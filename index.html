@@ -81,6 +81,11 @@
       color:var(--blue-dark);margin-bottom:1.25rem;
     }
     h1 em{font-style:italic;color:#1a2d3d;}
+    .h1-stack{display:inline-block;}
+    .h1-left,.h1-anchor,.h1-right{display:block;}
+    .h1-left{text-align:left;}
+    .h1-anchor{white-space:nowrap;}
+    .h1-right{text-align:right;}
     .hero-sub{font-size:15px;line-height:1.8;color:var(--text);font-weight:300;}
     .hero-right{
       text-align:center;font-family:var(--serif);font-size:17px;
@@ -261,9 +266,11 @@
     <div class="hero-inner">
       <div>
         <h1>
-          <span data-en="Learn English." data-es="Aprende inglés.">Learn English.</span><br>
-          <span data-en="Immerse yourself in English." data-es="Sumérgete en el inglés.">Immerse yourself in English.</span><br>
-          <em>Em<span data-en="body" data-es="body">body</span></em> <span data-en="English." data-es="el inglés.">English.</span>
+          <div class="h1-stack">
+            <span class="h1-left" data-en="Learn English." data-es="Aprende inglés.">Learn English.</span>
+            <span class="h1-anchor" data-en="Immerse yourself in English." data-es="Sumérgete en el inglés.">Immerse yourself in English.</span>
+            <span class="h1-right"><em>Em<span data-en="body" data-es="body">body</span></em> <span data-en="English." data-es="el inglés.">English.</span></span>
+          </div>
         </h1>
         <div class="hero-btns">
           <a class="btn btn-outline" onclick="scrollToSection('contact')" data-en="Contact" data-es="Contacto">Contact</a>
