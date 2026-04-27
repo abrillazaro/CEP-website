@@ -136,6 +136,25 @@
     /* ETHOS */
     .ethos-body{font-size:15px;line-height:1.9;color:var(--text);font-weight:300;max-width:740px;}
 
+    /* LEARNING */
+    .learning-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;}
+    .learning-card{
+      background:linear-gradient(160deg,rgba(180,205,225,0.55) 0%,rgba(120,165,200,0.45) 100%);
+      border:0.5px solid rgba(255,255,255,0.4);
+      backdrop-filter:blur(10px);border-radius:14px;padding:1.5rem 1.25rem;
+      display:flex;flex-direction:column;gap:0.75rem;
+      transition:transform 0.2s,box-shadow 0.2s;
+    }
+    .learning-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(45,74,99,0.18);}
+    .learning-title{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--blue-dark);line-height:1.2;}
+    .learning-subtitle{font-size:12px;font-weight:500;color:var(--text-light);margin-top:-0.25rem;}
+    .learning-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:0.25rem;}
+    .learning-tag{
+      font-size:11px;font-weight:500;color:var(--blue-dark);
+      background:rgba(255,255,255,0.5);border:0.5px solid rgba(255,255,255,0.6);
+      border-radius:20px;padding:4px 10px;
+    }
+
     /* FOUNDER */
     .founder-grid{display:grid;grid-template-columns:1fr auto;gap:4rem;align-items:start;}
     .founder-logo-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:1rem;}
@@ -228,6 +247,7 @@
       .hero-inner{grid-template-columns:1fr;gap:2rem;}
       h1{font-size:36px;}
       .plans-grid{grid-template-columns:1fr 1fr;}
+      .learning-grid{grid-template-columns:1fr;}
       .founder-grid{grid-template-columns:1fr;}
       .contact-grid{grid-template-columns:1fr;}
       .contact-or{display:block;padding:0.5rem 0;}
@@ -254,6 +274,7 @@
       <li><a onclick="scrollToSection('contact')" data-en="Contact" data-es="Contacto">Contact</a></li>
       <li><a onclick="scrollToSection('plans')" data-en="Plans" data-es="Planes">Plans</a></li>
       <li><a onclick="scrollToSection('ethos')" data-en="Ethos" data-es="Ethos">Ethos</a></li>
+      <li><a onclick="scrollToSection('learning')" data-en="Learning" data-es="Aprendizaje">Learning</a></li>
       <li><a onclick="scrollToSection('founder')" data-en="Our Founder" data-es="Fundadora">Our Founder</a></li>
       <li><button class="btn-nav-login" onclick="openLogin()" data-en="Login" data-es="Iniciar sesión">Login</button></li>
     </ul>
@@ -368,6 +389,53 @@
     <p class="ethos-body" data-en="The Corporate English Project is a holistic English language learning initiative rooted in the Latin concept of corpus, or body. The idea that language is a whole body of communication, not a collection of isolated skills. The goal is to develop complete communicators — not just grammar students or conversation practitioners, but individuals who can read, write, speak, listen, and think in English with confidence." data-es="The Corporate English Project es una iniciativa holística de aprendizaje del inglés, enraizada en el concepto latino de corpus, o cuerpo. La idea de que el lenguaje es un cuerpo completo de comunicación, no una colección de habilidades aisladas. El objetivo es desarrollar comunicadores completos — no solo estudiantes de gramática o practicantes de conversación, sino individuos que puedan leer, escribir, hablar, escuchar y pensar en inglés con confianza.">The Corporate English Project is a holistic English language learning initiative rooted in the Latin concept of corpus, or body. The idea that language is a whole body of communication, not a collection of isolated skills. The goal is to develop complete communicators — not just grammar students or conversation practitioners, but individuals who can read, write, speak, listen, and think in English with confidence.</p>
     <br>
     <p class="ethos-body" data-en="Language is inherently communal. True fluency requires not just technical knowledge but the ability to communicate with others in real time, across topics, levels, and contexts. The CEP is built on the belief that the best learning happens when students are immersed in the full experience of the language — together." data-es="El lenguaje es inherentemente comunal. La verdadera fluidez requiere no solo conocimiento técnico, sino la capacidad de comunicarse con otros en tiempo real, a través de temas, niveles y contextos. El CEP se basa en la creencia de que el mejor aprendizaje ocurre cuando los estudiantes están inmersos en la experiencia completa del idioma — juntos.">Language is inherently communal. True fluency requires not just technical knowledge but the ability to communicate with others in real time, across topics, levels, and contexts. The CEP is built on the belief that the best learning happens when students are immersed in the full experience of the language — together.</p>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- LEARNING -->
+<section id="learning" class="section">
+  <div class="section-inner">
+    <h2 class="section-title" data-en="Learning" data-es="Aprendizaje">Learning</h2>
+    <br>
+    <div class="learning-grid">
+
+      <div class="learning-card">
+        <div class="learning-title" data-en="The foundation" data-es="La base">The foundation</div>
+        <div class="learning-subtitle" data-en="Building blocks" data-es="Bloques fundamentales">Building blocks</div>
+        <div class="learning-tags">
+          <span class="learning-tag" data-en="Vocabulary" data-es="Vocabulario">Vocabulary</span>
+          <span class="learning-tag" data-en="Grammar" data-es="Gramática">Grammar</span>
+          <span class="learning-tag" data-en="Pronouns" data-es="Pronombres">Pronouns</span>
+          <span class="learning-tag" data-en="Articles" data-es="Artículos">Articles</span>
+          <span class="learning-tag" data-en="Prepositions" data-es="Preposiciones">Prepositions</span>
+          <span class="learning-tag" data-en="Quantities" data-es="Cantidades">Quantities</span>
+          <span class="learning-tag" data-en="Persons" data-es="Personas">Persons</span>
+        </div>
+      </div>
+
+      <div class="learning-card">
+        <div class="learning-title" data-en="The core skills" data-es="Las habilidades clave">The core skills</div>
+        <div class="learning-subtitle" data-en="Four skills" data-es="Cuatro habilidades">Four skills</div>
+        <div class="learning-tags">
+          <span class="learning-tag" data-en="Reading" data-es="Lectura">Reading</span>
+          <span class="learning-tag" data-en="Writing" data-es="Escritura">Writing</span>
+          <span class="learning-tag" data-en="Speaking" data-es="Habla">Speaking</span>
+          <span class="learning-tag" data-en="Listening to Understanding" data-es="Escucha comprensiva">Listening to Understanding</span>
+        </div>
+      </div>
+
+      <div class="learning-card">
+        <div class="learning-title" data-en="Embody English" data-es="Encarna el inglés">Embody English</div>
+        <div class="learning-subtitle" data-en="Your voice" data-es="Tu voz">Your voice</div>
+        <div class="learning-tags">
+          <span class="learning-tag" data-en="Public speaking" data-es="Oratoria">Public speaking</span>
+          <span class="learning-tag" data-en="Confident communication" data-es="Comunicación segura">Confident communication</span>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
