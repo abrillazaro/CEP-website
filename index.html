@@ -238,6 +238,8 @@
     .modal-submit:hover{background:#1a2d3d;}
     .modal-close{position:absolute;top:1rem;right:1.25rem;background:none;border:none;font-size:20px;color:var(--text-light);cursor:pointer;}
     .modal-note{font-size:12px;color:var(--text-light);text-align:center;margin-top:1rem;}
+    .modal-error{font-size:12px;color:#c0392b;text-align:center;margin-top:0.75rem;display:none;}
+    .modal-success{font-size:12px;color:#27ae60;font-weight:500;text-align:center;margin-top:0.75rem;display:none;}
     .modal-link{background:none;border:none;padding:0;font-size:12px;font-weight:700;color:var(--blue-dark);cursor:pointer;font-family:var(--sans);text-decoration:underline;}
 
     /* FOOTER */
@@ -312,6 +314,7 @@
       .footer-logo-row{justify-content:center;padding:1rem;}
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -575,9 +578,10 @@
     <div id="modalLogin">
       <div class="modal-title" data-en="Welcome back" data-es="Bienvenido de nuevo">Welcome back</div>
       <div class="modal-sub" data-en="Log in to access your dashboard, sessions, and materials." data-es="Inicia sesión para acceder a tu panel, sesiones y materiales.">Log in to access your dashboard, sessions, and materials.</div>
-      <input class="modal-field" type="email" placeholder="Email" data-en-placeholder="Email" data-es-placeholder="Correo electrónico"/>
-      <input class="modal-field" type="password" placeholder="Password" data-en-placeholder="Password" data-es-placeholder="Contraseña"/>
-      <button class="modal-submit" data-en="Log in" data-es="Iniciar sesión">Log in</button>
+      <input id="loginEmail" class="modal-field" type="email" placeholder="Email" data-en-placeholder="Email" data-es-placeholder="Correo electrónico"/>
+      <input id="loginPassword" class="modal-field" type="password" placeholder="Password" data-en-placeholder="Password" data-es-placeholder="Contraseña"/>
+      <button id="loginBtn" class="modal-submit" onclick="doLogin()" data-en="Log in" data-es="Iniciar sesión">Log in</button>
+      <div id="loginError" class="modal-error">Incorrect email or password. Please try again.</div>
       <p class="modal-note">Don't have an account? <button class="modal-link" onclick="showSignup()">Create an account</button></p>
     </div>
 
@@ -585,10 +589,12 @@
     <div id="modalSignup" style="display:none;">
       <div class="modal-title" data-en="Create an account" data-es="Crear una cuenta">Create an account</div>
       <div class="modal-sub" data-en="Sign up to get started with CEP." data-es="Regístrate para comenzar con CEP.">Sign up to get started with CEP.</div>
-      <input class="modal-field" type="text" placeholder="Full name" data-en-placeholder="Full name" data-es-placeholder="Nombre completo"/>
-      <input class="modal-field" type="email" placeholder="Email" data-en-placeholder="Email" data-es-placeholder="Correo electrónico"/>
-      <input class="modal-field" type="password" placeholder="Password" data-en-placeholder="Password" data-es-placeholder="Contraseña"/>
-      <button class="modal-submit" data-en="Sign up" data-es="Registrarse">Sign up</button>
+      <input id="signupName" class="modal-field" type="text" placeholder="Full name" data-en-placeholder="Full name" data-es-placeholder="Nombre completo"/>
+      <input id="signupEmail" class="modal-field" type="email" placeholder="Email" data-en-placeholder="Email" data-es-placeholder="Correo electrónico"/>
+      <input id="signupPassword" class="modal-field" type="password" placeholder="Password" data-en-placeholder="Password" data-es-placeholder="Contraseña"/>
+      <button id="signupBtn" class="modal-submit" onclick="doSignup()" data-en="Sign up" data-es="Registrarse">Sign up</button>
+      <div id="signupError" class="modal-error"></div>
+      <div id="signupSuccess" class="modal-success">Check your email to confirm your account!</div>
       <p class="modal-note">Already have an account? <button class="modal-link" onclick="showLogin()">Log in</button></p>
     </div>
 
@@ -596,6 +602,55 @@
 </div>
 
 <script>
+  const _sb = window.supabase.createClient(
+    'https://qkxhzpicqjxodeadhcvw.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFreGh6cGljcWp4b2RlYWRoY3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNTg2NTUsImV4cCI6MjA5MjgzNDY1NX0.wLL0h9vQ8W5xp7mKFbq-CphiqE4cRVGTQ-KayuteHt8'
+  );
+
+  async function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('loginBtn');
+    const err = document.getElementById('loginError');
+    err.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Logging in…';
+    const { error } = await _sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Log in';
+    } else {
+      window.location.href = 'dashboard.html';
+    }
+  }
+
+  async function doSignup() {
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const btn = document.getElementById('signupBtn');
+    const err = document.getElementById('signupError');
+    const success = document.getElementById('signupSuccess');
+    err.style.display = 'none';
+    success.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Signing up…';
+    const { error } = await _sb.auth.signUp({
+      email, password,
+      options: { data: { full_name: name } }
+    });
+    if (error) {
+      err.textContent = error.message;
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Sign up';
+    } else {
+      success.style.display = 'block';
+      btn.disabled = true;
+    }
+  }
+
   let currentLang = 'en';
 
   function scrollToTop() {
