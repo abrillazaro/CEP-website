@@ -92,7 +92,6 @@
       font-size:12.5px;font-weight:500;color:var(--text-light);
       background:rgba(45,74,99,.07);border-radius:20px;padding:4px 13px;
     }
-    .streak-on{color:#d4850a;background:rgba(212,133,10,.1);}
 
     /* CARD TYPE LABEL */
     .card-type{
@@ -160,7 +159,6 @@
       color:var(--blue-dark);margin-bottom:.5rem;
     }
     .fin-score{font-size:15px;color:var(--text-light);margin-bottom:.375rem;}
-    .fin-streak{font-size:13px;color:#d4850a;margin-bottom:1.75rem;}
     .btn-restart{
       background:var(--blue-dark);color:#fff;border:none;border-radius:11px;
       padding:12px 36px;font-size:14px;font-weight:500;cursor:pointer;
@@ -198,7 +196,6 @@
     <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
     <div class="stats-row">
       <span class="stat" id="scoreStat">Score: 0 / 0</span>
-      <span class="stat" id="streakStat">&#128293; 0</span>
     </div>
     <div id="drillArea"></div>
   </div>
@@ -247,7 +244,7 @@ const FILL = [
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 
-let deck, idx, score, total, streak, bestStreak, usedSecondChance, firstTry;
+let deck, idx, score, total, usedSecondChance, firstTry;
 
 function shuffle(a) {
   const b = [...a];
@@ -264,7 +261,7 @@ function distractors(correct, pool, n) {
 
 function init() {
   deck = shuffle([...VOCAB, ...FILL]);
-  idx = score = total = streak = bestStreak = 0;
+  idx = score = total = 0;
   usedSecondChance = firstTry = false;
   render();
 }
@@ -275,9 +272,6 @@ function render() {
   // progress + stats
   document.getElementById('progressFill').style.width = (idx / deck.length * 100) + '%';
   document.getElementById('scoreStat').textContent = 'Score: ' + score + ' / ' + total;
-  var ss = document.getElementById('streakStat');
-  ss.textContent = '\ud83d\udd25 ' + streak;
-  ss.className = 'stat' + (streak >= 3 ? ' streak-on' : '');
 
   usedSecondChance = false;
   firstTry = true;
@@ -331,7 +325,7 @@ function pick(btn) {
     lockAll();
     total++;
     score++;
-    if (firstTry) { streak++; bestStreak = Math.max(bestStreak, streak); }
+
     fb.className = 'feedback correct';
     fb.textContent = firstTry ? '\u2713 Correct!' : '\u2713 Got it on the second try!';
     setTimeout(advance, 900);
@@ -351,7 +345,6 @@ function pick(btn) {
     lockAll();
     revealCorrect(correct);
     total++;
-    streak = 0;
     fb.className = 'feedback wrong';
     fb.innerHTML = '\u2717 The answer was <strong>' + correct + '</strong>';
     setTimeout(advance, 1600);
@@ -377,6 +370,7 @@ function advance() {
 // ── FINISH ────────────────────────────────────────────────────────────────────
 
 function finish() {
+  saveSession();
   document.getElementById('progressFill').style.width = '100%';
   var pct = total > 0 ? Math.round(score / total * 100) : 0;
   var icon = pct >= 80 ? '\ud83c\udf89' : pct >= 50 ? '\ud83d\udcaa' : '\ud83d\udcda';
@@ -385,9 +379,26 @@ function finish() {
       '<span class="fin-icon">' + icon + '</span>' +
       '<h2 class="fin-title">Well done!</h2>' +
       '<p class="fin-score">You scored ' + score + ' out of ' + total + ' (' + pct + '%)</p>' +
-      '<p class="fin-streak">\ud83d\udd25 Best streak: ' + bestStreak + '</p>' +
       '<button class="btn-restart" onclick="init()">Try again &#8212; Intentar de nuevo</button>' +
     '</div>';
+}
+
+// ── SESSION STREAK ────────────────────────────────────────────────────────────
+
+function dateStr(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function todayStr(){ return dateStr(new Date()); }
+function yesterdayStr(){ var d=new Date(); d.setDate(d.getDate()-1); return dateStr(d); }
+
+function saveSession(){
+  var last  = localStorage.getItem('cep_last_session');
+  var saved = parseInt(localStorage.getItem('cep_streak')||'0');
+  var today = todayStr();
+  var newStreak;
+  if(last===today)          newStreak = saved;
+  else if(last===yesterdayStr()) newStreak = saved+1;
+  else                      newStreak = 1;
+  localStorage.setItem('cep_last_session', today);
+  localStorage.setItem('cep_streak', String(newStreak));
 }
 
 // ── START ─────────────────────────────────────────────────────────────────────

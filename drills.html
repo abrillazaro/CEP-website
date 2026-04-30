@@ -103,6 +103,16 @@
       .level-btn{width:100%;max-width:320px;padding:2rem 2.5rem;}
       .level-en{font-size:28px;}
     }
+
+    .streak-badge{
+      display:inline-flex;align-items:center;gap:.5rem;
+      background:rgba(255,255,255,.42);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      border:.5px solid rgba(255,255,255,.5);
+      border-radius:50px;padding:8px 22px;
+      font-size:14px;font-weight:500;color:var(--text);
+    }
+    .streak-none{color:var(--text-light);font-weight:400;}
   </style>
 </head>
 <body>
@@ -139,5 +149,42 @@
       </button>
     </div>
   </div>
+
+  <div style="margin-top:1.75rem;text-align:center;">
+    <span class="streak-badge" id="streakBadge"></span>
+  </div>
+
+</div>
+
+<script>
+  (function(){
+    function dateStr(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+    var today = dateStr(new Date());
+    var yd = new Date(); yd.setDate(yd.getDate()-1);
+    var yesterday = dateStr(yd);
+
+    var last  = localStorage.getItem('cep_last_session');
+    var saved = parseInt(localStorage.getItem('cep_streak') || '0');
+
+    var current;
+    if (!last) {
+      current = 0;
+    } else if (last === today || last === yesterday) {
+      current = saved;
+    } else {
+      current = 0;
+      localStorage.setItem('cep_streak', '0');
+    }
+
+    var el = document.getElementById('streakBadge');
+    if (current === 0) {
+      el.className = 'streak-badge streak-none';
+      el.textContent = 'Start your streak today!';
+    } else {
+      el.textContent = '\ud83d\udd25 ' + current + (current === 1 ? ' day streak' : ' day streak');
+    }
+  })();
+</script>
+
 </body>
 </html>
