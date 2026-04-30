@@ -639,14 +639,15 @@
     err.style.display = 'none';
     btn.disabled = true;
     btn.textContent = 'Logging in…';
-    const { error } = await _sb.auth.signInWithPassword({ email, password });
+    const { data, error } = await _sb.auth.signInWithPassword({ email, password });
     if (error) {
       err.style.display = 'block';
       btn.disabled = false;
       btn.textContent = 'Log in';
-    } else {
-      window.location.href = 'dashboard.html';
+      return;
     }
+    const { data: profile } = await _sb.from('users').select('role').eq('id', data.user.id).single();
+    window.location.href = profile?.role === 'teacher' ? 'teacher.html' : 'dashboard.html';
   }
 
   async function doSignup() {

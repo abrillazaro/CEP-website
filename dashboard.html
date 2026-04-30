@@ -405,14 +405,16 @@
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFreGh6cGljcWp4b2RlYWRoY3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNTg2NTUsImV4cCI6MjA5MjgzNDY1NX0.wLL0h9vQ8W5xp7mKFbq-CphiqE4cRVGTQ-KayuteHt8'
   );
 
-  // auth guard + populate profile
+  // auth guard: require login + redirect teachers
   (async () => {
     const { data: { session } } = await _sb.auth.getSession();
     if (!session) { window.location.href = 'index.html'; return; }
-    const u = session.user;
-    const name = (u.user_metadata && u.user_metadata.full_name) || u.email.split('@')[0];
+    const { data: profile } = await _sb.from('users')
+      .select('name, role').eq('id', session.user.id).single();
+    if (profile?.role === 'teacher') { window.location.href = 'teacher.html'; return; }
+    const name = profile?.name || session.user.email.split('@')[0];
     document.getElementById('profileName').textContent = name;
-    document.getElementById('profileEmail').textContent = u.email;
+    document.getElementById('profileEmail').textContent = session.user.email;
   })();
 
   // sidebar toggle
