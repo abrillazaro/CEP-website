@@ -399,6 +399,11 @@ function saveSession(){
   else                      newStreak = 1;
   localStorage.setItem('cep_last_session', today);
   localStorage.setItem('cep_streak', String(newStreak));
+
+  // activity log — store each completed date
+  var log = JSON.parse(localStorage.getItem('cep_activity_log')||'[]');
+  if(log.indexOf(today) === -1){ log.push(today); }
+  localStorage.setItem('cep_activity_log', JSON.stringify(log));
 }
 
 // ── START ─────────────────────────────────────────────────────────────────────
