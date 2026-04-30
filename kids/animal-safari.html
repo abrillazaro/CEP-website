@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Animal Safari 🦁 — CEP Kids</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --font:'Nunito',system-ui,sans-serif;
+      --card-radius:20px;
+    }
+    body{font-family:var(--font);min-height:100vh;background:#F0F8FF;}
+    .top-bar{
+      display:flex;align-items:center;gap:14px;
+      padding:14px 24px;
+      background:linear-gradient(135deg,#6C3DDB,#0099FF);
+      box-shadow:0 3px 12px rgba(0,0,0,.15);
+    }
+    .back-btn{
+      color:#fff;text-decoration:none;font-size:14px;font-weight:800;
+      background:rgba(255,255,255,.2);padding:8px 16px;border-radius:20px;
+      transition:background .15s;
+    }
+    .back-btn:hover{background:rgba(255,255,255,.35);}
+    .page-title{font-size:20px;font-weight:900;color:#fff;flex:1;text-align:center;}
+    .score-badge{
+      background:rgba(255,255,255,.25);color:#fff;
+      padding:6px 14px;border-radius:20px;font-size:14px;font-weight:800;
+    }
+    .activity-area{
+      max-width:700px;margin:0 auto;padding:32px 20px 48px;
+      text-align:center;
+    }
+    .activity-hero{font-size:80px;margin-bottom:16px;display:inline-block;animation:bounce 1.2s ease-in-out infinite;}
+    @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-16px);}
+    }
+    .activity-prompt{
+      font-size:clamp(22px,5vw,32px);font-weight:900;color:#333;
+      margin-bottom:8px;line-height:1.2;
+    }
+    .activity-sub{font-size:16px;font-weight:600;color:#888;margin-bottom:32px;}
+    .options-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;margin-bottom:24px;
+    }
+    .opt-btn{
+      background:#fff;border:3px solid #e0e0e0;
+      border-radius:16px;padding:20px 12px;
+      font-family:var(--font);font-size:20px;font-weight:800;
+      cursor:pointer;transition:transform .18s cubic-bezier(.34,1.56,.64,1),
+        box-shadow .18s,border-color .15s,background .15s;
+      box-shadow:0 3px 10px rgba(0,0,0,.08);
+      line-height:1.3;
+    }
+    .opt-btn:hover:not(:disabled){
+      transform:scale(1.06);
+      box-shadow:0 8px 24px rgba(0,0,0,.14);
+    }
+    .opt-btn.correct{background:#D4EFDF;border-color:#00C875;color:#1E8449;}
+    .opt-btn.wrong{background:#FADBD8;border-color:#FF4444;color:#C0392B;}
+    .opt-btn:disabled{cursor:default;}
+    .feedback{
+      font-size:26px;font-weight:900;margin-bottom:16px;min-height:38px;
+    }
+    .feedback.correct{color:#00C875;}
+    .feedback.wrong{color:#FF4444;}
+    .next-btn{
+      background:linear-gradient(135deg,#6C3DDB,#0099FF);
+      color:#fff;border:none;padding:16px 40px;
+      border-radius:32px;font-family:var(--font);font-size:18px;font-weight:900;
+      cursor:pointer;box-shadow:0 4px 16px rgba(108,61,219,.35);
+      transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s;
+      display:none;
+    }
+    .next-btn:hover{transform:scale(1.05);box-shadow:0 8px 28px rgba(108,61,219,.4);}
+    .progress-bar-wrap{
+      background:#E8E8E8;border-radius:10px;height:12px;
+      margin-bottom:28px;overflow:hidden;
+    }
+    .progress-fill{
+      height:100%;border-radius:10px;
+      background:linear-gradient(90deg,#6C3DDB,#0099FF,#00C875);
+      transition:width .4s ease;
+    }
+    .finish-card{
+      background:#fff;border-radius:var(--card-radius);
+      padding:40px 30px;box-shadow:0 6px 30px rgba(0,0,0,.1);
+      display:none;
+    }
+    .finish-card.show{display:block;}
+    .finish-icon{font-size:72px;margin-bottom:16px;display:block;}
+    .finish-title{font-size:32px;font-weight:900;color:#333;margin-bottom:8px;}
+    .finish-score{font-size:20px;font-weight:700;color:#555;margin-bottom:24px;}
+    .play-again-btn{
+      background:linear-gradient(135deg,#FF7A00,#FFD600);
+      color:#fff;border:none;padding:16px 40px;
+      border-radius:32px;font-family:var(--font);font-size:18px;font-weight:900;
+      cursor:pointer;box-shadow:0 4px 16px rgba(255,122,0,.35);
+      transition:transform .18s;
+    }
+    .play-again-btn:hover{transform:scale(1.05);}
+    @media(max-width:500px){
+      .options-grid{grid-template-columns:1fr;}
+    }
+
+    .activity-hero{animation-duration:2s;}
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <a class="back-btn" href="index.html">← Back</a>
+    <div class="page-title">Animal Safari 🦁</div>
+    <div class="score-badge" id="scoreBadge">⭐ 0</div>
+  </div>
+
+  <div class="activity-area">
+    <div class="progress-bar-wrap">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+
+    <div id="questionArea">
+      <div class="activity-hero" id="qEmoji">🦁</div>
+      <div class="activity-prompt" id="qPrompt">Loading…</div>
+      <div class="activity-sub" id="qSub"></div>
+      <div class="options-grid" id="optGrid"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">Next ▶</button>
+    </div>
+
+    <div class="finish-card" id="finishCard">
+      <span class="finish-icon">🏆</span>
+      <div class="finish-title">Amazing job!</div>
+      <div class="finish-score" id="finishScore"></div>
+      <button class="play-again-btn" onclick="init()">Play again! 🔄</button>
+    </div>
+  </div>
+
+  <script>
+  var QUESTIONS = [{"emoji": "🐶", "prompt": "What animal says WOOF?", "sub": "¿Qué animal dice WOOF?", "options": ["Cat", "Dog", "Cow", "Duck"], "answer": 1}, {"emoji": "🐱", "prompt": "What animal says MEOW?", "sub": "", "options": ["Dog", "Bird", "Cat", "Horse"], "answer": 2}, {"emoji": "🐮", "prompt": "What animal says MOO?", "sub": "", "options": ["Sheep", "Pig", "Cow", "Horse"], "answer": 2}, {"emoji": "🐷", "prompt": "What animal says OINK?", "sub": "", "options": ["Pig", "Cow", "Duck", "Frog"], "answer": 0}, {"emoji": "🐸", "prompt": "What animal says RIBBIT?", "sub": "", "options": ["Bird", "Frog", "Fish", "Snake"], "answer": 1}, {"emoji": "🦆", "prompt": "What animal says QUACK?", "sub": "", "options": ["Chicken", "Duck", "Goose", "Turkey"], "answer": 1}, {"emoji": "🦁", "prompt": "What is the KING of the jungle?", "sub": "", "options": ["Tiger", "Bear", "Lion", "Wolf"], "answer": 2}, {"emoji": "🐘", "prompt": "What is the BIGGEST land animal?", "sub": "", "options": ["Rhino", "Hippo", "Elephant", "Giraffe"], "answer": 2}, {"emoji": "🦒", "prompt": "Which animal has the LONGEST neck?", "sub": "", "options": ["Camel", "Ostrich", "Giraffe", "Horse"], "answer": 2}, {"emoji": "🐧", "prompt": "Which bird cannot fly?", "sub": "", "options": ["Eagle", "Penguin", "Parrot", "Owl"], "answer": 1}];
+
+  var idx = 0, score = 0;
+
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  function init() {
+    idx = 0; score = 0;
+    shuffle(QUESTIONS);
+    document.getElementById('finishCard').classList.remove('show');
+    document.getElementById('questionArea').style.display = '';
+    document.getElementById('scoreBadge').textContent = '⭐ 0';
+    render();
+  }
+
+  function render() {
+    var q = QUESTIONS[idx];
+    document.getElementById('qEmoji').textContent = q.emoji || '🦁';
+    document.getElementById('qPrompt').textContent = q.prompt;
+    document.getElementById('qSub').textContent = q.sub || '';
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('feedback').className = 'feedback';
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('progressFill').style.width = (idx / QUESTIONS.length * 100) + '%';
+
+    var opts = q.options.slice();
+    var correct = opts[q.answer];
+    // shuffle options and track correct answer
+    for (var i = opts.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = opts[i]; opts[i] = opts[j]; opts[j] = t;
+    }
+    var newCorrectIdx = opts.indexOf(correct);
+
+    var grid = document.getElementById('optGrid');
+    grid.innerHTML = '';
+    opts.forEach(function(opt, i) {
+      var btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = opt;
+      btn.onclick = (function(ci) { return function() { pick(this, ci === newCorrectIdx); }; })(i);
+      grid.appendChild(btn);
+    });
+  }
+
+  function pick(btn, isCorrect) {
+    document.querySelectorAll('.opt-btn').forEach(function(b) { b.disabled = true; });
+    var fb = document.getElementById('feedback');
+    if (isCorrect) {
+      btn.classList.add('correct');
+      fb.textContent = '✅ Correct! Great job!';
+      fb.className = 'feedback correct';
+      score++;
+      document.getElementById('scoreBadge').textContent = '⭐ ' + score;
+    } else {
+      btn.classList.add('wrong');
+      fb.textContent = '❌ Not quite — try next time!';
+      fb.className = 'feedback wrong';
+      // highlight correct
+      document.querySelectorAll('.opt-btn').forEach(function(b) {
+        if (b.textContent === QUESTIONS[idx].options[QUESTIONS[idx].answer]) b.classList.add('correct');
+      });
+    }
+    document.getElementById('nextBtn').style.display = '';
+  }
+
+  function nextQ() {
+    idx++;
+    if (idx >= QUESTIONS.length) {
+      document.getElementById('questionArea').style.display = 'none';
+      document.getElementById('progressFill').style.width = '100%';
+      var pct = Math.round(score / QUESTIONS.length * 100);
+      document.getElementById('finishScore').textContent =
+        'You got ' + score + ' out of ' + QUESTIONS.length + ' (' + pct + '%)';
+      document.getElementById('finishCard').classList.add('show');
+    } else {
+      render();
+    }
+  }
+
+  init();
+  </script>
+</body>
+</html>
