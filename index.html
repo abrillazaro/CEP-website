@@ -598,7 +598,7 @@
       </button>
       <div class="modal-divider">or</div>
       <input id="loginEmail" class="modal-field" type="email" placeholder="Email" data-en-placeholder="Email" data-es-placeholder="Correo electrónico"/>
-      <input id="loginPassword" class="modal-field" type="password" placeholder="Password" data-en-placeholder="Password" data-es-placeholder="Contraseña"/>
+      <input id="loginPassword" class="modal-field" type="password" placeholder="Password" data-en-placeholder="Password" data-es-placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()"/>
       <button id="loginBtn" class="modal-submit" onclick="doLogin()" data-en="Log in" data-es="Iniciar sesión">Log in</button>
       <div id="loginError" class="modal-error">Incorrect email or password. Please try again.</div>
       <p class="modal-note">Don't have an account? <button class="modal-link" onclick="showSignup()">Create an account</button></p>
