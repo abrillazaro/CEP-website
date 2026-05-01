@@ -252,26 +252,29 @@ async function doSignup() {
     return;
   }
 
-  // Account created — now sign in immediately so they don't need to confirm email
   btn.textContent = 'Signing in…';
-  var { data: loginData, error: loginError } = await _sb.auth.signInWithPassword({ email, password });
 
-  if (!loginError && loginData.session) {
-    // Signed in — go straight to the dashboard
+  // When email confirmation is OFF, signUp returns a session directly — use it.
+  if (signUpData.session) {
     window.location.href = 'teacher.html';
     return;
   }
 
-  // Sign-in failed — email confirmation is probably still required in Supabase settings
-  showSuccess(
-    '&#10003; Account created! Please check your inbox for a confirmation email, ' +
-    'then <a href="instructor-login.html">sign in here</a>.<br/><br/>' +
-    '<strong>Tip:</strong> check your spam folder if it doesn\'t arrive.'
+  // Session missing — try signInWithPassword as fallback.
+  var { data: loginData, error: loginError } = await _sb.auth.signInWithPassword({ email, password });
+
+  if (!loginError && loginData.session) {
+    window.location.href = 'teacher.html';
+    return;
+  }
+
+  // Still blocked — email confirmation is ON in Supabase. Show actionable error.
+  showError(
+    'Account created but email confirmation is blocking sign-in. ' +
+    'In Supabase go to Authentication → Providers → Email and turn off \'Confirm email\'.'
   );
-  ['name','email','password','code'].forEach(function(id) {
-    document.getElementById(id).value = '';
-  });
-  btn.textContent = 'Account created';
+  btn.disabled = false;
+  btn.textContent = 'Create instructor account';
 }
 </script>
 </body>
