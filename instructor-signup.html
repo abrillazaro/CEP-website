@@ -234,7 +234,7 @@ async function doSignup() {
   btn.textContent = 'Creating account…';
 
   // Sign up — pass role + full_name in metadata so the DB trigger picks them up
-  var { data, error } = await _sb.auth.signUp({
+  var { data: signUpData, error: signUpError } = await _sb.auth.signUp({
     email,
     password,
     options: {
@@ -245,26 +245,33 @@ async function doSignup() {
     }
   });
 
-  if (error) {
-    showError(error.message || 'Something went wrong. Please try again.');
+  if (signUpError) {
+    showError(signUpError.message || 'Something went wrong. Please try again.');
     btn.disabled = false;
     btn.textContent = 'Create instructor account';
     return;
   }
 
-  // Supabase may return a user but require email confirmation depending on your project settings.
-  // Either way, we show a success message.
-  showSuccess(
-    '&#10003; Account created! Check your email to confirm your address, then ' +
-    '<a href="instructor-login.html">sign in here</a>.'
-  );
+  // Account created — now sign in immediately so they don't need to confirm email
+  btn.textContent = 'Signing in…';
+  var { data: loginData, error: loginError } = await _sb.auth.signInWithPassword({ email, password });
 
-  // Clear the form
+  if (!loginError && loginData.session) {
+    // Signed in — go straight to the dashboard
+    window.location.href = 'teacher.html';
+    return;
+  }
+
+  // Sign-in failed — email confirmation is probably still required in Supabase settings
+  showSuccess(
+    '&#10003; Account created! Please check your inbox for a confirmation email, ' +
+    'then <a href="instructor-login.html">sign in here</a>.<br/><br/>' +
+    '<strong>Tip:</strong> check your spam folder if it doesn't arrive.'
+  );
   ['name','email','password','code'].forEach(function(id) {
     document.getElementById(id).value = '';
   });
   btn.textContent = 'Account created';
-  // Keep button disabled so they don't submit twice
 }
 </script>
 </body>
