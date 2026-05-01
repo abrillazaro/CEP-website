@@ -150,7 +150,7 @@
 
     <p class="card-eyebrow">Instructor Access</p>
     <h1 class="card-title">Create your account</h1>
-    <p class="card-sub">You need an invite code to register as an instructor</p>
+    <p class="card-sub">Enter your details — we'll send you a sign-in link. No password needed.</p>
 
     <hr class="gold-rule"/>
 
@@ -168,18 +168,13 @@
     </div>
 
     <div class="field-wrap">
-      <label class="field-label" for="password">Password</label>
-      <input id="password" class="field-input" type="password" placeholder="Min. 8 characters" autocomplete="new-password"/>
-    </div>
-
-    <div class="field-wrap">
       <label class="field-label" for="code">Invite code</label>
       <input id="code" class="field-input code-field" type="text" placeholder="Enter your invite code"
              autocomplete="off" onkeydown="if(event.key==='Enter')doSignup()"/>
       <p class="code-hint">You should have received this code from CEP.</p>
     </div>
 
-    <button class="submit-btn" id="submitBtn" onclick="doSignup()">Create instructor account</button>
+    <button class="submit-btn" id="submitBtn" onclick="doSignup()">Send sign-in link</button>
 
     <div class="card-footer">
       Already have an account? <a href="instructor-login.html">Sign in here</a>
@@ -218,60 +213,43 @@ function clearMessages() {
 async function doSignup() {
   clearMessages();
 
-  var name     = document.getElementById('name').value.trim();
-  var email    = document.getElementById('email').value.trim();
-  var password = document.getElementById('password').value;
-  var code     = document.getElementById('code').value.trim();
-  var btn      = document.getElementById('submitBtn');
+  var name  = document.getElementById('name').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var code  = document.getElementById('code').value.trim();
+  var btn   = document.getElementById('submitBtn');
 
-  // Client-side validation
-  if (!name)                        { showError('Please enter your full name.'); return; }
-  if (!email)                       { showError('Please enter your email address.'); return; }
-  if (password.length < 8)          { showError('Password must be at least 8 characters.'); return; }
-  if (code !== INVITE_CODE)         { showError('Invalid invite code. Please check the code you received and try again.'); return; }
+  if (!name)                { showError('Please enter your full name.'); return; }
+  if (!email)               { showError('Please enter your email address.'); return; }
+  if (code !== INVITE_CODE) { showError('Invalid invite code. Please check the code you received and try again.'); return; }
 
   btn.disabled = true;
-  btn.textContent = 'Creating account…';
+  btn.textContent = 'Sending link…';
 
-  // Sign up — pass role + full_name in metadata so the DB trigger picks them up
-  var { data: signUpData, error: signUpError } = await _sb.auth.signUp({
-    email,
-    password,
+  // Magic link: creates the account on first click, no password or confirmation needed.
+  var { error } = await _sb.auth.signInWithOtp({
+    email: email,
     options: {
-      data: {
-        full_name: name,
-        role: 'teacher'
-      }
+      emailRedirectTo: 'https://abrillazaro.github.io/CEP-website/confirm.html',
+      data: { full_name: name, role: 'teacher' }
     }
   });
 
-  if (signUpError) {
-    showError(signUpError.message || 'Something went wrong. Please try again.');
+  if (error) {
+    showError(error.message || 'Something went wrong. Please try again.');
     btn.disabled = false;
-    btn.textContent = 'Create instructor account';
+    btn.textContent = 'Send sign-in link';
     return;
   }
 
-  // Account created — now sign in immediately so they don't need to confirm email
-  btn.textContent = 'Signing in…';
-  var { data: loginData, error: loginError } = await _sb.auth.signInWithPassword({ email, password });
-
-  if (!loginError && loginData.session) {
-    // Signed in — go straight to the dashboard
-    window.location.href = 'teacher.html';
-    return;
-  }
-
-  // Sign-in failed — email confirmation is probably still required in Supabase settings
   showSuccess(
-    '&#10003; Account created! Please check your inbox for a confirmation email, ' +
-    'then <a href="instructor-login.html">sign in here</a>.<br/><br/>' +
-    '<strong>Tip:</strong> check your spam folder if it doesn\'t arrive.'
+    '✓ Sign-in link sent to <strong>' + email + '</strong>.<br/><br/>' +
+    'Click the link in your email to open your instructor dashboard instantly. ' +
+    "Check your spam folder if it doesn't arrive within a minute."
   );
-  ['name','email','password','code'].forEach(function(id) {
-    document.getElementById(id).value = '';
-  });
-  btn.textContent = 'Account created';
+  document.getElementById('name').value  = '';
+  document.getElementById('email').value = '';
+  document.getElementById('code').value  = '';
+  btn.textContent = 'Link sent!';
 }
 </script>
 </body>
