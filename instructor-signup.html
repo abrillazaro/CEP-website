@@ -150,7 +150,7 @@
 
     <p class="card-eyebrow">Instructor Access</p>
     <h1 class="card-title">Create your account</h1>
-    <p class="card-sub">Enter your details — we'll send you a sign-in link. No password needed.</p>
+    <p class="card-sub">Create your instructor account instantly — no email confirmation needed.</p>
 
     <hr class="gold-rule"/>
 
@@ -168,13 +168,18 @@
     </div>
 
     <div class="field-wrap">
+      <label class="field-label" for="password">Password</label>
+      <input id="password" class="field-input" type="password" placeholder="Min. 8 characters" autocomplete="new-password"/>
+    </div>
+
+    <div class="field-wrap">
       <label class="field-label" for="code">Invite code</label>
       <input id="code" class="field-input code-field" type="text" placeholder="Enter your invite code"
              autocomplete="off" onkeydown="if(event.key==='Enter')doSignup()"/>
       <p class="code-hint">You should have received this code from CEP.</p>
     </div>
 
-    <button class="submit-btn" id="submitBtn" onclick="doSignup()">Send sign-in link</button>
+    <button class="submit-btn" id="submitBtn" onclick="doSignup()">Create instructor account</button>
 
     <div class="card-footer">
       Already have an account? <a href="instructor-login.html">Sign in here</a>
@@ -213,43 +218,57 @@ function clearMessages() {
 async function doSignup() {
   clearMessages();
 
-  var name  = document.getElementById('name').value.trim();
-  var email = document.getElementById('email').value.trim();
-  var code  = document.getElementById('code').value.trim();
-  var btn   = document.getElementById('submitBtn');
+  var name     = document.getElementById('name').value.trim();
+  var email    = document.getElementById('email').value.trim();
+  var password = document.getElementById('password').value;
+  var code     = document.getElementById('code').value.trim();
+  var btn      = document.getElementById('submitBtn');
 
-  if (!name)                { showError('Please enter your full name.'); return; }
-  if (!email)               { showError('Please enter your email address.'); return; }
-  if (code !== INVITE_CODE) { showError('Invalid invite code. Please check the code you received and try again.'); return; }
+  if (!name)               { showError('Please enter your full name.'); return; }
+  if (!email)              { showError('Please enter your email address.'); return; }
+  if (password.length < 8) { showError('Password must be at least 8 characters.'); return; }
+  if (!code)               { showError('Please enter your invite code.'); return; }
 
   btn.disabled = true;
-  btn.textContent = 'Sending link…';
+  btn.textContent = 'Creating account…';
 
-  // Magic link: creates the account on first click, no password or confirmation needed.
-  var { error } = await _sb.auth.signInWithOtp({
-    email: email,
-    options: {
-      emailRedirectTo: 'https://abrillazaro.github.io/CEP-website/confirm.html',
-      data: { full_name: name, role: 'teacher' }
+  try {
+    // Call the edge function — validates invite code and creates a pre-confirmed account
+    var res = await fetch(
+      'https://qkxhzpicqjxodeadhcvw.supabase.co/functions/v1/create-instructor',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: email, password: password, invite_code: code })
+      }
+    );
+    var json = await res.json();
+
+    if (!res.ok || json.error) {
+      showError(json.error || 'Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Create instructor account';
+      return;
     }
-  });
 
-  if (error) {
-    showError(error.message || 'Something went wrong. Please try again.');
+    // Account created and already confirmed — sign in directly, no email needed
+    btn.textContent = 'Signing in…';
+    var { data, error: loginError } = await _sb.auth.signInWithPassword({ email: email, password: password });
+
+    if (loginError || !data.session) {
+      showError('Account created but sign-in failed: ' + (loginError?.message || 'unknown error') + '. Try signing in manually.');
+      btn.disabled = false;
+      btn.textContent = 'Create instructor account';
+      return;
+    }
+
+    window.location.href = 'teacher.html';
+
+  } catch (e) {
+    showError('Network error: ' + (e.message || 'could not reach server. Check your connection and try again.'));
     btn.disabled = false;
-    btn.textContent = 'Send sign-in link';
-    return;
+    btn.textContent = 'Create instructor account';
   }
-
-  showSuccess(
-    '✓ Sign-in link sent to <strong>' + email + '</strong>.<br/><br/>' +
-    'Click the link in your email to open your instructor dashboard instantly. ' +
-    "Check your spam folder if it doesn't arrive within a minute."
-  );
-  document.getElementById('name').value  = '';
-  document.getElementById('email').value = '';
-  document.getElementById('code').value  = '';
-  btn.textContent = 'Link sent!';
 }
 </script>
 </body>
