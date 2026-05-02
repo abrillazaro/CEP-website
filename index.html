@@ -664,7 +664,10 @@
     btn.textContent = 'Signing up…';
     const { error } = await _sb.auth.signUp({
       email, password,
-      options: { data: { full_name: name } }
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: 'https://abrillazaro.github.io/CEP-website/index.html'
+      }
     });
     if (error) {
       err.textContent = error.message;
