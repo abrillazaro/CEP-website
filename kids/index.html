@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CEP Kids — Learn English!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --yellow:#FFD600;
+      --orange:#FF7A00;
+      --pink:#FF4DA6;
+      --green:#00C875;
+      --blue:#0099FF;
+      --purple:#9B59B6;
+      --red:#FF4444;
+      --teal:#00BCD4;
+      --bg:#F0F8FF;
+      --card-radius:22px;
+      --font:'Nunito',system-ui,sans-serif;
+    }
+    body{
+      font-family:var(--font);
+      background:var(--bg);
+      min-height:100vh;
+    }
+
+    /* ── HEADER ── */
+    .site-header{
+      background:linear-gradient(135deg,#6C3DDB 0%,#0099FF 50%,#00C875 100%);
+      padding:0 24px;
+      box-shadow:0 4px 20px rgba(0,0,0,.15);
+      position:sticky;top:0;z-index:100;
+    }
+    .header-inner{
+      max-width:1200px;margin:0 auto;
+      display:flex;align-items:center;gap:16px;
+      height:70px;
+    }
+    .logo-link{
+      font-size:26px;font-weight:900;color:#fff;
+      text-decoration:none;letter-spacing:-0.5px;white-space:nowrap;
+      text-shadow:0 2px 8px rgba(0,0,0,.2);
+    }
+    .logo-link span{color:var(--yellow);}
+    .search-wrap{
+      flex:1;max-width:480px;margin:0 auto;position:relative;
+    }
+    .search-wrap input{
+      width:100%;height:44px;border-radius:22px;border:none;
+      padding:0 48px 0 20px;font-size:15px;font-family:var(--font);
+      font-weight:600;background:#fff;color:#333;
+      box-shadow:0 2px 12px rgba(0,0,0,.15);outline:none;
+    }
+    .search-wrap input::placeholder{color:#aaa;}
+    .search-wrap .search-icon{
+      position:absolute;right:16px;top:50%;transform:translateY(-50%);
+      font-size:18px;pointer-events:none;
+    }
+    .back-link{
+      color:#fff;text-decoration:none;font-size:14px;font-weight:700;
+      white-space:nowrap;opacity:.85;
+      transition:opacity .15s;
+    }
+    .back-link:hover{opacity:1;}
+
+    /* ── HERO ── */
+    .hero{
+      background:linear-gradient(160deg,#6C3DDB 0%,#0099FF 60%,#00C875 100%);
+      color:#fff;text-align:center;padding:40px 24px 50px;
+      clip-path:ellipse(100% 90% at 50% 10%);
+    }
+    .hero h1{
+      font-size:clamp(32px,6vw,62px);font-weight:900;
+      text-shadow:0 3px 12px rgba(0,0,0,.2);
+      line-height:1.15;margin-bottom:10px;
+    }
+    .hero h1 .wave{display:inline-block;animation:wave 2s ease-in-out infinite;}
+    @keyframes wave{0%,100%{transform:rotate(0deg);}25%{transform:rotate(20deg);}75%{transform:rotate(-10deg);}
+    }
+    .hero p{font-size:18px;font-weight:600;opacity:.9;margin-bottom:0;}
+
+    /* ── CATEGORY FILTERS ── */
+    .filters{
+      max-width:1200px;margin:0 auto;
+      padding:28px 24px 0;
+      display:flex;gap:10px;flex-wrap:wrap;
+    }
+    .filter-btn{
+      padding:9px 20px;border-radius:24px;border:2.5px solid transparent;
+      font-family:var(--font);font-size:14px;font-weight:800;
+      cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;
+      background:#fff;color:#444;
+      box-shadow:0 2px 8px rgba(0,0,0,.08);
+    }
+    .filter-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.12);}
+    .filter-btn.active{color:#fff;border-color:transparent;transform:translateY(-2px);}
+    .filter-btn[data-cat="All"].active{background:linear-gradient(135deg,#6C3DDB,#0099FF);}
+    .filter-btn[data-cat="Letters"].active{background:var(--orange);}
+    .filter-btn[data-cat="Numbers"].active{background:var(--green);}
+    .filter-btn[data-cat="Animals"].active{background:var(--teal);}
+    .filter-btn[data-cat="Colors"].active{background:var(--pink);}
+    .filter-btn[data-cat="Phrases"].active{background:var(--purple);}
+    .filter-btn[data-cat="Games"].active{background:var(--red);}
+
+    /* ── GRID ── */
+    .grid-wrap{
+      max-width:1200px;margin:0 auto;
+      padding:24px 24px 48px;
+    }
+    .activities-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+      gap:22px;
+    }
+
+    /* ── ACTIVITY CARD ── */
+    .act-card{
+      background:#fff;border-radius:var(--card-radius);
+      overflow:hidden;cursor:pointer;
+      box-shadow:0 4px 16px rgba(0,0,0,.10);
+      transition:transform .2s cubic-bezier(.34,1.56,.64,1),
+                 box-shadow .2s ease;
+      text-decoration:none;display:block;
+      position:relative;
+    }
+    .act-card:hover{
+      transform:translateY(-8px) scale(1.02);
+      box-shadow:0 16px 36px rgba(0,0,0,.16);
+    }
+    .act-card.hidden{display:none;}
+
+    .card-art{
+      height:160px;display:flex;align-items:center;justify-content:center;
+      font-size:72px;position:relative;overflow:hidden;
+    }
+    .card-art .emoji{
+      animation:float 3s ease-in-out infinite;
+      display:inline-block;
+    }
+    @keyframes float{
+      0%,100%{transform:translateY(0);}
+      50%{transform:translateY(-10px);}
+    }
+    .card-art::after{
+      content:'';position:absolute;inset:0;
+      background:inherit;opacity:.08;
+    }
+
+    .card-body{padding:16px 16px 18px;}
+    .card-badge{
+      display:inline-block;
+      padding:3px 10px;border-radius:12px;
+      font-size:11px;font-weight:800;
+      text-transform:uppercase;letter-spacing:.5px;
+      margin-bottom:8px;
+    }
+    .badge-easy{background:#D4EFDF;color:#1E8449;}
+    .badge-medium{background:#FCF3CF;color:#B7950B;}
+    .badge-hard{background:#FADBD8;color:#C0392B;}
+
+    .card-title{
+      font-size:18px;font-weight:900;color:#222;
+      margin-bottom:4px;line-height:1.2;
+    }
+    .card-desc{
+      font-size:13px;font-weight:600;color:#777;
+      line-height:1.4;
+    }
+
+    .card-play-btn{
+      position:absolute;bottom:18px;right:16px;
+      width:36px;height:36px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;background:#fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.15);
+      transition:transform .2s;
+    }
+    .act-card:hover .card-play-btn{transform:scale(1.15);}
+
+    /* ── EMPTY STATE ── */
+    .empty-state{
+      text-align:center;padding:60px 20px;grid-column:1/-1;
+      display:none;
+    }
+    .empty-state.show{display:block;}
+    .empty-state .big{font-size:64px;margin-bottom:16px;}
+    .empty-state p{font-size:20px;font-weight:700;color:#aaa;}
+
+    /* ── FOOTER ── */
+    .site-footer{
+      background:linear-gradient(135deg,#6C3DDB,#0099FF);
+      color:#fff;text-align:center;padding:24px;
+      font-size:14px;font-weight:700;opacity:.9;
+    }
+
+    @media(max-width:600px){
+      .hero h1{font-size:32px;}
+      .header-inner{flex-wrap:wrap;height:auto;padding:12px 0;gap:10px;}
+      .search-wrap{order:3;width:100%;max-width:100%;}
+      .activities-grid{grid-template-columns:1fr 1fr;}
+      .card-art{height:120px;font-size:52px;}
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo-link" href="index.html">CEP <span>Kids</span> 🌟</a>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Search activities…" oninput="filterCards()" autocomplete="off"/>
+      <span class="search-icon">🔍</span>
+    </div>
+    <a class="back-link" href="../index.html">← Main site</a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Let's Learn English! <span class="wave">👋</span></h1>
+  <p>Fun activities for kids aged 6–10 &bull; ¡Actividades divertidas!</p>
+</section>
+
+<div class="filters" id="filterRow">
+  <button class="filter-btn active" data-cat="All"    onclick="setFilter('All')">⭐ All</button>
+  <button class="filter-btn"        data-cat="Letters" onclick="setFilter('Letters')">🔤 Letters</button>
+  <button class="filter-btn"        data-cat="Numbers" onclick="setFilter('Numbers')">🔢 Numbers</button>
+  <button class="filter-btn"        data-cat="Animals" onclick="setFilter('Animals')">🐾 Animals</button>
+  <button class="filter-btn"        data-cat="Colors"  onclick="setFilter('Colors')">🎨 Colors</button>
+  <button class="filter-btn"        data-cat="Phrases" onclick="setFilter('Phrases')">💬 Phrases</button>
+  <button class="filter-btn"        data-cat="Games"   onclick="setFilter('Games')">🎮 Games</button>
+</div>
+
+<div class="grid-wrap">
+  <div class="activities-grid" id="activitiesGrid">
+
+    <a class="act-card" href="alphabet-dash.html" data-cat="Letters" data-title="Alphabet Dash">
+      <div class="card-art" style="background:linear-gradient(135deg,#FF7A00,#FFD600);">
+        <span class="emoji">🔤</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-easy">Easy</span>
+        <div class="card-title">Alphabet Dash</div>
+        <div class="card-desc">Learn letters A–Z and their sounds!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="color-pop.html" data-cat="Colors" data-title="Color Pop">
+      <div class="card-art" style="background:linear-gradient(135deg,#FF4DA6,#FF7A00);">
+        <span class="emoji">🎨</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-easy">Easy</span>
+        <div class="card-title">Color Pop</div>
+        <div class="card-desc">Name all the colors in English!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="animal-safari.html" data-cat="Animals" data-title="Animal Safari">
+      <div class="card-art" style="background:linear-gradient(135deg,#00C875,#00BCD4);">
+        <span class="emoji">🦁</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-easy">Easy</span>
+        <div class="card-title">Animal Safari</div>
+        <div class="card-desc">Meet animals and learn their names!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="number-crunch.html" data-cat="Numbers" data-title="Number Crunch">
+      <div class="card-art" style="background:linear-gradient(135deg,#0099FF,#6C3DDB);">
+        <span class="emoji">🔢</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-medium">Medium</span>
+        <div class="card-title">Number Crunch</div>
+        <div class="card-desc">Count from 1 to 20 — ¡uno a veinte!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="hello-world.html" data-cat="Phrases" data-title="Hello World">
+      <div class="card-art" style="background:linear-gradient(135deg,#9B59B6,#FF4DA6);">
+        <span class="emoji">👋</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-easy">Easy</span>
+        <div class="card-title">Hello World</div>
+        <div class="card-desc">Greetings and everyday phrases!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="word-match.html" data-cat="Games" data-title="Word Match">
+      <div class="card-art" style="background:linear-gradient(135deg,#FF4444,#FF7A00);">
+        <span class="emoji">🃏</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-medium">Medium</span>
+        <div class="card-title">Word Match</div>
+        <div class="card-desc">Match the picture to the word!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="shape-quest.html" data-cat="Letters" data-title="Shape Quest">
+      <div class="card-art" style="background:linear-gradient(135deg,#00BCD4,#0099FF);">
+        <span class="emoji">🔷</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-easy">Easy</span>
+        <div class="card-title">Shape Quest</div>
+        <div class="card-desc">Circles, squares, triangles and more!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="fruit-fiesta.html" data-cat="Games" data-title="Fruit Fiesta">
+      <div class="card-art" style="background:linear-gradient(135deg,#FFD600,#00C875);">
+        <span class="emoji">🍎</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-medium">Medium</span>
+        <div class="card-title">Fruit Fiesta</div>
+        <div class="card-desc">Learn fruit names in English!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="body-parts.html" data-cat="Phrases" data-title="Body Parts Boogie">
+      <div class="card-art" style="background:linear-gradient(135deg,#FF4DA6,#9B59B6);">
+        <span class="emoji">🕺</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-medium">Medium</span>
+        <div class="card-title">Body Parts Boogie</div>
+        <div class="card-desc">Head, shoulders, knees and toes!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="story-time.html" data-cat="Phrases" data-title="Story Time">
+      <div class="card-art" style="background:linear-gradient(135deg,#6C3DDB,#9B59B6);">
+        <span class="emoji">📖</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-hard">Hard</span>
+        <div class="card-title">Story Time</div>
+        <div class="card-desc">Read a short story in English!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="wild-animals.html" data-cat="Animals" data-title="Wild Animals">
+      <div class="card-art" style="background:linear-gradient(135deg,#00C875,#FFD600);">
+        <span class="emoji">🐘</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-medium">Medium</span>
+        <div class="card-title">Wild Animals</div>
+        <div class="card-desc">Elephants, giraffes and more!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <a class="act-card" href="number-quiz.html" data-cat="Numbers" data-title="Number Quiz">
+      <div class="card-art" style="background:linear-gradient(135deg,#FF4444,#FF7A00);">
+        <span class="emoji">❓</span>
+      </div>
+      <div class="card-body">
+        <span class="card-badge badge-hard">Hard</span>
+        <div class="card-title">Number Quiz</div>
+        <div class="card-desc">Test your number skills 1–100!</div>
+      </div>
+      <div class="card-play-btn">▶️</div>
+    </a>
+
+    <div class="empty-state" id="emptyState">
+      <div class="big">🔍</div>
+      <p>No activities found. Try a different search!</p>
+    </div>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  Made with ❤️ by The Corporate English Project &bull; CEP Kids
+</footer>
+
+<script>
+var currentCat = 'All';
+
+function setFilter(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.filter-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.cat === cat);
+  });
+  filterCards();
+}
+
+function filterCards() {
+  var query = document.getElementById('searchInput').value.toLowerCase().trim();
+  var cards = document.querySelectorAll('.act-card');
+  var visibleCount = 0;
+  cards.forEach(function(card) {
+    var matchCat = currentCat === 'All' || card.dataset.cat === currentCat;
+    var matchSearch = !query || card.dataset.title.toLowerCase().includes(query) ||
+      card.querySelector('.card-desc').textContent.toLowerCase().includes(query);
+    var visible = matchCat && matchSearch;
+    card.classList.toggle('hidden', !visible);
+    if (visible) visibleCount++;
+  });
+  var empty = document.getElementById('emptyState');
+  empty.classList.toggle('show', visibleCount === 0);
+}
+
+// Stagger float animation delays so cards don't all bob in sync
+document.querySelectorAll('.emoji').forEach(function(el, i) {
+  el.style.animationDelay = (i * 0.4) + 's';
+});
+</script>
+</body>
+</html>
