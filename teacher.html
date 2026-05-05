@@ -290,8 +290,10 @@
     if (!session) { window.location.href = 'index.html'; return; }
     const { data: profile } = await _sb.from('users')
       .select('name, role').eq('id', session.user.id).single();
-    if (profile?.role !== 'teacher') { window.location.href = 'dashboard.html'; return; }
-    const name = profile?.name || session.user.email.split('@')[0];
+    // Fall back to JWT metadata if users table row is missing
+    const role = profile?.role || session.user.user_metadata?.role;
+    if (role !== 'teacher') { window.location.href = 'dashboard.html'; return; }
+    const name = profile?.name || session.user.user_metadata?.full_name || session.user.email.split('@')[0];
     document.getElementById('profileName').textContent = name;
     document.getElementById('profileEmail').textContent = session.user.email;
     document.getElementById('profileAvatar').textContent = name.charAt(0).toUpperCase();

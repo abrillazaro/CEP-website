@@ -242,13 +242,15 @@ async function doLogin() {
     return;
   }
 
-  // 2. Check role
+  // 2. Check role — users table first, fall back to JWT metadata
+  var role = null;
   var { data: profile } = await _sb.from('users')
     .select('role')
     .eq('id', data.user.id)
     .single();
+  role = profile?.role || data.user.user_metadata?.role;
 
-  if (profile?.role === 'teacher') {
+  if (role === 'teacher') {
     window.location.href = 'teacher.html';
   } else {
     // Sign them out — they authenticated but aren't an instructor
