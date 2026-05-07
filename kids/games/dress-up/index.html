@@ -476,13 +476,13 @@ body{font-family:var(--font);background:linear-gradient(135deg,var(--bg1) 0%,var
 <script>
 /* ── DATA ─────────────────────────────────────────────── */
 const CATEGORIES = [
-  {id:'hair',        label:'Hair',        emoji:'💇', slot:'hair'},
-  {id:'face',        label:'Face',        emoji:'😊', slot:'face'},
-  {id:'tops',        label:'Tops',        emoji:'👕', slot:'top'},
-  {id:'bottoms',     label:'Bottoms',     emoji:'👖', slot:'bottom'},
-  {id:'dresses',     label:'Dresses',     emoji:'👗', slot:'dress'},
-  {id:'shoes',       label:'Shoes',       emoji:'👠', slot:'shoes'},
-  {id:'accessories', label:'Acc',         emoji:'✨', slot:'accessory'},
+  {id:'hair',        label:'Hair',        emoji:'💇', slot:'hair',      voice:'Hair'},
+  {id:'face',        label:'Face',        emoji:'😊', slot:'face',      voice:'Face'},
+  {id:'tops',        label:'Tops',        emoji:'👕', slot:'top',       voice:'Tops'},
+  {id:'bottoms',     label:'Bottoms',     emoji:'👖', slot:'bottom',    voice:'Bottoms'},
+  {id:'dresses',     label:'Dresses',     emoji:'👗', slot:'dress',     voice:'Dresses'},
+  {id:'shoes',       label:'Shoes',       emoji:'👠', slot:'shoes',     voice:'Shoes'},
+  {id:'accessories', label:'Acc',         emoji:'✨', slot:'accessory', voice:'Accessories'},
 ];
 
 const ITEMS = {
@@ -591,29 +591,46 @@ const OVERLAY_POS = {
 
 const NS = 'http://www.w3.org/2000/svg';
 
-/* ── TTS ─────────────────────────────────────────────── */
+/* ── AUDIO (MP3 preferred, Web Speech fallback) ────────── */
+const AUDIO_BASE = 'audio/';
+const _audioCache = {};
 let synth = window.speechSynthesis;
 let voices = [];
 let _pickedVoice = null;
 
+function toAudioKey(text){
+  return text.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_\-]/g,'');
+}
+
+function stopAudio(){
+  Object.values(_audioCache).forEach(a=>{ try{a.pause();a.currentTime=0;}catch(e){} });
+  synth && synth.cancel();
+}
+
+function playAudio(text, fallbackRate=0.9, fallbackPitch=1.1){
+  const key = toAudioKey(text);
+  stopAudio();
+  if(!_audioCache[key]){
+    const a = new Audio(AUDIO_BASE + key + '.mp3');
+    a.onerror = ()=>{ a._missing=true; };
+    _audioCache[key] = a;
+  }
+  const a = _audioCache[key];
+  if(a._missing){ speak(text, fallbackRate, fallbackPitch); return; }
+  a.currentTime = 0;
+  a.play().catch(()=>{ a._missing=true; speak(text, fallbackRate, fallbackPitch); });
+}
+
 function loadVoices(){
   voices = synth.getVoices();
   if(!voices.length){ setTimeout(loadVoices, 150); return; }
-
-  // Log all voices to console so you can see what's available
-  console.log('🎤 Available voices (' + voices.length + '):');
-  voices.forEach((v,i) => console.log(`  [${i}] "${v.name}" | lang:${v.lang} | local:${v.localService} | default:${v.default}`));
-
-  // Pick best voice: priority order
   _pickedVoice =
-    voices.find(v => v.name === 'Samantha') ||                                // macOS/iOS — best natural female
-    voices.find(v => v.name === 'Google US English') ||                       // Chrome — good quality
-    voices.find(v => /microsoft zira/i.test(v.name)) ||                      // Windows
-    voices.find(v => v.lang === 'en-US' && v.localService === true) ||        // any local en-US (always more natural)
-    voices.find(v => v.lang === 'en-US') ||                                   // any en-US fallback
-    voices.find(v => /^en/i.test(v.lang));                                    // any English last resort
-
-  console.log('✅ Selected voice:', _pickedVoice ? `"${_pickedVoice.name}" (${_pickedVoice.lang}, local:${_pickedVoice.localService})` : 'browser default');
+    voices.find(v => v.name === 'Samantha') ||
+    voices.find(v => v.name === 'Google US English') ||
+    voices.find(v => /microsoft zira/i.test(v.name)) ||
+    voices.find(v => v.lang === 'en-US' && v.localService === true) ||
+    voices.find(v => v.lang === 'en-US') ||
+    voices.find(v => /^en/i.test(v.lang));
 }
 loadVoices();
 if(synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
@@ -626,7 +643,7 @@ function speak(text, rate=0.9, pitch=1.1){
   if(_pickedVoice) u.voice = _pickedVoice;
   synth.speak(u);
 }
-function cancelSpeech(){ synth && synth.cancel(); }
+function cancelSpeech(){ stopAudio(); }
 
 /* ── TOOLTIP ─────────────────────────────────────────── */
 const tipEl = document.getElementById('tip');
@@ -641,7 +658,7 @@ function moveTip(e){
 }
 function hideTip(){
   tipEl.style.display='none';
-  cancelSpeech();
+  stopAudio();
 }
 
 /* ── PANEL RENDERING ─────────────────────────────────── */
@@ -652,8 +669,8 @@ function renderCategories(){
   const btnHTML = CATEGORIES.map(c=>`
     <button class="cat-btn ${activeCat===c.id?'active':''}" id="catbtn-${c.id}"
       onclick="switchCat('${c.id}')"
-      onmouseenter="speak('${c.label}')"
-      onmouseleave="cancelSpeech()">
+      onmouseenter="playAudio('${c.voice}')"
+      onmouseleave="stopAudio()">
       <span>${c.emoji}</span>
       <span class="cat-btn-label">${c.label}</span>
     </button>`).join('');
@@ -738,19 +755,19 @@ function onItemHover(e, itemId, cat){
   const item = (ITEMS[cat]||[]).find(x=>x.id===itemId);
   if(!item) return;
   showTip(e, item.label);
-  speak(item.voice, 1, 1.1);
+  playAudio(item.voice);
 }
 function onColorHover(e, colorId){
   const c = COLORS.find(x=>x.id===colorId);
   if(!c) return;
   showTip(e, c.name);
-  speak(c.name, 1, 1.1);
+  playAudio(c.name);
 }
 function onPatternHover(e, patId){
   const p = PATTERNS.find(x=>x.id===patId);
   if(!p) return;
   showTip(e, p.name);
-  speak(p.name, 1, 1.1);
+  playAudio(p.name);
 }
 
 /* ── SELECTION LOGIC ─────────────────────────────────── */
