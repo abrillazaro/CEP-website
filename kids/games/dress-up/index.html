@@ -309,93 +309,107 @@ body{font-family:var(--font);background:linear-gradient(135deg,var(--bg1) 0%,var
     <svg id="doll-svg" viewBox="0 0 300 570" xmlns="http://www.w3.org/2000/svg">
       <defs id="doll-defs"></defs>
 
-      <!-- Drop shadow -->
-      <ellipse cx="150" cy="560" rx="82" ry="12" fill="rgba(0,0,0,.07)"/>
+      <!-- Ground shadow -->
+      <ellipse cx="150" cy="554" rx="74" ry="10" fill="rgba(0,0,0,.09)"/>
 
       <!-- DRESS layer (shown when dress selected) -->
       <g id="svg-dress" style="display:none">
-        <path id="svg-dress-top" d="M88,185 Q66,196 56,310 L244,310 Q234,196 212,185 Q180,177 150,177 Q120,177 88,185Z" fill="#E8D5E8"/>
-        <path id="svg-dress-bot" d="M56,308 Q38,386 34,456 L266,456 Q262,386 244,308Z" fill="#E8D5E8"/>
+        <path id="svg-dress-top" d="M86,200 Q64,216 54,322 L246,322 Q236,216 214,200 Q182,191 150,191 Q118,191 86,200Z" fill="#E8D5E8"/>
+        <path id="svg-dress-bot" d="M54,320 Q36,402 32,472 L268,472 Q264,402 246,320Z" fill="#E8D5E8"/>
       </g>
 
       <!-- TOP layer -->
-      <path id="svg-top" d="M88,185 Q66,196 56,310 L244,310 Q234,196 212,185 Q180,177 150,177 Q120,177 88,185Z" fill="#E8E8E8"/>
+      <path id="svg-top" d="M86,200 Q64,216 54,322 L246,322 Q236,216 214,200 Q182,191 150,191 Q118,191 86,200Z" fill="#F5F5F5"/>
 
       <!-- BOTTOM layer -->
-      <path id="svg-bottom" d="M56,308 Q38,386 34,456 L266,456 Q262,386 244,308Z" fill="#D8D8D8"/>
+      <path id="svg-bottom" d="M54,320 Q36,402 32,472 L268,472 Q264,402 246,320Z" fill="#F5F5F5"/>
 
-      <!-- Hair back -->
-      <ellipse id="svg-hair-back" cx="150" cy="90" rx="70" ry="76" fill="#8B6356"/>
+      <!-- Hair back (hidden when no hair selected) -->
+      <ellipse id="svg-hair-back" cx="150" cy="98" rx="84" ry="90" fill="#8B6356" style="display:none"/>
 
-      <!-- Head -->
-      <circle cx="150" cy="98" r="66" fill="#FDBCB4"/>
+      <!-- ═══ HEAD ═══ -->
+      <circle cx="150" cy="108" r="82" fill="#F8C5A2"/>
 
       <!-- Ears -->
-      <ellipse cx="84" cy="100" rx="12" ry="16" fill="#FDBCB4"/>
-      <ellipse cx="216" cy="100" rx="12" ry="16" fill="#FDBCB4"/>
+      <ellipse cx="68" cy="111" rx="13" ry="18" fill="#F8C5A2"/>
+      <ellipse cx="232" cy="111" rx="13" ry="18" fill="#F8C5A2"/>
+      <ellipse cx="68"  cy="113" rx="8"  ry="11" fill="#EFA882" opacity=".38"/>
+      <ellipse cx="232" cy="113" rx="8"  ry="11" fill="#EFA882" opacity=".38"/>
+
+      <!-- Eyebrows -->
+      <path d="M107,72 Q120,64 133,70" stroke="#7A5038" fill="none" stroke-width="3"   stroke-linecap="round"/>
+      <path d="M167,70 Q180,64 193,72" stroke="#7A5038" fill="none" stroke-width="3"   stroke-linecap="round"/>
 
       <!-- Eye whites -->
-      <ellipse cx="122" cy="88" rx="13" ry="15" fill="white"/>
-      <ellipse cx="178" cy="88" rx="13" ry="15" fill="white"/>
-      <!-- Iris -->
-      <circle cx="122" cy="91" r="10" fill="#4A90D9"/>
-      <circle cx="178" cy="91" r="10" fill="#4A90D9"/>
+      <ellipse cx="120" cy="92" rx="15" ry="17" fill="white"/>
+      <ellipse cx="180" cy="92" rx="15" ry="17" fill="white"/>
+      <!-- Iris (green) -->
+      <circle cx="120" cy="95" r="12"   fill="#5A9060"/>
+      <circle cx="180" cy="95" r="12"   fill="#5A9060"/>
       <!-- Pupils -->
-      <circle cx="123" cy="92" r="6" fill="#1a1a2e"/>
-      <circle cx="179" cy="92" r="6" fill="#1a1a2e"/>
+      <circle cx="121" cy="96" r="7.5"  fill="#1a2010"/>
+      <circle cx="181" cy="96" r="7.5"  fill="#1a2010"/>
       <!-- Sparkle -->
-      <circle cx="127" cy="87" r="3" fill="white"/>
-      <circle cx="183" cy="87" r="3" fill="white"/>
-      <!-- Lashes -->
-      <path d="M109,75 Q122,66 135,75" stroke="#333" fill="none" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M165,75 Q178,66 191,75" stroke="#333" fill="none" stroke-width="2.5" stroke-linecap="round"/>
-      <!-- Blush -->
-      <ellipse id="blush-l" cx="102" cy="110" rx="15" ry="9" fill="#FFB3C6" opacity=".65"/>
-      <ellipse id="blush-r" cx="198" cy="110" rx="15" ry="9" fill="#FFB3C6" opacity=".65"/>
+      <circle cx="125" cy="89" r="3.5"  fill="white"/>
+      <circle cx="185" cy="89" r="3.5"  fill="white"/>
+      <circle cx="117" cy="101" r="1.8" fill="white" opacity=".6"/>
+      <circle cx="177" cy="101" r="1.8" fill="white" opacity=".6"/>
+      <!-- Upper lashes -->
+      <path d="M105,77 Q120,68 135,77" stroke="#2A1E10" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M165,77 Q180,68 195,77" stroke="#2A1E10" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- Rosy cheeks -->
+      <ellipse id="blush-l" cx="98"  cy="118" rx="19" ry="12" fill="#FFB0C0" opacity=".72"/>
+      <ellipse id="blush-r" cx="202" cy="118" rx="19" ry="12" fill="#FFB0C0" opacity=".72"/>
+
       <!-- Nose -->
-      <circle cx="150" cy="114" r="3.5" fill="#F0A090" opacity=".7"/>
+      <path d="M145,121 Q150,127 155,121" stroke="#D98870" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+
       <!-- Mouth -->
-      <path id="svg-mouth" d="M135,124 Q150,138 165,124" stroke="#E87878" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path id="svg-mouth" d="M136,135 Q150,150 164,135" stroke="#D06858" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+
+      <!-- Bald shine highlight -->
+      <ellipse cx="133" cy="54" rx="24" ry="16" fill="rgba(255,255,255,.22)" transform="rotate(-20,133,54)"/>
 
       <!-- Face overlay (freckles, lip gloss, sparkle eyes) -->
       <g id="face-overlay"></g>
 
-      <!-- Hair front -->
-      <g id="svg-hair-front" fill="#8B6356">
-        <path d="M80,60 Q90,28 150,22 Q210,28 220,60 Q196,44 150,40 Q104,44 80,60Z"/>
-        <path d="M80,60 Q72,100 78,146 Q83,100 86,68Z"/>
-        <path d="M220,60 Q228,100 222,146 Q217,100 214,68Z"/>
+      <!-- Hair front (hidden when no hair selected) -->
+      <g id="svg-hair-front" fill="#8B6356" style="display:none">
+        <path d="M72,76 Q83,36 150,29 Q217,36 228,76 Q200,54 150,50 Q100,54 72,76Z"/>
+        <path d="M72,76 Q64,118 70,165 Q76,118 80,86Z"/>
+        <path d="M228,76 Q236,118 230,165 Q224,118 220,86Z"/>
       </g>
 
       <!-- Neck -->
-      <rect x="136" y="160" width="28" height="28" rx="8" fill="#FDBCB4"/>
+      <rect x="136" y="187" width="28" height="24" rx="8" fill="#F8C5A2"/>
 
       <!-- Necklace -->
-      <text id="acc-necklace" x="150" y="198" font-size="22" text-anchor="middle" style="display:none">💎</text>
+      <text id="acc-necklace" x="150" y="214" font-size="22" text-anchor="middle" style="display:none">💎</text>
 
       <!-- Arms -->
-      <rect x="54" y="178" width="24" height="116" rx="12" fill="#FDBCB4"/>
-      <rect x="222" y="178" width="24" height="116" rx="12" fill="#FDBCB4"/>
-      <circle cx="66" cy="299" r="13" fill="#FDBCB4"/>
-      <circle cx="234" cy="299" r="13" fill="#FDBCB4"/>
+      <rect x="44"  y="196" width="26" height="120" rx="13" fill="#F8C5A2"/>
+      <rect x="230" y="196" width="26" height="120" rx="13" fill="#F8C5A2"/>
+      <circle cx="57"  cy="323" r="14" fill="#F8C5A2"/>
+      <circle cx="243" cy="323" r="14" fill="#F8C5A2"/>
 
       <!-- Legs -->
-      <rect x="98" y="453" width="36" height="72" rx="11" fill="#FDBCB4"/>
-      <rect x="166" y="453" width="36" height="72" rx="11" fill="#FDBCB4"/>
+      <rect x="100" y="462" width="40" height="72" rx="13" fill="#F8C5A2"/>
+      <rect x="160" y="462" width="40" height="72" rx="13" fill="#F8C5A2"/>
 
       <!-- Shoes -->
-      <ellipse id="svg-shoe-l" cx="116" cy="530" rx="30" ry="14" fill="#D0D0D0"/>
-      <ellipse id="svg-shoe-r" cx="184" cy="530" rx="30" ry="14" fill="#D0D0D0"/>
-      <ellipse cx="110" cy="524" rx="11" ry="5" fill="rgba(255,255,255,.3)"/>
-      <ellipse cx="178" cy="524" rx="11" ry="5" fill="rgba(255,255,255,.3)"/>
+      <ellipse id="svg-shoe-l" cx="120" cy="539" rx="32" ry="14" fill="#D0D0D0"/>
+      <ellipse id="svg-shoe-r" cx="180" cy="539" rx="32" ry="14" fill="#D0D0D0"/>
+      <ellipse cx="112" cy="532" rx="12" ry="5" fill="rgba(255,255,255,.3)"/>
+      <ellipse cx="172" cy="532" rx="12" ry="5" fill="rgba(255,255,255,.3)"/>
 
       <!-- Accessories -->
-      <text id="acc-bag"      x="270" y="316" font-size="26" text-anchor="middle" style="display:none">👜</text>
-      <text id="acc-crown"    x="150" y="22"  font-size="34" text-anchor="middle" style="display:none">👑</text>
-      <text id="acc-hat"      x="150" y="18"  font-size="36" text-anchor="middle" style="display:none">🎩</text>
-      <text id="acc-glasses"  x="150" y="96"  font-size="26" text-anchor="middle" style="display:none">🕶️</text>
-      <text id="acc-ear-l"    x="76"  y="108" font-size="15" text-anchor="middle" style="display:none">💕</text>
-      <text id="acc-ear-r"    x="224" y="108" font-size="15" text-anchor="middle" style="display:none">💕</text>
+      <text id="acc-bag"      x="272" y="330" font-size="26" text-anchor="middle" style="display:none">👜</text>
+      <text id="acc-crown"    x="150" y="22"  font-size="36" text-anchor="middle" style="display:none">👑</text>
+      <text id="acc-hat"      x="150" y="18"  font-size="38" text-anchor="middle" style="display:none">🎩</text>
+      <text id="acc-glasses"  x="150" y="103" font-size="28" text-anchor="middle" style="display:none">🕶️</text>
+      <text id="acc-ear-l"    x="60"  y="118" font-size="16" text-anchor="middle" style="display:none">💕</text>
+      <text id="acc-ear-r"    x="240" y="118" font-size="16" text-anchor="middle" style="display:none">💕</text>
 
       <!-- Pattern emoji overlays -->
       <g id="pat-overlays"></g>
@@ -570,8 +584,8 @@ const PATTERNS = [
 const slots = {
   hair:      {item:null, color:COLORS[1],  pattern:PATTERNS[0]}, // pink default
   face:      {item:null, color:COLORS[1],  pattern:PATTERNS[0]},
-  top:       {item:null, color:COLORS[3],  pattern:PATTERNS[0]}, // baby blue
-  bottom:    {item:null, color:COLORS[6],  pattern:PATTERNS[0]}, // lavender
+  top:       {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white (underwear look)
+  bottom:    {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white
   dress:     {item:null, color:COLORS[2],  pattern:PATTERNS[0]}, // hot pink
   shoes:     {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white
   accessory: {item:null, color:COLORS[9],  pattern:PATTERNS[0]}, // gold
@@ -582,11 +596,11 @@ let p2CurrentIdx = 0;
 
 // Overlay positions for each slot (where emoji patterns float)
 const OVERLAY_POS = {
-  top:    [[100,228],[162,252],[200,226],[140,208]],
-  bottom: [[94,357],[156,394],[206,357],[146,424]],
-  dress:  [[100,226],[202,226],[125,338],[178,378],[152,280]],
-  shoes:  [[110,528],[188,528]],
-  hair:   [[120,48],[178,48],[150,30]],
+  top:    [[104,244],[163,268],[204,242],[146,222]],
+  bottom: [[90,374],[155,412],[210,372],[148,442]],
+  dress:  [[104,242],[204,242],[128,352],[182,390],[155,296]],
+  shoes:  [[120,539],[180,539]],
+  hair:   [[120,56],[178,56],[150,38]],
 };
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -895,7 +909,7 @@ function updateFaceOverlay(){
     document.getElementById('blush-r').setAttribute('opacity','0.88');
   }
   if(item.id==='f3'){ // Freckles
-    [[135,108],[148,104],[162,108],[142,115],[158,115]].forEach(([x,y])=>{
+    [[136,119],[149,115],[163,119],[143,127],[159,127]].forEach(([x,y])=>{
       const c=document.createElementNS(NS,'circle');
       c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r','2.5');
       c.setAttribute('fill','#C4956A');c.setAttribute('opacity','0.55');
@@ -904,12 +918,12 @@ function updateFaceOverlay(){
   }
   if(item.id==='f4'){ // Lip Gloss
     const p=document.createElementNS(NS,'path');
-    p.setAttribute('d','M135,124 Q150,138 165,124 Q163,133 150,138 Q137,133 135,124Z');
+    p.setAttribute('d','M136,135 Q150,150 164,135 Q162,145 150,150 Q138,145 136,135Z');
     p.setAttribute('fill',colorHex); p.setAttribute('opacity','0.8');
     fo.appendChild(p);
   }
   if(item.id==='f5'){ // Bright Eyes - star overlays near eyes
-    [[127,80],[183,80]].forEach(([x,y])=>{
+    [[127,82],[183,82]].forEach(([x,y])=>{
       const t=document.createElementNS(NS,'text');
       t.setAttribute('x',x);t.setAttribute('y',y);
       t.setAttribute('font-size','10');t.setAttribute('text-anchor','middle');
@@ -919,13 +933,21 @@ function updateFaceOverlay(){
 }
 
 function updateDoll(){
-  // Hair
-  const hHex = slots.hair.color?.hex || '#8B6356';
-  const hPat = slots.hair.pattern?.id || 'plain';
-  applyFill('svg-hair-back', hHex, hPat);
-  const hf = document.getElementById('svg-hair-front');
-  if(hf) hf.setAttribute('fill', hPat==='floral'?lighten(hHex):hHex);
-  updatePatternOverlays('hair', hPat, hHex);
+  // Hair — bald by default, show only when an item is selected
+  if(slots.hair.item){
+    const hHex = slots.hair.color?.hex || '#8B6356';
+    const hPat = slots.hair.pattern?.id || 'plain';
+    document.getElementById('svg-hair-back').style.display = '';
+    applyFill('svg-hair-back', hHex, hPat);
+    const hf = document.getElementById('svg-hair-front');
+    if(hf){ hf.style.display=''; hf.setAttribute('fill', hPat==='floral'?lighten(hHex):hHex); }
+    updatePatternOverlays('hair', hPat, hHex);
+  } else {
+    document.getElementById('svg-hair-back').style.display = 'none';
+    const hf = document.getElementById('svg-hair-front');
+    if(hf) hf.style.display = 'none';
+    updatePatternOverlays('hair', 'plain', '');
+  }
 
   // Clothing
   if(slots.dress.item){
