@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Fashion Dress-Up — CEP Kids</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --pink:#FF9EB5;--purple:#C8A4E8;--yellow:#FFE66D;--green:#A8EDAB;
+  --blue:#A4C8F0;--orange:#FFCBA4;--navy:#0f1e2e;
+  --panel:#fffaf8;--radius:18px;--font:'Nunito',sans-serif;
+  --gold:#F1C40F;--shadow:0 6px 24px rgba(0,0,0,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:linear-gradient(135deg,#FFE5F1 0%,#FFF5E5 50%,#E5EFFF 100%);
+  min-height:100vh;overflow:hidden;user-select:none;}
+
+/* ── TOP BAR ── */
+#topbar{
+  height:52px;background:rgba(255,255,255,.85);
+  backdrop-filter:blur(12px);border-bottom:2px solid rgba(255,158,181,.3);
+  display:flex;align-items:center;gap:10px;padding:0 14px;
+  position:relative;z-index:50;flex-shrink:0;
+}
+.tb-back{
+  display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;
+  color:#777;text-decoration:none;background:rgba(255,158,181,.15);
+  padding:6px 12px;border-radius:20px;transition:background .15s;
+}
+.tb-back:hover{background:rgba(255,158,181,.3);}
+.tb-title{flex:1;text-align:center;font-size:17px;font-weight:900;
+  background:linear-gradient(135deg,#FF6B9D,#C084FC);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+#challenge-btn{
+  background:linear-gradient(135deg,#FFE66D,#FFB347);
+  border:none;border-radius:20px;padding:7px 14px;
+  font-family:var(--font);font-size:13px;font-weight:800;cursor:pointer;
+  box-shadow:0 3px 10px rgba(255,179,71,.4);transition:transform .15s;
+}
+#challenge-btn:hover{transform:scale(1.05);}
+
+/* ── GAME LAYOUT ── */
+#game{display:flex;height:calc(100vh - 52px);overflow:hidden;}
+
+/* ── PANELS ── */
+.panel{
+  width:210px;flex-shrink:0;
+  background:var(--panel);
+  border:2px solid rgba(255,158,181,.25);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.panel-left{border-right-width:2px;border-left-width:0;
+  border-radius:0 var(--radius) var(--radius) 0;}
+.panel-right{border-left-width:2px;border-right-width:0;
+  border-radius:var(--radius) 0 0 var(--radius);}
+
+/* Category tabs */
+.cat-tabs{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:rgba(255,158,181,.1);}
+.cat-tab{
+  flex:1;min-width:72px;padding:6px 4px;border:none;border-radius:10px;
+  font-family:var(--font);font-size:11px;font-weight:800;cursor:pointer;
+  background:rgba(255,255,255,.7);color:#888;transition:all .15s;
+  white-space:nowrap;
+}
+.cat-tab.active{background:linear-gradient(135deg,#FF9EB5,#C084FC);color:#fff;
+  box-shadow:0 3px 10px rgba(192,132,252,.4);}
+.cat-tab:hover:not(.active){background:rgba(255,158,181,.2);color:#555;}
+
+/* Item grid */
+.items-wrap{flex:1;overflow-y:auto;padding:8px;}
+.items-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.item-card{
+  background:#fff;border-radius:14px;padding:10px 6px 8px;
+  border:2.5px solid transparent;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,.06);
+  draggable:true;position:relative;
+}
+.item-card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(0,0,0,.12);}
+.item-card.selected{
+  border-color:var(--pink);
+  box-shadow:0 0 0 3px rgba(255,158,181,.35),0 4px 12px rgba(0,0,0,.1);
+  transform:translateY(-2px) scale(1.03);
+}
+.item-emoji{font-size:32px;line-height:1;display:block;}
+.item-swatch{
+  width:28px;height:8px;border-radius:4px;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.1);
+}
+.item-label{font-size:10px;font-weight:800;color:#555;text-align:center;line-height:1.2;}
+
+/* ── DOLL STAGE ── */
+#doll-stage{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  cursor:crosshair;
+}
+#doll-stage.drag-over::after{
+  content:'Drop here!';position:absolute;inset:0;
+  border:4px dashed var(--pink);border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:900;color:var(--pink);
+  background:rgba(255,158,181,.08);pointer-events:none;
+}
+#doll-svg{max-height:calc(100vh - 120px);width:auto;filter:drop-shadow(0 8px 20px rgba(0,0,0,.12));}
+
+/* ── WHAT'S SHE WEARING BUTTON ── */
+#wearing-bar{
+  position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  display:flex;gap:10px;z-index:30;
+}
+.wearing-btn{
+  background:linear-gradient(135deg,#FF6B9D,#C084FC);
+  color:#fff;border:none;border-radius:25px;padding:10px 20px;
+  font-family:var(--font);font-size:13px;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 16px rgba(192,107,157,.4);
+  transition:transform .15s,box-shadow .15s;white-space:nowrap;
+}
+.wearing-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(192,107,157,.5);}
+
+/* ── SPARKLE PARTICLES ── */
+.spark{
+  position:absolute;pointer-events:none;font-size:18px;
+  animation:sparkFly .9s ease-out forwards;
+  left:50%;top:40%;z-index:100;
+}
+@keyframes sparkFly{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(0deg);opacity:1;}
+  100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.2) rotate(var(--rot));opacity:0;}
+}
+
+/* ── HOVER TOOLTIP ── */
+#hover-tip{
+  position:fixed;background:#fff;color:#333;
+  padding:7px 16px;border-radius:25px;font-size:13px;font-weight:800;
+  box-shadow:var(--shadow);pointer-events:none;z-index:9999;
+  white-space:nowrap;border:2.5px solid var(--pink);display:none;
+  transition:opacity .1s;
+}
+
+/* ── CHALLENGE POPUP ── */
+#challenge-pop{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:#fff;border-radius:var(--radius);padding:28px 32px;
+  box-shadow:0 20px 60px rgba(0,0,0,.18);z-index:200;
+  text-align:center;max-width:320px;width:90%;display:none;
+  animation:popIn .3s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+#challenge-pop h3{font-size:28px;margin-bottom:10px;}
+#challenge-pop p{font-size:17px;font-weight:700;color:#555;line-height:1.4;margin-bottom:18px;}
+.pop-close{
+  background:linear-gradient(135deg,#FF6B9D,#C084FC);color:#fff;
+  border:none;border-radius:20px;padding:9px 24px;
+  font-family:var(--font);font-size:14px;font-weight:800;cursor:pointer;
+}
+@keyframes popIn{
+  from{transform:translate(-50%,-50%) scale(.7);opacity:0;}
+  to{transform:translate(-50%,-50%) scale(1);opacity:1;}
+}
+.pop-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:190;display:none;
+}
+
+/* ── PHASE 2 ── */
+#phase2{
+  position:fixed;inset:0;z-index:300;
+  background:linear-gradient(135deg,#FFE5F1,#F0E5FF,#E5F0FF);
+  display:none;flex-direction:column;align-items:center;
+  overflow-y:auto;padding:20px 16px 40px;
+  animation:slideUp .5s cubic-bezier(.34,1.36,.64,1) forwards;
+}
+@keyframes slideUp{
+  from{transform:translateY(100%);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+#p2-header{
+  text-align:center;margin-bottom:16px;
+}
+#p2-header h2{
+  font-size:clamp(20px,4vw,28px);font-weight:900;
+  background:linear-gradient(135deg,#FF6B9D,#C084FC);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:6px;
+}
+#p2-header p{font-size:14px;color:#888;font-weight:700;}
+
+/* Outfit summary chips */
+#p2-outfit-chips{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  margin-bottom:22px;max-width:600px;
+}
+.outfit-chip{
+  padding:7px 14px;border-radius:20px;font-size:13px;font-weight:800;
+  border:2px solid rgba(0,0,0,.08);
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+
+/* Story text */
+#p2-story{
+  background:#fff;border-radius:var(--radius);padding:22px 26px;
+  box-shadow:var(--shadow);max-width:560px;width:100%;
+  font-size:clamp(15px,3vw,19px);font-weight:700;color:#333;
+  line-height:1.9;margin-bottom:22px;
+  text-align:left;
+}
+.story-blank{
+  display:inline-block;min-width:80px;
+  border-bottom:3px solid var(--pink);
+  text-align:center;font-weight:900;
+  padding:0 6px;margin:0 4px;
+  vertical-align:bottom;line-height:1.4;
+  transition:all .25s;
+}
+.story-blank.active-blank{
+  border-color:#C084FC;background:rgba(192,132,252,.1);
+  border-radius:6px;animation:blinkBorder 1s infinite;
+}
+.story-blank.filled{
+  color:var(--navy);border-color:transparent;
+  background:linear-gradient(135deg,rgba(255,158,181,.25),rgba(192,132,252,.2));
+  border-radius:8px;animation:popFill .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes blinkBorder{
+  0%,100%{border-color:#C084FC;}50%{border-color:rgba(192,132,252,.3);}
+}
+@keyframes popFill{
+  0%{transform:scale(.8);opacity:0;}60%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}
+}
+
+/* Choices */
+#p2-choices{
+  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  max-width:560px;width:100%;margin-bottom:20px;
+}
+.choice-btn{
+  flex:1;min-width:130px;max-width:180px;
+  padding:14px 10px;border-radius:16px;border:none;
+  font-family:var(--font);font-size:15px;font-weight:800;
+  cursor:pointer;transition:all .15s;
+  background:#fff;color:#333;
+  box-shadow:0 4px 14px rgba(0,0,0,.1);
+}
+.choice-btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.15);}
+.choice-btn.correct-flash{
+  background:linear-gradient(135deg,#A8EDAB,#56C596);color:#fff;
+  animation:correctPop .5s cubic-bezier(.34,1.56,.64,1);
+}
+.choice-btn.wrong-shake{animation:wrongShake .4s ease;}
+@keyframes correctPop{
+  0%{transform:scale(.9);}60%{transform:scale(1.12);}100%{transform:scale(1);}
+}
+@keyframes wrongShake{
+  0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}
+  40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}
+}
+
+/* Prompt above choices */
+#p2-prompt{
+  font-size:14px;font-weight:800;color:#C084FC;
+  text-align:center;margin-bottom:12px;max-width:560px;width:100%;
+}
+
+/* P2 complete buttons */
+#p2-complete{
+  display:none;flex-direction:column;align-items:center;gap:12px;
+  max-width:360px;width:100%;
+}
+.p2-big-btn{
+  width:100%;padding:15px;border:none;border-radius:20px;
+  font-family:var(--font);font-size:16px;font-weight:900;cursor:pointer;
+  transition:transform .15s,box-shadow .15s;
+}
+#p2-read-btn{
+  background:linear-gradient(135deg,#FF6B9D,#C084FC);color:#fff;
+  box-shadow:0 5px 20px rgba(192,107,157,.45);
+}
+#p2-restart-btn{
+  background:linear-gradient(135deg,#FFE66D,#FFB347);color:#fff;
+  box-shadow:0 5px 20px rgba(255,179,71,.4);
+}
+.p2-big-btn:hover{transform:translateY(-3px);}
+
+/* Correct/finish message */
+#p2-cheer{
+  font-size:18px;font-weight:900;text-align:center;
+  background:linear-gradient(135deg,#FF6B9D,#C084FC);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:10px;display:none;
+}
+
+/* Mobile panel (appears at bottom on small screens) */
+#mobile-panel{
+  display:none;
+  flex-direction:column;
+  background:var(--panel);
+  border-top:2px solid rgba(255,158,181,.25);
+  max-height:260px;
+  flex-shrink:0;
+}
+.mobile-cats{
+  display:flex;overflow-x:auto;gap:6px;padding:8px 10px;
+  background:rgba(255,158,181,.1);
+  scrollbar-width:none;
+}
+.mobile-cats::-webkit-scrollbar{display:none;}
+.mobile-cat-tab{
+  flex-shrink:0;padding:6px 14px;border:none;border-radius:10px;
+  font-family:var(--font);font-size:12px;font-weight:800;
+  cursor:pointer;background:rgba(255,255,255,.7);color:#888;
+  transition:all .15s;
+}
+.mobile-cat-tab.active{background:linear-gradient(135deg,#FF9EB5,#C084FC);color:#fff;}
+#mobile-items{
+  flex:1;overflow-y:auto;padding:8px 10px;
+}
+.mobile-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:767px){
+  .panel{display:none;}
+  #game{flex-direction:column;height:calc(100vh - 52px - 260px);}
+  #doll-stage{height:100%;}
+  #mobile-panel{display:flex;}
+  #doll-svg{max-height:calc(100vh - 52px - 260px);}
+  .mobile-grid{grid-template-columns:repeat(5,1fr);}
+  #wearing-bar{bottom:8px;}
+  .wearing-btn{font-size:12px;padding:8px 14px;}
+}
+@media(max-width:480px){
+  .mobile-grid{grid-template-columns:repeat(4,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <a class="tb-back" href="../../index.html">← Kids</a>
+  <span class="tb-title">👗 Fashion Dress-Up ✨</span>
+  <button id="challenge-btn" onclick="showChallenge()">⭐ Challenge</button>
+</div>
+
+<!-- PHASE 1: GAME -->
+<div id="game">
+
+  <!-- Left panel: Hair + Accessories -->
+  <aside class="panel panel-left">
+    <div class="cat-tabs" id="left-tabs"></div>
+    <div class="items-wrap"><div class="items-grid" id="left-grid"></div></div>
+  </aside>
+
+  <!-- Doll Stage -->
+  <main id="doll-stage"
+    ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+
+    <svg id="doll-svg" viewBox="0 0 300 570" xmlns="http://www.w3.org/2000/svg">
+      <!-- Drop shadow -->
+      <ellipse cx="150" cy="560" rx="82" ry="12" fill="rgba(0,0,0,.07)"/>
+
+      <!-- DRESS layer (combined top+skirt, same color) -->
+      <g id="svg-dress" style="display:none">
+        <path d="M88,185 Q66,196 56,310 L244,310 Q234,196 212,185 Q180,177 150,177 Q120,177 88,185Z" id="svg-dress-top"/>
+        <path d="M56,308 Q38,386 34,456 L266,456 Q262,386 244,308Z" id="svg-dress-bot"/>
+      </g>
+
+      <!-- TOP layer -->
+      <path id="svg-top" d="M88,185 Q66,196 56,310 L244,310 Q234,196 212,185 Q180,177 150,177 Q120,177 88,185Z" fill="#E8D5E8"/>
+
+      <!-- BOTTOM layer -->
+      <path id="svg-bottom" d="M56,308 Q38,386 34,456 L266,456 Q262,386 244,308Z" fill="#D5E8F0"/>
+
+      <!-- Hair back -->
+      <ellipse id="svg-hair-back" cx="150" cy="90" rx="70" ry="76" fill="#8B6356"/>
+
+      <!-- HEAD -->
+      <circle cx="150" cy="98" r="66" fill="#FDBCB4"/>
+
+      <!-- Ears -->
+      <ellipse cx="84" cy="100" rx="12" ry="16" fill="#FDBCB4"/>
+      <ellipse cx="216" cy="100" rx="12" ry="16" fill="#FDBCB4"/>
+
+      <!-- Eye whites -->
+      <ellipse cx="122" cy="88" rx="13" ry="15" fill="white"/>
+      <ellipse cx="178" cy="88" rx="13" ry="15" fill="white"/>
+      <!-- Iris -->
+      <circle cx="122" cy="91" r="10" fill="#4A90D9"/>
+      <circle cx="178" cy="91" r="10" fill="#4A90D9"/>
+      <!-- Pupils -->
+      <circle cx="123" cy="92" r="6" fill="#1a1a2e"/>
+      <circle cx="179" cy="92" r="6" fill="#1a1a2e"/>
+      <!-- Eye sparkle -->
+      <circle cx="127" cy="87" r="3" fill="white"/>
+      <circle cx="183" cy="87" r="3" fill="white"/>
+      <!-- Eyelashes -->
+      <path d="M109,75 Q122,66 135,75" stroke="#333" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M165,75 Q178,66 191,75" stroke="#333" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Blush -->
+      <ellipse cx="102" cy="110" rx="15" ry="9" fill="#FFB3C6" opacity=".65"/>
+      <ellipse cx="198" cy="110" rx="15" ry="9" fill="#FFB3C6" opacity=".65"/>
+      <!-- Nose -->
+      <circle cx="150" cy="114" r="3.5" fill="#F0A090" opacity=".7"/>
+      <!-- Mouth -->
+      <path d="M135,124 Q150,138 165,124" stroke="#E87878" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+      <!-- Hair front -->
+      <g id="svg-hair-front" fill="#8B6356">
+        <path d="M80,60 Q90,28 150,22 Q210,28 220,60 Q196,44 150,40 Q104,44 80,60Z"/>
+        <path d="M80,60 Q72,100 78,146 Q83,100 86,68Z"/>
+        <path d="M220,60 Q228,100 222,146 Q217,100 214,68Z"/>
+      </g>
+
+      <!-- Neck -->
+      <rect x="136" y="160" width="28" height="28" rx="8" fill="#FDBCB4"/>
+
+      <!-- Accessory: necklace -->
+      <text id="acc-necklace" x="150" y="198" font-size="22" text-anchor="middle" style="display:none">💎</text>
+
+      <!-- Arms -->
+      <rect x="54" y="178" width="24" height="115" rx="12" fill="#FDBCB4"/>
+      <rect x="222" y="178" width="24" height="115" rx="12" fill="#FDBCB4"/>
+      <!-- Hands -->
+      <circle cx="66" cy="298" r="13" fill="#FDBCB4"/>
+      <circle cx="234" cy="298" r="13" fill="#FDBCB4"/>
+
+      <!-- Legs -->
+      <rect x="98" y="453" width="36" height="72" rx="11" fill="#FDBCB4"/>
+      <rect x="166" y="453" width="36" height="72" rx="11" fill="#FDBCB4"/>
+
+      <!-- Shoes -->
+      <g id="svg-shoes">
+        <ellipse cx="116" cy="530" rx="30" ry="14" fill="#D0D0D0"/>
+        <ellipse cx="184" cy="530" rx="30" ry="14" fill="#D0D0D0"/>
+        <ellipse cx="110" cy="524" rx="11" ry="5" fill="rgba(255,255,255,.35)"/>
+        <ellipse cx="178" cy="524" rx="11" ry="5" fill="rgba(255,255,255,.35)"/>
+      </g>
+
+      <!-- Accessory: bag -->
+      <text id="acc-bag" x="270" y="316" font-size="26" text-anchor="middle" style="display:none">👜</text>
+
+      <!-- Accessory: crown / headband -->
+      <text id="acc-crown" x="150" y="22" font-size="34" text-anchor="middle" style="display:none">👑</text>
+
+      <!-- Accessory: glasses -->
+      <text id="acc-glasses" x="150" y="96" font-size="26" text-anchor="middle" style="display:none">🕶️</text>
+
+      <!-- Accessory: earrings -->
+      <text id="acc-ear-l" x="76" y="108" font-size="15" text-anchor="middle" style="display:none">💕</text>
+      <text id="acc-ear-r" x="224" y="108" font-size="15" text-anchor="middle" style="display:none">💕</text>
+    </svg>
+
+    <!-- Sparkle container -->
+    <div id="sparkle-box" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
+
+    <!-- Bottom buttons -->
+    <div id="wearing-bar">
+      <button class="wearing-btn" onclick="readOutfit()">🎤 What is she wearing?</button>
+      <button class="wearing-btn" onclick="startPhase2()" id="phase2-btn" style="display:none">✨ Show my look!</button>
+    </div>
+  </main>
+
+  <!-- Right panel: Tops / Bottoms / Dresses / Shoes -->
+  <aside class="panel panel-right">
+    <div class="cat-tabs" id="right-tabs"></div>
+    <div class="items-wrap"><div class="items-grid" id="right-grid"></div></div>
+  </aside>
+
+</div><!-- end #game -->
+
+<!-- Mobile bottom panel -->
+<div id="mobile-panel">
+  <div class="mobile-cats" id="mobile-tabs"></div>
+  <div id="mobile-items"><div class="mobile-grid" id="mobile-grid"></div></div>
+</div>
+
+<!-- Hover tooltip -->
+<div id="hover-tip"></div>
+
+<!-- Challenge popup -->
+<div class="pop-overlay" id="pop-overlay" onclick="closeChallenge()"></div>
+<div id="challenge-pop">
+  <h3>⭐ Challenge!</h3>
+  <p id="challenge-text">Can you find something blue? 💙</p>
+  <button class="pop-close" onclick="closeChallenge()">Got it! 👍</button>
+</div>
+
+<!-- PHASE 2: MAD-LIBS -->
+<div id="phase2" style="display:none">
+  <div id="p2-header">
+    <h2>Now tell me about your look! 👗✨</h2>
+    <p>Tap the right word to fill in the story!</p>
+  </div>
+
+  <div id="p2-outfit-chips"></div>
+
+  <div id="p2-story"></div>
+
+  <div id="p2-prompt">Choose the right word 👇</div>
+
+  <div id="p2-choices"></div>
+
+  <div id="p2-cheer"></div>
+
+  <div id="p2-complete">
+    <button class="p2-big-btn" id="p2-read-btn" onclick="readStory()">🎤 Read my story out loud!</button>
+    <button class="p2-big-btn" id="p2-restart-btn" onclick="restartGame()">👗 Dress her again!</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   ITEM DATA
+═══════════════════════════════════════════════════════ */
+const ITEMS = {
+  hair:[
+    {id:'h1',label:'Golden Waves',   emoji:'✨',color:'#FFD700',colorName:'golden', adj:'wavy',     noun:'waves',    pos:null,voice:'golden waves',      placed:'What gorgeous golden waves!'},
+    {id:'h2',label:'Pink Pigtails',  emoji:'🌸',color:'#FF69B4',colorName:'pink',   adj:'curly',    noun:'pigtails', pos:null,voice:'pink pigtails',     placed:'So cute with pink pigtails!'},
+    {id:'h3',label:'Purple Braids',  emoji:'💜',color:'#9B59B6',colorName:'purple', adj:'braided',  noun:'braids',   pos:null,voice:'purple braids',     placed:'Lovely purple braids!'},
+    {id:'h4',label:'Red Ponytail',   emoji:'🔴',color:'#C0392B',colorName:'red',    adj:'long',     noun:'ponytail', pos:null,voice:'red ponytail',      placed:'A gorgeous red ponytail!'},
+    {id:'h5',label:'Blue Space Buns',emoji:'💙',color:'#3498DB',colorName:'blue',   adj:'cool',     noun:'buns',     pos:null,voice:'blue space buns',   placed:'Cool blue space buns!'},
+    {id:'h6',label:'Rainbow Hair',   emoji:'🌈',color:'#FF8C94',colorName:'rainbow',adj:'colorful', noun:'hair',     pos:null,voice:'rainbow hair',      placed:'Amazing rainbow hair!'},
+    {id:'h7',label:'Sleek Black Hair',emoji:'🖤',color:'#2C2C2C',colorName:'black', adj:'straight', noun:'hair',     pos:null,voice:'sleek black hair',  placed:'Elegant sleek black hair!'},
+    {id:'h8',label:'Mint Curls',     emoji:'🌿',color:'#1ABC9C',colorName:'mint',   adj:'curly',    noun:'curls',    pos:null,voice:'mint green curls',  placed:'Adorable mint green curls!'},
+    {id:'h9',label:'Brown Waves',    emoji:'🤎',color:'#8B6356',colorName:'brown',  adj:'wavy',     noun:'waves',    pos:null,voice:'brown waves',       placed:'Pretty brown waves!'},
+    {id:'h10',label:'Silver Updo',   emoji:'⭐',color:'#BDC3C7',colorName:'silver', adj:'elegant',  noun:'updo',     pos:null,voice:'silver updo',       placed:'A stunning silver updo!'},
+  ],
+  tops:[
+    {id:'t1',label:'Pink Hoodie',     emoji:'🩷',color:'#FF9EB5',colorName:'pink',   adj:'cozy',    noun:'hoodie',  voice:'pink hoodie',       placed:"A cozy pink hoodie!"},
+    {id:'t2',label:'White T-Shirt',   emoji:'👕',color:'#E8E8E8',colorName:'white',  adj:'classic', noun:'t-shirt', voice:'white t-shirt',     placed:"A classic white t-shirt!"},
+    {id:'t3',label:'Yellow Tank Top', emoji:'💛',color:'#F9E04B',colorName:'yellow', adj:'bright',  noun:'tank top',voice:'yellow tank top',   placed:"A bright yellow tank top!"},
+    {id:'t4',label:'Purple Sweater',  emoji:'💜',color:'#9B59B6',colorName:'purple', adj:'warm',    noun:'sweater', voice:'purple sweater',    placed:"A warm purple sweater!"},
+    {id:'t5',label:'Red Crop Top',    emoji:'❤️',color:'#E74C3C',colorName:'red',    adj:'bold',    noun:'crop top',voice:'red crop top',      placed:"A bold red crop top!"},
+    {id:'t6',label:'Blue Blouse',     emoji:'💙',color:'#5DADE2',colorName:'blue',   adj:'pretty',  noun:'blouse',  voice:'blue blouse',       placed:"A pretty blue blouse!"},
+    {id:'t7',label:'Green Tee',       emoji:'💚',color:'#2ECC71',colorName:'green',  adj:'fun',     noun:'tee',     voice:'green tee',         placed:"A fun green tee!"},
+    {id:'t8',label:'Star Shirt',      emoji:'⭐',color:'#F39C12',colorName:'orange', adj:'sparkly', noun:'shirt',   voice:'star print shirt',  placed:"A sparkly star shirt!"},
+    {id:'t9',label:'Floral Top',      emoji:'🌺',color:'#FF8FAB',colorName:'pink',   adj:'floral',  noun:'top',     voice:'floral top',        placed:"A beautiful floral top!"},
+    {id:'t10',label:'Rainbow Top',    emoji:'🌈',color:'#FDAB9F',colorName:'rainbow',adj:'colorful',noun:'top',     voice:'rainbow top',       placed:"A colorful rainbow top!"},
+  ],
+  bottoms:[
+    {id:'b1',label:'Blue Jeans',    emoji:'👖',color:'#3B6EA5',colorName:'blue',   adj:'cool',    noun:'jeans',    voice:'blue jeans',     placed:"Cool blue jeans!"},
+    {id:'b2',label:'Pink Skirt',    emoji:'🩷',color:'#FF9EB5',colorName:'pink',   adj:'pretty',  noun:'skirt',    voice:'pink skirt',     placed:"A pretty pink skirt!"},
+    {id:'b3',label:'Purple Tutu',   emoji:'🩰',color:'#D7BDE2',colorName:'purple', adj:'fluffy',  noun:'tutu',     voice:'purple tutu',    placed:"A fluffy purple tutu!"},
+    {id:'b4',label:'Yellow Shorts', emoji:'💛',color:'#F9E04B',colorName:'yellow', adj:'bright',  noun:'shorts',   voice:'yellow shorts',  placed:"Bright yellow shorts!"},
+    {id:'b5',label:'Green Leggings',emoji:'💚',color:'#2ECC71',colorName:'green',  adj:'comfy',   noun:'leggings', voice:'green leggings', placed:"Comfy green leggings!"},
+    {id:'b6',label:'Red Mini Skirt',emoji:'❤️',color:'#E74C3C',colorName:'red',    adj:'bold',    noun:'skirt',    voice:'red mini skirt', placed:"A bold red mini skirt!"},
+    {id:'b7',label:'White Pants',   emoji:'🤍',color:'#E8E8E8',colorName:'white',  adj:'crisp',   noun:'pants',    voice:'white pants',    placed:"Crisp white pants!"},
+    {id:'b8',label:'Star Shorts',   emoji:'⭐',color:'#F39C12',colorName:'orange', adj:'sparkly', noun:'shorts',   voice:'star shorts',    placed:"Fun sparkly star shorts!"},
+    {id:'b9',label:'Denim Skirt',   emoji:'🌀',color:'#5B8AB5',colorName:'denim',  adj:'casual',  noun:'skirt',    voice:'denim skirt',    placed:"A casual denim skirt!"},
+    {id:'b10',label:'Rainbow Skirt',emoji:'🌈',color:'#FFB3C6',colorName:'rainbow',adj:'magical', noun:'skirt',    voice:'rainbow skirt',  placed:"A magical rainbow skirt!"},
+  ],
+  dresses:[
+    {id:'d1',label:'Pink Princess Dress', emoji:'👸',color:'#FF9EB5',colorName:'pink',   adj:'princess', noun:'dress', voice:'pink princess dress',    placed:"A beautiful pink princess dress!"},
+    {id:'d2',label:'Blue Ball Gown',      emoji:'💙',color:'#5DADE2',colorName:'blue',   adj:'royal',    noun:'gown',  voice:'blue ball gown',          placed:"A royal blue ball gown!"},
+    {id:'d3',label:'Purple Evening Gown', emoji:'💜',color:'#9B59B6',colorName:'purple', adj:'elegant',  noun:'gown',  voice:'purple evening gown',     placed:"An elegant purple gown!"},
+    {id:'d4',label:'Yellow Sundress',     emoji:'☀️',color:'#F9E04B',colorName:'yellow', adj:'sunny',    noun:'dress', voice:'yellow sundress',         placed:"A sunny yellow sundress!"},
+    {id:'d5',label:'Red Rose Dress',      emoji:'🌹',color:'#E74C3C',colorName:'red',    adj:'romantic', noun:'dress', voice:'red rose dress',          placed:"A romantic red rose dress!"},
+    {id:'d6',label:'Sparkly Silver Dress',emoji:'✨',color:'#BDC3C7',colorName:'silver', adj:'sparkly',  noun:'dress', voice:'sparkly silver dress',    placed:"A dazzling sparkly silver dress!"},
+    {id:'d7',label:'Rainbow Dress',       emoji:'🌈',color:'#FFB3C6',colorName:'rainbow',adj:'magical',  noun:'dress', voice:'rainbow dress',           placed:"A magical rainbow dress!"},
+    {id:'d8',label:'Green Fairy Dress',   emoji:'🧚',color:'#2ECC71',colorName:'green',  adj:'magical',  noun:'dress', voice:'green fairy dress',       placed:"A magical green fairy dress!"},
+    {id:'d9',label:'Orange Floral Dress', emoji:'🌺',color:'#F39C12',colorName:'orange', adj:'floral',   noun:'dress', voice:'orange floral dress',     placed:"A bright orange floral dress!"},
+    {id:'d10',label:'Teal Mermaid Dress', emoji:'🧜',color:'#1ABC9C',colorName:'teal',   adj:'shimmery', noun:'dress', voice:'teal mermaid dress',      placed:"A shimmery teal mermaid dress!"},
+  ],
+  shoes:[
+    {id:'s1',label:'Pink Heels',       emoji:'👠',color:'#FF69B4',colorName:'pink',   adj:'tall',     noun:'heels',      voice:'pink high heels',     placed:"Fabulous pink high heels!"},
+    {id:'s2',label:'White Sneakers',   emoji:'👟',color:'#E8E8E8',colorName:'white',  adj:'sporty',   noun:'sneakers',   voice:'white sneakers',      placed:"Cool white sneakers!"},
+    {id:'s3',label:'Red Boots',        emoji:'👢',color:'#E74C3C',colorName:'red',    adj:'bold',     noun:'boots',      voice:'red boots',           placed:"Fierce red boots!"},
+    {id:'s4',label:'Blue Ballet Flats',emoji:'🩰',color:'#3498DB',colorName:'blue',   adj:'comfy',    noun:'flats',      voice:'blue ballet flats',   placed:"Cute blue ballet flats!"},
+    {id:'s5',label:'Gold Sandals',     emoji:'✨',color:'#F1C40F',colorName:'golden', adj:'shiny',    noun:'sandals',    voice:'gold sandals',        placed:"Shiny gold sandals!"},
+    {id:'s6',label:'Purple Platforms', emoji:'💜',color:'#9B59B6',colorName:'purple', adj:'tall',     noun:'platforms',  voice:'purple platforms',    placed:"Wow, purple platform shoes!"},
+    {id:'s7',label:'Green Flip Flops', emoji:'🩴',color:'#2ECC71',colorName:'green',  adj:'casual',   noun:'flip flops', voice:'green flip flops',   placed:"Fun green flip flops!"},
+    {id:'s8',label:'Star Sneakers',    emoji:'⭐',color:'#F39C12',colorName:'orange', adj:'sparkly',  noun:'sneakers',   voice:'star sneakers',       placed:"Awesome sparkly star sneakers!"},
+    {id:'s9',label:'Silver Heels',     emoji:'💎',color:'#ABB2B9',colorName:'silver', adj:'elegant',  noun:'heels',      voice:'silver heels',        placed:"Elegant silver heels!"},
+    {id:'s10',label:'Rainbow Boots',   emoji:'🌈',color:'#FF8C94',colorName:'rainbow',adj:'colorful', noun:'boots',      voice:'rainbow boots',       placed:"Colorful rainbow boots!"},
+  ],
+  accessories:[
+    {id:'a1',label:'Golden Crown',     emoji:'👑',color:'#F1C40F',colorName:'golden', adj:'royal',   noun:'crown',      pos:'crown',    voice:'golden crown',          placed:"A royal golden crown!"},
+    {id:'a2',label:'Diamond Necklace', emoji:'💎',color:'#85C1E9',colorName:'diamond',adj:'shiny',   noun:'necklace',   pos:'necklace', voice:'diamond necklace',      placed:"A sparkling diamond necklace!"},
+    {id:'a3',label:'Flower Headband',  emoji:'🌸',color:'#FF9EB5',colorName:'pink',   adj:'pretty',  noun:'headband',   pos:'crown',    voice:'flower headband',       placed:"A pretty flower headband!"},
+    {id:'a4',label:'Pink Bow',         emoji:'🎀',color:'#FF69B4',colorName:'pink',   adj:'cute',    noun:'bow',        pos:'crown',    voice:'pink bow',              placed:"A cute pink bow!"},
+    {id:'a5',label:'Heart Earrings',   emoji:'💕',color:'#E74C3C',colorName:'red',    adj:'sparkly', noun:'earrings',   pos:'earrings', voice:'heart earrings',        placed:"Sparkly heart earrings!"},
+    {id:'a6',label:'Pink Purse',       emoji:'👜',color:'#FF9EB5',colorName:'pink',   adj:'stylish', noun:'purse',      pos:'bag',      voice:'pink purse',            placed:"A stylish pink purse!"},
+    {id:'a7',label:'Star Sunglasses',  emoji:'🕶️',color:'#F39C12',colorName:'golden', adj:'cool',    noun:'sunglasses', pos:'glasses',  voice:'star sunglasses',       placed:"Cool star sunglasses!"},
+    {id:'a8',label:'Pearl Necklace',   emoji:'🪩',color:'#F0F0F0',colorName:'white',  adj:'classic', noun:'necklace',   pos:'necklace', voice:'pearl necklace',        placed:"A classic pearl necklace!"},
+    {id:'a9',label:'Rainbow Bracelet', emoji:'🌈',color:'#FFB3C6',colorName:'rainbow',adj:'fun',     noun:'bracelet',   pos:'bag',      voice:'rainbow bracelet',      placed:"A fun rainbow bracelet!"},
+    {id:'a10',label:'Butterfly Clip',  emoji:'🦋',color:'#9B59B6',colorName:'purple', adj:'pretty',  noun:'hair clip',  pos:'crown',    voice:'butterfly hair clip',   placed:"A pretty butterfly hair clip!"},
+  ],
+};
+
+const LEFT_CATS  = ['hair','accessories'];
+const RIGHT_CATS = ['tops','bottoms','dresses','shoes'];
+const ALL_CATS   = [...LEFT_CATS, ...RIGHT_CATS];
+
+const CAT_META = {
+  hair:        {label:'Hair 💇',    key:'hair'},
+  accessories: {label:'Acc ✨',     key:'accessory'},
+  tops:        {label:'Tops 👕',    key:'top'},
+  bottoms:     {label:'Bottoms 👖', key:'bottom'},
+  dresses:     {label:'Dresses 👗', key:'dress'},
+  shoes:       {label:'Shoes 👠',   key:'shoes'},
+};
+
+const CHALLENGES = [
+  'Can you find something blue? 💙',
+  'Can you find something sparkly? ✨',
+  'Can you find something with stars? ⭐',
+  'Can you find the longest hair? 👱‍♀️',
+  'Can you find something rainbow? 🌈',
+  'Can you find something golden? 💛',
+  'Can you find the tallest shoes? 👠',
+  'Can you find something green? 💚',
+  'Can you find something pink? 🩷',
+  'Can you find something purple? 💜',
+];
+
+/* ═══════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════ */
+const outfit = { hair:null, top:null, bottom:null, dress:null, shoes:null, accessory:null };
+let activeCats = { left:'hair', right:'tops', mobile:'hair' };
+let dragItem = null; let dragCat = null;
+let ttsTimer = null;
+let madLibsBlanks = [];
+let currentBlankIdx = 0;
+
+/* ═══════════════════════════════════════════════════════
+   TTS
+═══════════════════════════════════════════════════════ */
+let synth = window.speechSynthesis;
+let voices = [];
+function loadVoices(){
+  voices = synth.getVoices();
+  if(!voices.length) setTimeout(loadVoices, 200);
+}
+loadVoices();
+if(synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+
+function speak(text, rate=1, pitch=1.1){
+  if(!synth) return;
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = rate; u.pitch = pitch; u.volume = 1;
+  // Prefer a female English voice
+  const femVoice = voices.find(v => /female|woman|girl/i.test(v.name) && /en/i.test(v.lang))
+    || voices.find(v => /en/i.test(v.lang) && v.name.includes('Google'))
+    || voices.find(v => /en/i.test(v.lang));
+  if(femVoice) u.voice = femVoice;
+  synth.speak(u);
+}
+function cancelSpeech(){ synth && synth.cancel(); }
+
+/* ═══════════════════════════════════════════════════════
+   RENDER PANELS
+═══════════════════════════════════════════════════════ */
+function buildTabs(cats, containerId, activeKey, side){
+  const el = document.getElementById(containerId);
+  el.innerHTML = cats.map(cat => `
+    <button class="cat-tab ${activeCats[side]===cat?'active':''}"
+      onclick="switchCat('${side}','${cat}')">${CAT_META[cat].label}</button>`).join('');
+}
+
+function buildGrid(cat, gridId, cardClass=''){
+  const el = document.getElementById(gridId);
+  el.innerHTML = (ITEMS[cat]||[]).map(item => `
+    <div class="item-card ${cardClass} ${isSelected(item,cat)?'selected':''}"
+      id="card-${item.id}"
+      draggable="true"
+      ondragstart="onDragStart(event,'${item.id}','${cat}')"
+      onmouseenter="onHover(event,'${item.id}','${cat}')"
+      onmousemove="onHoverMove(event)"
+      onmouseleave="onHoverLeave()"
+      onclick="selectItem('${item.id}','${cat}')">
+      <span class="item-emoji">${item.emoji}</span>
+      <div class="item-swatch" style="background:${item.color}"></div>
+      <span class="item-label">${item.label}</span>
+    </div>`).join('');
+}
+
+function switchCat(side, cat){
+  activeCats[side] = cat;
+  if(side==='left'){
+    buildTabs(LEFT_CATS,'left-tabs',activeCats.left,'left');
+    buildGrid(cat,'left-grid');
+  } else if(side==='right'){
+    buildTabs(RIGHT_CATS,'right-tabs',activeCats.right,'right');
+    buildGrid(cat,'right-grid');
+  } else {
+    buildTabs(ALL_CATS,'mobile-tabs',activeCats.mobile,'mobile');
+    buildGrid(cat,'mobile-grid');
+  }
+}
+
+function isSelected(item, cat){
+  const key = CAT_META[cat].key;
+  return outfit[key]?.id === item.id;
+}
+
+function initPanels(){
+  buildTabs(LEFT_CATS,'left-tabs',activeCats.left,'left');
+  buildGrid('hair','left-grid');
+
+  buildTabs(RIGHT_CATS,'right-tabs',activeCats.right,'right');
+  buildGrid('tops','right-grid');
+
+  buildTabs(ALL_CATS,'mobile-tabs',activeCats.mobile,'mobile');
+  buildGrid('hair','mobile-grid');
+}
+
+/* ═══════════════════════════════════════════════════════
+   ITEM SELECTION
+═══════════════════════════════════════════════════════ */
+function findItem(id, cat){
+  return (ITEMS[cat]||[]).find(x=>x.id===id);
+}
+
+function selectItem(itemId, cat){
+  const item = findItem(itemId, cat);
+  if(!item) return;
+  const key = CAT_META[cat].key;
+
+  // Mutual exclusion: dress <-> top/bottom
+  if(cat==='dresses'){
+    outfit.top=null; outfit.bottom=null;
+    refreshGridIfActive('tops'); refreshGridIfActive('bottoms');
+  } else if(cat==='tops'||cat==='bottoms'){
+    outfit.dress=null;
+    refreshGridIfActive('dresses');
+  }
+
+  // Toggle
+  const wasSelected = outfit[key]?.id === item.id;
+  outfit[key] = wasSelected ? null : item;
+
+  refreshGridIfActive(cat);
+  updateDoll();
+
+  if(!wasSelected){
+    triggerSparkle();
+    clearTimeout(ttsTimer);
+    ttsTimer = setTimeout(()=> speak(item.placed, 1, 1.15), 80);
+    checkShowPhase2Btn();
+  }
+}
+
+function refreshGridIfActive(cat){
+  // Refresh whichever grid(s) show this category
+  if(activeCats.left===cat) buildGrid(cat,'left-grid');
+  if(activeCats.right===cat) buildGrid(cat,'right-grid');
+  if(activeCats.mobile===cat) buildGrid(cat,'mobile-grid');
+}
+
+function checkShowPhase2Btn(){
+  const hasClothing = outfit.dress||outfit.top;
+  document.getElementById('phase2-btn').style.display = hasClothing ? 'inline-block' : 'none';
+}
+
+/* ═══════════════════════════════════════════════════════
+   DOLL UPDATE
+═══════════════════════════════════════════════════════ */
+function setFill(id, color){
+  const el = document.getElementById(id);
+  if(el) el.setAttribute('fill', color);
+}
+function svgShow(id){ const el=document.getElementById(id); if(el) el.style.display=''; }
+function svgHide(id){ const el=document.getElementById(id); if(el) el.style.display='none'; }
+function showAcc(id, emoji){ const el=document.getElementById(id); if(el){el.textContent=emoji;el.style.display='';} }
+function hideAccAll(){
+  ['acc-necklace','acc-bag','acc-crown','acc-glasses','acc-ear-l','acc-ear-r']
+    .forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
+}
+
+function updateDoll(){
+  // Hair
+  const hairColor = outfit.hair?.color || '#8B6356';
+  setFill('svg-hair-back', hairColor);
+  const hf = document.getElementById('svg-hair-front');
+  if(hf) hf.setAttribute('fill', hairColor);
+
+  // Clothing
+  if(outfit.dress){
+    svgShow('svg-dress');
+    setFill('svg-top','transparent');
+    setFill('svg-bottom','transparent');
+    setFill('svg-dress-top', outfit.dress.color);
+    setFill('svg-dress-bot', outfit.dress.color);
+  } else {
+    svgHide('svg-dress');
+    setFill('svg-top', outfit.top?.color || '#E8D5E8');
+    setFill('svg-bottom', outfit.bottom?.color || '#D5E8F0');
+  }
+
+  // Shoes - update only the body ellipses (not highlights)
+  const shoeColor = outfit.shoes?.color || '#D0D0D0';
+  const shoeEls = document.querySelectorAll('#svg-shoes ellipse');
+  shoeEls.forEach((el,i)=>{ if(i<2) el.setAttribute('fill', shoeColor); });
+
+  // Accessories
+  hideAccAll();
+  const acc = outfit.accessory;
+  if(acc){
+    switch(acc.pos){
+      case 'crown':   showAcc('acc-crown', acc.emoji); break;
+      case 'necklace':showAcc('acc-necklace', acc.emoji); break;
+      case 'glasses': showAcc('acc-glasses', acc.emoji); break;
+      case 'bag':     showAcc('acc-bag', acc.emoji); break;
+      case 'earrings':showAcc('acc-ear-l', acc.emoji); showAcc('acc-ear-r', acc.emoji); break;
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SPARKLE EFFECT
+═══════════════════════════════════════════════════════ */
+const SPARKS = ['✨','⭐','💫','🌟','💖','🎀'];
+function triggerSparkle(){
+  const box = document.getElementById('sparkle-box');
+  for(let i=0;i<9;i++){
+    const s = document.createElement('div');
+    s.className='spark';
+    s.textContent = SPARKS[Math.floor(Math.random()*SPARKS.length)];
+    const angle = (i/9)*360 + Math.random()*20;
+    const dist = 55+Math.random()*55;
+    const dx = Math.cos(angle*Math.PI/180)*dist;
+    const dy = Math.sin(angle*Math.PI/180)*dist;
+    s.style.cssText=`
+      position:absolute;left:50%;top:40%;pointer-events:none;
+      font-size:${14+Math.random()*14}px;
+      animation:sparkFly ${.7+Math.random()*.4}s ease-out forwards;
+      --dx:${dx}px;--dy:${dy}px;--rot:${Math.random()*360}deg;
+      z-index:100;animation-delay:${i*40}ms;
+    `;
+    box.appendChild(s);
+    setTimeout(()=>s.remove(), 1200+i*40);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   HOVER TOOLTIP + TTS
+═══════════════════════════════════════════════════════ */
+function onHover(e, itemId, cat){
+  const item = findItem(itemId, cat);
+  if(!item) return;
+  const tip = document.getElementById('hover-tip');
+  tip.textContent = item.label;
+  tip.style.display='block';
+  positionTip(e);
+  clearTimeout(ttsTimer);
+  ttsTimer = setTimeout(()=> speak(item.voice, 1, 1.1), 350);
+}
+function onHoverMove(e){ positionTip(e); }
+function onHoverLeave(){
+  document.getElementById('hover-tip').style.display='none';
+  clearTimeout(ttsTimer);
+  cancelSpeech();
+}
+function positionTip(e){
+  const tip=document.getElementById('hover-tip');
+  tip.style.left=(e.clientX+14)+'px';
+  tip.style.top=(e.clientY-38)+'px';
+}
+
+/* ═══════════════════════════════════════════════════════
+   DRAG & DROP
+═══════════════════════════════════════════════════════ */
+function onDragStart(e, itemId, cat){
+  dragItem={id:itemId,cat};
+  e.dataTransfer.effectAllowed='copy';
+}
+function onDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect='copy';
+  document.getElementById('doll-stage').classList.add('drag-over');
+}
+function onDragLeave(e){
+  document.getElementById('doll-stage').classList.remove('drag-over');
+}
+function onDrop(e){
+  e.preventDefault();
+  document.getElementById('doll-stage').classList.remove('drag-over');
+  if(dragItem){ selectItem(dragItem.id,dragItem.cat); dragItem=null; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   WHAT IS SHE WEARING? (Phase 1 TTS)
+═══════════════════════════════════════════════════════ */
+function readOutfit(){
+  const parts=[];
+  const clothing = outfit.dress||outfit.top;
+  if(clothing) parts.push(`a ${clothing.colorName} ${clothing.noun}`);
+  if(outfit.bottom && !outfit.dress) parts.push(`${outfit.bottom.colorName} ${outfit.bottom.noun}`);
+  if(outfit.shoes) parts.push(`${outfit.shoes.colorName} ${outfit.shoes.noun}`);
+  if(outfit.hair)  parts.push(`${outfit.hair.adj} ${outfit.hair.noun}`);
+  if(outfit.accessory) parts.push(`a ${outfit.accessory.noun}`);
+  if(!parts.length){ speak("She's not dressed yet! Pick some clothes!"); return; }
+  speak(`She is wearing ${parts.join(', and ')}.`, .95, 1.1);
+}
+
+/* ═══════════════════════════════════════════════════════
+   CHALLENGE
+═══════════════════════════════════════════════════════ */
+function showChallenge(){
+  const ch = CHALLENGES[Math.floor(Math.random()*CHALLENGES.length)];
+  document.getElementById('challenge-text').textContent = ch;
+  document.getElementById('challenge-pop').style.display='block';
+  document.getElementById('pop-overlay').style.display='block';
+  document.getElementById('challenge-pop').style.animation='popIn .3s cubic-bezier(.34,1.56,.64,1) forwards';
+  speak(ch, .95, 1.1);
+}
+function closeChallenge(){
+  document.getElementById('challenge-pop').style.display='none';
+  document.getElementById('pop-overlay').style.display='none';
+}
+
+/* ═══════════════════════════════════════════════════════
+   PHASE 2: MAD-LIBS
+═══════════════════════════════════════════════════════ */
+const COLOR_POOL = ['red','blue','pink','purple','yellow','green','golden','silver','orange','teal','rainbow','white','black','mint','brown','denim'];
+const HAIR_ADJ_POOL = ['wavy','curly','straight','braided','long','short','colorful','elegant','cool','pretty'];
+const NOUN_POOL = ['dress','gown','top','skirt','outfit','blouse','hoodie','tutu','shirt'];
+const SHOE_ADJ_POOL = ['tall','sporty','bold','comfy','shiny','elegant','casual','sparkly','colorful'];
+
+function pickDistractors(answer, pool, n=2){
+  const filtered = pool.filter(x=>x!==answer);
+  const shuffled = filtered.sort(()=>Math.random()-.5);
+  return shuffled.slice(0,n);
+}
+function shuffled(arr){ return [...arr].sort(()=>Math.random()-.5); }
+
+function buildMadLibs(){
+  const clothing = outfit.dress || outfit.top;
+  const blanks = [];
+
+  // Blank 0: color of main clothing
+  const colAns = clothing?.colorName || 'pink';
+  blanks.push({
+    prompt:'What color is her outfit?',
+    answer: colAns,
+    options: shuffled([colAns, ...pickDistractors(colAns, COLOR_POOL)]),
+    filled:null, creative:false,
+    storyPrefix:'My doll is wearing a beautiful ', storySuffix:' ',
+  });
+
+  // Blank 1: type of clothing
+  const typeAns = outfit.dress?.noun || outfit.top?.noun || 'dress';
+  blanks.push({
+    prompt:'What is she wearing?',
+    answer: typeAns,
+    options: shuffled([typeAns, ...pickDistractors(typeAns, NOUN_POOL)]),
+    filled:null, creative:false,
+    storyPrefix:'', storySuffix:'.',
+  });
+
+  // Blank 2: shoe color
+  const shoeAns = outfit.shoes?.colorName || 'pretty';
+  blanks.push({
+    prompt:'What color are her shoes?',
+    answer: shoeAns,
+    options: shuffled([shoeAns, ...pickDistractors(shoeAns, COLOR_POOL)]),
+    filled:null, creative:false,
+    storyPrefix:'\nShe has ', storySuffix:' shoes.',
+  });
+
+  // Blank 3: hair adjective
+  const hairAns = outfit.hair?.adj || 'lovely';
+  blanks.push({
+    prompt:"Describe her hair!",
+    answer: hairAns,
+    options: shuffled([hairAns, ...pickDistractors(hairAns, HAIR_ADJ_POOL)]),
+    filled:null, creative:false,
+    storyPrefix:'\nHer hair is ', storySuffix:'.',
+  });
+
+  // Blank 4: destination (any answer valid — creative)
+  blanks.push({
+    prompt:'Where is she going? You choose! 🎉',
+    answer: null,
+    options: shuffled(['a party 🎉', 'school 📚', 'a runway show 🌟']),
+    filled:null, creative:true,
+    storyPrefix:'\nTonight she is going to ', storySuffix:'!',
+  });
+
+  return blanks;
+}
+
+function outfitChips(){
+  const chips=[];
+  const clothing = outfit.dress||outfit.top;
+  if(clothing) chips.push({label:`${clothing.emoji} ${clothing.label}`, color:clothing.color});
+  if(outfit.bottom&&!outfit.dress) chips.push({label:`${outfit.bottom.emoji} ${outfit.bottom.label}`, color:outfit.bottom.color});
+  if(outfit.shoes) chips.push({label:`${outfit.shoes.emoji} ${outfit.shoes.label}`, color:outfit.shoes.color});
+  if(outfit.hair)  chips.push({label:`${outfit.hair.emoji} ${outfit.hair.label}`, color:outfit.hair.color});
+  if(outfit.accessory) chips.push({label:`${outfit.accessory.emoji} ${outfit.accessory.label}`, color:outfit.accessory.color});
+  return chips;
+}
+
+function lighten(hex){
+  // Lighten hex color for background
+  const r=parseInt(hex.slice(1,3),16);
+  const g=parseInt(hex.slice(3,5),16);
+  const b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},.18)`;
+}
+
+function renderStoryHtml(){
+  let html='';
+  madLibsBlanks.forEach((b,i)=>{
+    html += escHtml(b.storyPrefix.replace(/\n/g,'<br>'));
+    const cls = b.filled ? 'story-blank filled' : (i===currentBlankIdx ? 'story-blank active-blank' : 'story-blank');
+    const display = b.filled || '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    html += `<span class="${cls}" id="blank-${i}">${b.filled ? escHtml(b.filled.replace(/ 🎉| 📚| 🌟/g,'')) : display}</span>`;
+    html += escHtml(b.storySuffix);
+  });
+  return html;
+}
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderChoices(idx){
+  const b = madLibsBlanks[idx];
+  document.getElementById('p2-prompt').textContent = b.prompt;
+  document.getElementById('p2-choices').innerHTML = b.options.map(opt=>`
+    <button class="choice-btn" onclick="handleChoice(${idx},'${opt.replace(/'/g,"\\'")}')">
+      ${opt}
+    </button>`).join('');
+}
+
+function startPhase2(){
+  cancelSpeech();
+  madLibsBlanks = buildMadLibs();
+  currentBlankIdx = 0;
+
+  // Outfit chips
+  const chips = outfitChips();
+  document.getElementById('p2-outfit-chips').innerHTML = chips.map(c=>`
+    <span class="outfit-chip" style="background:${lighten(c.color)};border-color:${c.color}40">
+      ${c.label}
+    </span>`).join('');
+
+  // Story
+  document.getElementById('p2-story').innerHTML = renderStoryHtml();
+
+  // Choices
+  renderChoices(0);
+
+  document.getElementById('p2-cheer').style.display='none';
+  document.getElementById('p2-complete').style.display='none';
+  document.getElementById('p2-choices').style.display='flex';
+  document.getElementById('p2-prompt').style.display='block';
+
+  const p2 = document.getElementById('phase2');
+  p2.style.display='flex';
+  p2.style.animation='slideUp .5s cubic-bezier(.34,1.36,.64,1) forwards';
+
+  setTimeout(()=> speak("Now tell me about your look! Tap the right word!", .95, 1.1), 400);
+}
+
+function handleChoice(idx, value){
+  const b = madLibsBlanks[idx];
+  if(b.filled) return;
+
+  const isCorrect = b.creative || (value.toLowerCase().includes(b.answer.toLowerCase()));
+  const btns = document.querySelectorAll('.choice-btn');
+
+  if(isCorrect){
+    // Flash correct button green
+    btns.forEach(btn=>{ if(btn.textContent.trim()===value) btn.classList.add('correct-flash'); });
+
+    b.filled = value;
+    setTimeout(()=>{
+      document.getElementById('p2-story').innerHTML = renderStoryHtml();
+
+      // Find next unfilled blank
+      let next = -1;
+      for(let i=0;i<madLibsBlanks.length;i++){
+        if(!madLibsBlanks[i].filled){ next=i; break; }
+      }
+
+      if(next === -1){
+        allFilled();
+      } else {
+        currentBlankIdx = next;
+        renderChoices(next);
+        speak('Great job! Keep going!', 1, 1.15);
+      }
+    }, 450);
+  } else {
+    // Shake wrong buttons
+    btns.forEach(btn=>{ btn.classList.add('wrong-shake'); });
+    setTimeout(()=> btns.forEach(btn=>{ btn.classList.remove('wrong-shake'); }), 450);
+    speak("Hmm, try again!", 1, 1.1);
+  }
+}
+
+function allFilled(){
+  document.getElementById('p2-choices').style.display='none';
+  document.getElementById('p2-prompt').style.display='none';
+  const cheer = document.getElementById('p2-cheer');
+  cheer.textContent="🎉 Amazing! You did it! 🌟";
+  cheer.style.display='block';
+  document.getElementById('p2-complete').style.display='flex';
+  speak("Amazing! You did it! Now listen to your story!", 1, 1.15);
+}
+
+function readStory(){
+  const parts = madLibsBlanks.map((b,i)=>{
+    return (b.storyPrefix + (b.filled||'') + b.storySuffix).replace(/\n/g,' ');
+  });
+  const fullStory = parts.join(' ').replace(/\s+/g,' ').trim();
+  speak(fullStory, .9, 1.1);
+}
+
+function restartGame(){
+  const p2 = document.getElementById('phase2');
+  p2.style.animation='none';
+  p2.style.display='none';
+  cancelSpeech();
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
+initPanels();
+
+// Dismiss challenge on Escape
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') closeChallenge();
+});
+</script>
+</body>
+</html>
