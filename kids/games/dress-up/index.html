@@ -470,6 +470,7 @@ const CATEGORIES = [
 const ITEMS = {
   hair:[
     {id:'h1', label:'Pixie Cut', hairStyle:'pixiecut', img:'hair/whitepixiecut.png', voice:'pixie cut', noun:'pixie cut'},
+    {id:'h2', label:'Bob',       hairStyle:'bob',       img:'hair/whitebob.png',      voice:'bob',        noun:'bob'},
   ],
   face:[],
   tops:[],
@@ -513,6 +514,14 @@ const PATTERNS = [
 // Map: computed color slug → actual filename slug (handles any naming discrepancies)
 // To add a new color variant, add an entry here and drop the PNG in hair/.
 const HAIR_COLOR_FILES = {
+  bob: {
+    white:    'white',
+    pink:     'pink',
+    hotpink:  'hotpink',
+    babyblue: 'babyblue',
+    navyblue: 'navyblue',
+    red:      'red',
+  },
   pixiecut: {
     white:        'white',
     brown:        'brown',
@@ -1080,7 +1089,7 @@ function closeChallenge(){
 /* ── PHASE 2 MAD-LIBS ────────────────────────────────── */
 const COLOR_POOL = COLORS.map(c=>c.name.toLowerCase());
 const NOUN_POOL  = ['t-shirt','tank top','hoodie','sweater','crop top','jeans','skirt','shorts','leggings','short dress','long dress','gown','party dress'];
-const HAIR_POOL  = ['ponytail','braids','curly hair','straight hair','bun','pigtails','pixie cut'];
+const HAIR_POOL  = ['ponytail','braids','curly hair','straight hair','bun','pigtails','pixie cut','bob'];
 
 function pickDistractors(answer, pool, n=2){
   return pool.filter(x=>x!==answer).sort(()=>Math.random()-.5).slice(0,n);
