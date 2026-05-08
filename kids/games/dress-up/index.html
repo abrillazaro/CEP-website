@@ -352,6 +352,9 @@ body{font-family:var(--font);background:linear-gradient(135deg,var(--bg1) 0%,var
           <path d="M750,134 Q780,210 760,292 Q740,210 726,154Z"/>
         </g>
 
+        <!-- Hair PNG overlay (for image-based hair options) -->
+        <image id="svg-hair-img" href="" x="0" y="0" width="992" height="992" style="display:none"/>
+
         <!-- Necklace -->
         <text id="acc-necklace" x="496" y="428" font-size="90"  text-anchor="middle" style="display:none">💎</text>
 
@@ -457,7 +460,9 @@ const CATEGORIES = [
 ];
 
 const ITEMS = {
-  hair:[],
+  hair:[
+    {id:'h1',label:'Pixie Cut', img:'hair/brownpixiecut.png', voice:'pixie cut', noun:'pixie cut'},
+  ],
   face:[
     {id:'f1',label:'Natural',    emoji:'😊',voice:'natural look',  noun:'natural look'},
     {id:'f2',label:'Rosy Cheeks',emoji:'🌹',voice:'rosy cheeks',   noun:'rosy cheeks'},
@@ -658,7 +663,7 @@ function renderItems(cat, gridId){
       onmouseenter="onItemHover(event,'${item.id}','${cat}')"
       onmousemove="moveTip(event)"
       onmouseleave="hideTip()">
-      <span class="item-emoji">${item.emoji}</span>
+      ${item.img ? `<img src="${item.img}" style="width:44px;height:44px;object-fit:contain;border-radius:8px;" alt="${item.label}"/>` : `<span class="item-emoji">${item.emoji||''}</span>`}
       <span class="item-label">${item.label}</span>
     </div>`).join('');
 }
@@ -883,15 +888,28 @@ function updateFaceOverlay(){
 
 function updateDoll(){
   // Hair — bald by default, show only when an item is selected
+  const hairImgEl = document.getElementById('svg-hair-img');
   if(slots.hair.item){
-    const hHex = slots.hair.color?.hex || '#8B6356';
-    const hPat = slots.hair.pattern?.id || 'plain';
-    document.getElementById('svg-hair-back').style.display = '';
-    applyFill('svg-hair-back', hHex, hPat);
-    const hf = document.getElementById('svg-hair-front');
-    if(hf){ hf.style.display=''; hf.setAttribute('fill', hPat==='floral'?lighten(hHex):hHex); }
-    updatePatternOverlays('hair', hPat, hHex);
+    if(slots.hair.item.img){
+      // PNG-based hair: show image overlay, hide SVG hair shapes
+      if(hairImgEl){ hairImgEl.setAttribute('href', slots.hair.item.img); hairImgEl.style.display=''; }
+      document.getElementById('svg-hair-back').style.display = 'none';
+      const hf = document.getElementById('svg-hair-front');
+      if(hf) hf.style.display = 'none';
+      updatePatternOverlays('hair', 'plain', '');
+    } else {
+      // SVG-based hair
+      if(hairImgEl) hairImgEl.style.display = 'none';
+      const hHex = slots.hair.color?.hex || '#8B6356';
+      const hPat = slots.hair.pattern?.id || 'plain';
+      document.getElementById('svg-hair-back').style.display = '';
+      applyFill('svg-hair-back', hHex, hPat);
+      const hf = document.getElementById('svg-hair-front');
+      if(hf){ hf.style.display=''; hf.setAttribute('fill', hPat==='floral'?lighten(hHex):hHex); }
+      updatePatternOverlays('hair', hPat, hHex);
+    }
   } else {
+    if(hairImgEl) hairImgEl.style.display = 'none';
     document.getElementById('svg-hair-back').style.display = 'none';
     const hf = document.getElementById('svg-hair-front');
     if(hf) hf.style.display = 'none';
@@ -1049,7 +1067,7 @@ function closeChallenge(){
 /* ── PHASE 2 MAD-LIBS ────────────────────────────────── */
 const COLOR_POOL = COLORS.map(c=>c.name.toLowerCase());
 const NOUN_POOL  = ['t-shirt','tank top','hoodie','sweater','crop top','jeans','skirt','shorts','leggings','short dress','long dress','gown','party dress'];
-const HAIR_POOL  = ['ponytail','braids','curly hair','straight hair','bun','pigtails'];
+const HAIR_POOL  = ['ponytail','braids','curly hair','straight hair','bun','pigtails','pixie cut'];
 
 function pickDistractors(answer, pool, n=2){
   return pool.filter(x=>x!==answer).sort(()=>Math.random()-.5).slice(0,n);
