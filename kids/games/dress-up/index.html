@@ -67,6 +67,16 @@ body{font-family:var(--font);background:linear-gradient(135deg,var(--bg1) 0%,var
   display:block;max-height:calc(100vh - 120px);width:auto;max-width:100%;
   filter:drop-shadow(0 8px 22px rgba(0,0,0,.13));
 }
+#hair-overlay-img{
+  position:absolute;
+  top:0%;
+  left:50%;
+  transform:translateX(-50%);
+  width:33%;
+  height:auto;
+  pointer-events:none;
+  display:none;
+}
 
 /* Wearing bar */
 #wearing-bar{
@@ -317,6 +327,7 @@ body{font-family:var(--font);background:linear-gradient(135deg,var(--bg1) 0%,var
     <div class="doll-platform"></div>
     <div class="zoe-wrapper">
       <img id="zoe-base" src="zoe%20transparent.png" alt="Zoe"/>
+      <img id="hair-overlay-img" src="" alt=""/>
       <svg id="doll-svg" viewBox="0 0 992 992" xmlns="http://www.w3.org/2000/svg">
         <defs id="doll-defs"></defs>
 
@@ -351,9 +362,6 @@ body{font-family:var(--font);background:linear-gradient(135deg,var(--bg1) 0%,var
           <path d="M242,134 Q212,210 232,292 Q252,210 266,154Z"/>
           <path d="M750,134 Q780,210 760,292 Q740,210 726,154Z"/>
         </g>
-
-        <!-- Hair PNG overlay (for image-based hair options) -->
-        <image id="svg-hair-img" href="" x="0" y="0" width="992" height="992" style="display:none"/>
 
         <!-- Necklace -->
         <text id="acc-necklace" x="496" y="428" font-size="90"  text-anchor="middle" style="display:none">💎</text>
@@ -906,12 +914,12 @@ function updateFaceOverlay(){
 
 function updateDoll(){
   // Hair — bald by default, show only when an item is selected
-  const hairImgEl = document.getElementById('svg-hair-img');
+  const hairImgEl = document.getElementById('hair-overlay-img');
   if(slots.hair.item){
     if(slots.hair.item.hairStyle){
-      // PNG-based hair: resolve color variant, show image overlay, hide SVG hair shapes
+      // PNG-based hair: resolve color variant, show overlay <img>, hide SVG hair shapes
       const src = getHairImgSrc(slots.hair.item.hairStyle, slots.hair.color?.name);
-      if(hairImgEl){ hairImgEl.setAttribute('href', src); hairImgEl.style.display=''; }
+      if(hairImgEl){ hairImgEl.src = src; hairImgEl.style.display=''; }
       document.getElementById('svg-hair-back').style.display = 'none';
       const hf = document.getElementById('svg-hair-front');
       if(hf) hf.style.display = 'none';
