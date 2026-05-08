@@ -461,7 +461,7 @@ const CATEGORIES = [
 
 const ITEMS = {
   hair:[
-    {id:'h1',label:'Pixie Cut', img:'hair/brownpixiecut.png', voice:'pixie cut', noun:'pixie cut'},
+    {id:'h1', label:'Pixie Cut', hairStyle:'pixiecut', img:'hair/whitepixiecut.png', voice:'pixie cut', noun:'pixie cut'},
   ],
   face:[
     {id:'f1',label:'Natural',    emoji:'😊',voice:'natural look',  noun:'natural look'},
@@ -534,10 +534,28 @@ const PATTERNS = [
   {id:'polka',   name:'Polka Dots', emoji:'🔵'},
 ];
 
+/* ── HAIR COLOR SYSTEM ───────────────────────────────── */
+// Add a new array entry here each time a new color file is created.
+// Pattern: hair/{colorslug}{hairStyle}.png
+const HAIR_COLOR_FILES = {
+  pixiecut: ['white', 'brown'],
+};
+
+function hairColorSlug(colorName){
+  return colorName.toLowerCase().replace(/\s+/g, '');
+}
+
+function getHairImgSrc(hairStyle, colorName){
+  const slug = hairColorSlug(colorName || 'white');
+  const available = HAIR_COLOR_FILES[hairStyle] || [];
+  const use = available.includes(slug) ? slug : 'white';
+  return `hair/${use}${hairStyle}.png`;
+}
+
 /* ── STATE ───────────────────────────────────────────── */
 // Each outfit slot tracks item, color, pattern independently
 const slots = {
-  hair:      {item:null, color:COLORS[1],  pattern:PATTERNS[0]}, // pink default
+  hair:      {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white default
   face:      {item:null, color:COLORS[1],  pattern:PATTERNS[0]},
   top:       {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white (underwear look)
   bottom:    {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white
@@ -890,9 +908,10 @@ function updateDoll(){
   // Hair — bald by default, show only when an item is selected
   const hairImgEl = document.getElementById('svg-hair-img');
   if(slots.hair.item){
-    if(slots.hair.item.img){
-      // PNG-based hair: show image overlay, hide SVG hair shapes
-      if(hairImgEl){ hairImgEl.setAttribute('href', slots.hair.item.img); hairImgEl.style.display=''; }
+    if(slots.hair.item.hairStyle){
+      // PNG-based hair: resolve color variant, show image overlay, hide SVG hair shapes
+      const src = getHairImgSrc(slots.hair.item.hairStyle, slots.hair.color?.name);
+      if(hairImgEl){ hairImgEl.setAttribute('href', src); hairImgEl.style.display=''; }
       document.getElementById('svg-hair-back').style.display = 'none';
       const hf = document.getElementById('svg-hair-front');
       if(hf) hf.style.display = 'none';
