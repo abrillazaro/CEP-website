@@ -544,20 +544,32 @@ const PATTERNS = [
 
 /* ── HAIR COLOR SYSTEM ───────────────────────────────── */
 // Add a new array entry here each time a new color file is created.
-// Pattern: hair/{colorslug}{hairStyle}.png
+// Map: computed color slug → actual filename slug (handles any naming discrepancies)
+// To add a new color variant, add an entry here and drop the PNG in hair/.
 const HAIR_COLOR_FILES = {
-  pixiecut: ['white', 'brown'],
+  pixiecut: {
+    white:    'white',
+    brown:    'brown',
+    hotpink:  'hotpink',
+    pink:     'pink',
+    red:      'red',
+    purple:   'purple',
+    lavender: 'lavender',
+    navyblue: 'navyblue',
+    babyblue: 'babyblue',
+    turquoise:'turqoise',  // file is intentionally spelled turqoise
+  },
 };
 
 function hairColorSlug(colorName){
-  return colorName.toLowerCase().replace(/\s+/g, '');
+  return colorName.toLowerCase().replace(/\s+/g,'');
 }
 
 function getHairImgSrc(hairStyle, colorName){
   const slug = hairColorSlug(colorName || 'white');
-  const available = HAIR_COLOR_FILES[hairStyle] || [];
-  const use = available.includes(slug) ? slug : 'white';
-  return `hair/${use}${hairStyle}.png`;
+  const variants = HAIR_COLOR_FILES[hairStyle] || {};
+  const fileSlug = variants[slug] !== undefined ? variants[slug] : 'white';
+  return `hair/${fileSlug}${hairStyle}.png`;
 }
 
 /* ── STATE ───────────────────────────────────────────── */
