@@ -56,8 +56,16 @@ body{font-family:var(--font);background:linear-gradient(135deg,var(--bg1) 0%,var
   border-radius:50%;pointer-events:none;
 }
 #doll-svg{
-  max-height:calc(100vh - 120px);width:auto;max-width:100%;
-  filter:drop-shadow(0 8px 22px rgba(0,0,0,.13));position:relative;z-index:1;
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;overflow:visible;
+}
+.zoe-wrapper{
+  position:relative;display:inline-flex;
+  max-height:calc(100vh - 120px);
+}
+#zoe-base{
+  display:block;max-height:calc(100vh - 120px);width:auto;max-width:100%;
+  filter:drop-shadow(0 8px 22px rgba(0,0,0,.13));
 }
 
 /* Wearing bar */
@@ -281,7 +289,8 @@ body{font-family:var(--font);background:linear-gradient(135deg,var(--bg1) 0%,var
   .cats-col,.items-col{display:none;}
   #game{flex-direction:column;height:auto;overflow:visible;}
   body{overflow:auto;}
-  #doll-svg{max-height:40vh;}
+  .zoe-wrapper{max-height:40vh;}
+  #zoe-base{max-height:40vh;}
   .doll-col{min-height:38vh;}
   #mobile-bottom{display:flex;}
   #wearing-bar{position:relative;bottom:auto;left:auto;transform:none;
@@ -306,114 +315,62 @@ body{font-family:var(--font);background:linear-gradient(135deg,var(--bg1) 0%,var
   <!-- LEFT: Doll -->
   <div class="doll-col">
     <div class="doll-platform"></div>
-    <svg id="doll-svg" viewBox="0 0 300 570" xmlns="http://www.w3.org/2000/svg">
-      <defs id="doll-defs"></defs>
+    <div class="zoe-wrapper">
+      <img id="zoe-base" src="zoe%20transparent.png" alt="Zoe"/>
+      <svg id="doll-svg" viewBox="0 0 992 992" xmlns="http://www.w3.org/2000/svg">
+        <defs id="doll-defs"></defs>
 
-      <!-- Ground shadow -->
-      <ellipse cx="150" cy="554" rx="74" ry="10" fill="rgba(0,0,0,.09)"/>
+        <!-- DRESS layer -->
+        <g id="svg-dress" style="display:none">
+          <path id="svg-dress-top" d="M215,362 Q168,422 158,562 L834,562 Q824,422 777,362 Q650,326 496,326 Q340,326 215,362Z" fill="#E8D5E8"/>
+          <path id="svg-dress-bot" d="M158,559 Q132,712 128,912 L864,912 Q860,712 834,559Z" fill="#E8D5E8"/>
+        </g>
 
-      <!-- DRESS layer (shown when dress selected) -->
-      <g id="svg-dress" style="display:none">
-        <path id="svg-dress-top" d="M86,200 Q64,216 54,322 L246,322 Q236,216 214,200 Q182,191 150,191 Q118,191 86,200Z" fill="#E8D5E8"/>
-        <path id="svg-dress-bot" d="M54,320 Q36,402 32,472 L268,472 Q264,402 246,320Z" fill="#E8D5E8"/>
-      </g>
+        <!-- TOP (transparent until item selected) -->
+        <path id="svg-top" d="M215,362 Q168,422 158,562 L834,562 Q824,422 777,362 Q650,326 496,326 Q340,326 215,362Z" fill="transparent"/>
 
-      <!-- TOP layer -->
-      <path id="svg-top" d="M86,200 Q64,216 54,322 L246,322 Q236,216 214,200 Q182,191 150,191 Q118,191 86,200Z" fill="#F5F5F5"/>
+        <!-- BOTTOM (transparent until item selected) -->
+        <path id="svg-bottom" d="M158,559 Q135,662 132,760 L860,760 Q857,662 834,559Z" fill="transparent"/>
 
-      <!-- BOTTOM layer -->
-      <path id="svg-bottom" d="M54,320 Q36,402 32,472 L268,472 Q264,402 246,320Z" fill="#F5F5F5"/>
+        <!-- Hair back (hidden until hair item selected) -->
+        <ellipse id="svg-hair-back" cx="496" cy="148" rx="154" ry="168" fill="#8B6356" style="display:none"/>
 
-      <!-- Hair back (hidden when no hair selected) -->
-      <ellipse id="svg-hair-back" cx="150" cy="98" rx="84" ry="90" fill="#8B6356" style="display:none"/>
+        <!-- Blush overlays — start invisible, activated by face items -->
+        <ellipse id="blush-l" cx="308" cy="235" rx="82" ry="54" fill="#FFB0C0" opacity="0"/>
+        <ellipse id="blush-r" cx="684" cy="235" rx="82" ry="54" fill="#FFB0C0" opacity="0"/>
 
-      <!-- ═══ HEAD ═══ -->
-      <circle cx="150" cy="108" r="82" fill="#F8C5A2"/>
+        <!-- Mouth reference path (invisible; lip-gloss is drawn into face-overlay) -->
+        <path id="svg-mouth" d="M436,282 Q496,316 556,282" stroke="none" fill="none" stroke-linecap="round"/>
 
-      <!-- Ears -->
-      <ellipse cx="68" cy="111" rx="13" ry="18" fill="#F8C5A2"/>
-      <ellipse cx="232" cy="111" rx="13" ry="18" fill="#F8C5A2"/>
-      <ellipse cx="68"  cy="113" rx="8"  ry="11" fill="#EFA882" opacity=".38"/>
-      <ellipse cx="232" cy="113" rx="8"  ry="11" fill="#EFA882" opacity=".38"/>
+        <!-- Face overlay (freckles, lip gloss, sparkle eyes) -->
+        <g id="face-overlay"></g>
 
-      <!-- Eyebrows -->
-      <path d="M107,72 Q120,64 133,70" stroke="#7A5038" fill="none" stroke-width="3"   stroke-linecap="round"/>
-      <path d="M167,70 Q180,64 193,72" stroke="#7A5038" fill="none" stroke-width="3"   stroke-linecap="round"/>
+        <!-- Hair front (hidden until hair item selected) -->
+        <g id="svg-hair-front" fill="#8B6356" style="display:none">
+          <path d="M242,134 Q276,64 496,50 Q716,64 750,134 Q660,90 496,84 Q330,90 242,134Z"/>
+          <path d="M242,134 Q212,210 232,292 Q252,210 266,154Z"/>
+          <path d="M750,134 Q780,210 760,292 Q740,210 726,154Z"/>
+        </g>
 
-      <!-- Eye whites -->
-      <ellipse cx="120" cy="92" rx="15" ry="17" fill="white"/>
-      <ellipse cx="180" cy="92" rx="15" ry="17" fill="white"/>
-      <!-- Iris (green) -->
-      <circle cx="120" cy="95" r="12"   fill="#5A9060"/>
-      <circle cx="180" cy="95" r="12"   fill="#5A9060"/>
-      <!-- Pupils -->
-      <circle cx="121" cy="96" r="7.5"  fill="#1a2010"/>
-      <circle cx="181" cy="96" r="7.5"  fill="#1a2010"/>
-      <!-- Sparkle -->
-      <circle cx="125" cy="89" r="3.5"  fill="white"/>
-      <circle cx="185" cy="89" r="3.5"  fill="white"/>
-      <circle cx="117" cy="101" r="1.8" fill="white" opacity=".6"/>
-      <circle cx="177" cy="101" r="1.8" fill="white" opacity=".6"/>
-      <!-- Upper lashes -->
-      <path d="M105,77 Q120,68 135,77" stroke="#2A1E10" fill="none" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M165,77 Q180,68 195,77" stroke="#2A1E10" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Necklace -->
+        <text id="acc-necklace" x="496" y="428" font-size="90"  text-anchor="middle" style="display:none">💎</text>
 
-      <!-- Rosy cheeks -->
-      <ellipse id="blush-l" cx="98"  cy="118" rx="19" ry="12" fill="#FFB0C0" opacity=".72"/>
-      <ellipse id="blush-r" cx="202" cy="118" rx="19" ry="12" fill="#FFB0C0" opacity=".72"/>
+        <!-- Shoes (transparent until shoe item selected) -->
+        <ellipse id="svg-shoe-l" cx="348" cy="924" rx="124" ry="46" fill="transparent"/>
+        <ellipse id="svg-shoe-r" cx="644" cy="924" rx="124" ry="46" fill="transparent"/>
 
-      <!-- Nose -->
-      <path d="M145,121 Q150,127 155,121" stroke="#D98870" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <!-- Accessories -->
+        <text id="acc-bag"      x="914" y="635" font-size="110" text-anchor="middle" style="display:none">👜</text>
+        <text id="acc-crown"    x="496" y="56"  font-size="150" text-anchor="middle" style="display:none">👑</text>
+        <text id="acc-hat"      x="496" y="46"  font-size="158" text-anchor="middle" style="display:none">🎩</text>
+        <text id="acc-glasses"  x="496" y="196" font-size="118" text-anchor="middle" style="display:none">🕶️</text>
+        <text id="acc-ear-l"    x="280" y="228" font-size="68"  text-anchor="middle" style="display:none">💕</text>
+        <text id="acc-ear-r"    x="714" y="228" font-size="68"  text-anchor="middle" style="display:none">💕</text>
 
-      <!-- Mouth -->
-      <path id="svg-mouth" d="M136,135 Q150,150 164,135" stroke="#D06858" stroke-width="2.8" fill="none" stroke-linecap="round"/>
-
-      <!-- Bald shine highlight -->
-      <ellipse cx="133" cy="54" rx="24" ry="16" fill="rgba(255,255,255,.22)" transform="rotate(-20,133,54)"/>
-
-      <!-- Face overlay (freckles, lip gloss, sparkle eyes) -->
-      <g id="face-overlay"></g>
-
-      <!-- Hair front (hidden when no hair selected) -->
-      <g id="svg-hair-front" fill="#8B6356" style="display:none">
-        <path d="M72,76 Q83,36 150,29 Q217,36 228,76 Q200,54 150,50 Q100,54 72,76Z"/>
-        <path d="M72,76 Q64,118 70,165 Q76,118 80,86Z"/>
-        <path d="M228,76 Q236,118 230,165 Q224,118 220,86Z"/>
-      </g>
-
-      <!-- Neck -->
-      <rect x="136" y="187" width="28" height="24" rx="8" fill="#F8C5A2"/>
-
-      <!-- Necklace -->
-      <text id="acc-necklace" x="150" y="214" font-size="22" text-anchor="middle" style="display:none">💎</text>
-
-      <!-- Arms -->
-      <rect x="44"  y="196" width="26" height="120" rx="13" fill="#F8C5A2"/>
-      <rect x="230" y="196" width="26" height="120" rx="13" fill="#F8C5A2"/>
-      <circle cx="57"  cy="323" r="14" fill="#F8C5A2"/>
-      <circle cx="243" cy="323" r="14" fill="#F8C5A2"/>
-
-      <!-- Legs -->
-      <rect x="100" y="462" width="40" height="72" rx="13" fill="#F8C5A2"/>
-      <rect x="160" y="462" width="40" height="72" rx="13" fill="#F8C5A2"/>
-
-      <!-- Shoes -->
-      <ellipse id="svg-shoe-l" cx="120" cy="539" rx="32" ry="14" fill="#D0D0D0"/>
-      <ellipse id="svg-shoe-r" cx="180" cy="539" rx="32" ry="14" fill="#D0D0D0"/>
-      <ellipse cx="112" cy="532" rx="12" ry="5" fill="rgba(255,255,255,.3)"/>
-      <ellipse cx="172" cy="532" rx="12" ry="5" fill="rgba(255,255,255,.3)"/>
-
-      <!-- Accessories -->
-      <text id="acc-bag"      x="272" y="330" font-size="26" text-anchor="middle" style="display:none">👜</text>
-      <text id="acc-crown"    x="150" y="22"  font-size="36" text-anchor="middle" style="display:none">👑</text>
-      <text id="acc-hat"      x="150" y="18"  font-size="38" text-anchor="middle" style="display:none">🎩</text>
-      <text id="acc-glasses"  x="150" y="103" font-size="28" text-anchor="middle" style="display:none">🕶️</text>
-      <text id="acc-ear-l"    x="60"  y="118" font-size="16" text-anchor="middle" style="display:none">💕</text>
-      <text id="acc-ear-r"    x="240" y="118" font-size="16" text-anchor="middle" style="display:none">💕</text>
-
-      <!-- Pattern emoji overlays -->
-      <g id="pat-overlays"></g>
-    </svg>
+        <!-- Pattern emoji overlays -->
+        <g id="pat-overlays"></g>
+      </svg>
+    </div>
 
     <div id="sparkle-box"></div>
 
@@ -594,13 +551,13 @@ let activeCat = 'tops';
 let p2Blanks = [];
 let p2CurrentIdx = 0;
 
-// Overlay positions for each slot (where emoji patterns float)
+// Overlay positions for each slot (where emoji patterns float) — 992×992 space
 const OVERLAY_POS = {
-  top:    [[104,244],[163,268],[204,242],[146,222]],
-  bottom: [[90,374],[155,412],[210,372],[148,442]],
-  dress:  [[104,242],[204,242],[128,352],[182,390],[155,296]],
-  shoes:  [[120,539],[180,539]],
-  hair:   [[120,56],[178,56],[150,38]],
+  top:    [[350,430],[496,470],[640,430],[420,400]],
+  bottom: [[340,640],[496,680],[650,640],[420,720]],
+  dress:  [[350,430],[640,430],[400,620],[590,660],[496,530]],
+  shoes:  [[348,924],[644,924]],
+  hair:   [[406,95],[586,95],[496,60]],
 };
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -881,7 +838,7 @@ function updatePatternOverlays(slotId, patId, hex){
   positions.forEach(([x,y])=>{
     const t = document.createElementNS(NS,'text');
     t.setAttribute('x',x); t.setAttribute('y',y);
-    t.setAttribute('font-size','13'); t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-size','44'); t.setAttribute('text-anchor','middle');
     t.dataset.slot = slotId;
     t.textContent = emoji;
     t.style.pointerEvents='none';
@@ -894,39 +851,38 @@ function updateFaceOverlay(){
   fo.innerHTML='';
   const item = slots.face.item;
   const colorHex = slots.face.color?.hex || '#FFB3C6';
-  // Reset blush
-  document.getElementById('blush-l').setAttribute('fill','#FFB3C6');
-  document.getElementById('blush-l').setAttribute('opacity','0.65');
-  document.getElementById('blush-r').setAttribute('fill','#FFB3C6');
-  document.getElementById('blush-r').setAttribute('opacity','0.65');
-  document.getElementById('svg-mouth').setAttribute('stroke','#E87878');
+  // Reset blush to invisible (PNG already has natural blush painted)
+  document.getElementById('blush-l').setAttribute('opacity','0');
+  document.getElementById('blush-r').setAttribute('opacity','0');
+  // Reset mouth to invisible (PNG has its own mouth)
+  document.getElementById('svg-mouth').setAttribute('stroke','none');
   if(!item||item.id==='f1') return;
 
-  if(item.id==='f2'){ // Rosy Cheeks
+  if(item.id==='f2'){ // Rosy Cheeks — light overlay on top of PNG's natural blush
     document.getElementById('blush-l').setAttribute('fill',colorHex);
-    document.getElementById('blush-l').setAttribute('opacity','0.88');
+    document.getElementById('blush-l').setAttribute('opacity','0.55');
     document.getElementById('blush-r').setAttribute('fill',colorHex);
-    document.getElementById('blush-r').setAttribute('opacity','0.88');
+    document.getElementById('blush-r').setAttribute('opacity','0.55');
   }
-  if(item.id==='f3'){ // Freckles
-    [[136,119],[149,115],[163,119],[143,127],[159,127]].forEach(([x,y])=>{
+  if(item.id==='f3'){ // Freckles — 992×992 face coords
+    [[445,244],[486,233],[544,244],[460,265],[532,265]].forEach(([x,y])=>{
       const c=document.createElementNS(NS,'circle');
-      c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r','2.5');
+      c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r','9');
       c.setAttribute('fill','#C4956A');c.setAttribute('opacity','0.55');
       fo.appendChild(c);
     });
   }
-  if(item.id==='f4'){ // Lip Gloss
+  if(item.id==='f4'){ // Lip Gloss — 992×992 mouth path
     const p=document.createElementNS(NS,'path');
-    p.setAttribute('d','M136,135 Q150,150 164,135 Q162,145 150,150 Q138,145 136,135Z');
+    p.setAttribute('d','M436,278 Q496,318 556,278 Q552,302 496,318 Q440,302 436,278Z');
     p.setAttribute('fill',colorHex); p.setAttribute('opacity','0.8');
     fo.appendChild(p);
   }
-  if(item.id==='f5'){ // Bright Eyes - star overlays near eyes
-    [[127,82],[183,82]].forEach(([x,y])=>{
+  if(item.id==='f5'){ // Bright Eyes — sparkle overlays near eyes (992×992)
+    [[406,140],[586,140]].forEach(([x,y])=>{
       const t=document.createElementNS(NS,'text');
       t.setAttribute('x',x);t.setAttribute('y',y);
-      t.setAttribute('font-size','10');t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size','38');t.setAttribute('text-anchor','middle');
       t.textContent='✨'; fo.appendChild(t);
     });
   }
@@ -963,22 +919,38 @@ function updateDoll(){
   } else {
     document.getElementById('svg-dress').style.display='none';
     document.getElementById('pat-overlays').querySelectorAll('[data-slot="dress"]').forEach(e=>e.remove());
-    const tHex = slots.top.color?.hex||'#E8E8E8';
-    const tPat = slots.top.pattern?.id||'plain';
-    applyFill('svg-top', tHex, tPat);
-    updatePatternOverlays('top', tPat, tHex);
-    const bHex = slots.bottom.color?.hex||'#D8D8D8';
-    const bPat = slots.bottom.pattern?.id||'plain';
-    applyFill('svg-bottom', bHex, bPat);
-    updatePatternOverlays('bottom', bPat, bHex);
+    if(slots.top.item){
+      const tHex = slots.top.color?.hex||'#E8E8E8';
+      const tPat = slots.top.pattern?.id||'plain';
+      applyFill('svg-top', tHex, tPat);
+      updatePatternOverlays('top', tPat, tHex);
+    } else {
+      document.getElementById('svg-top').setAttribute('fill','transparent');
+      clearOverlay('top');
+    }
+    if(slots.bottom.item){
+      const bHex = slots.bottom.color?.hex||'#D8D8D8';
+      const bPat = slots.bottom.pattern?.id||'plain';
+      applyFill('svg-bottom', bHex, bPat);
+      updatePatternOverlays('bottom', bPat, bHex);
+    } else {
+      document.getElementById('svg-bottom').setAttribute('fill','transparent');
+      clearOverlay('bottom');
+    }
   }
 
-  // Shoes
-  const sHex = slots.shoes.color?.hex||'#D0D0D0';
-  const sPat = slots.shoes.pattern?.id||'plain';
-  applyFill('svg-shoe-l', sHex, sPat);
-  applyFill('svg-shoe-r', sHex, sPat);
-  updatePatternOverlays('shoes', sPat, sHex);
+  // Shoes — transparent when no shoe item selected
+  if(slots.shoes.item){
+    const sHex = slots.shoes.color?.hex||'#D0D0D0';
+    const sPat = slots.shoes.pattern?.id||'plain';
+    applyFill('svg-shoe-l', sHex, sPat);
+    applyFill('svg-shoe-r', sHex, sPat);
+    updatePatternOverlays('shoes', sPat, sHex);
+  } else {
+    document.getElementById('svg-shoe-l').setAttribute('fill','transparent');
+    document.getElementById('svg-shoe-r').setAttribute('fill','transparent');
+    clearOverlay('shoes');
+  }
 
   // Accessories
   updateAccessory();
