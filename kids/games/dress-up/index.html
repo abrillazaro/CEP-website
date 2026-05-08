@@ -69,10 +69,10 @@ body{font-family:var(--font);background:linear-gradient(135deg,var(--bg1) 0%,var
 }
 #hair-overlay-img{
   position:absolute;
-  top:0%;
+  top:6%;
   left:50%;
   transform:translateX(-50%);
-  width:33%;
+  width:42%;
   height:auto;
   pointer-events:none;
   display:none;
@@ -919,7 +919,7 @@ function updateDoll(){
     if(slots.hair.item.hairStyle){
       // PNG-based hair: resolve color variant, show overlay <img>, hide SVG hair shapes
       const src = getHairImgSrc(slots.hair.item.hairStyle, slots.hair.color?.name);
-      if(hairImgEl){ hairImgEl.src = src; hairImgEl.style.display=''; }
+      if(hairImgEl){ hairImgEl.src = src; hairImgEl.style.display='block'; }
       document.getElementById('svg-hair-back').style.display = 'none';
       const hf = document.getElementById('svg-hair-front');
       if(hf) hf.style.display = 'none';
