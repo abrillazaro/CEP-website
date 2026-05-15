@@ -927,7 +927,7 @@ function updateDoll(){
       // PNG-based hair: resolve color variant, show overlay <img>, hide SVG hair shapes
       const src = getHairImgSrc(slots.hair.item.hairStyle, slots.hair.color?.name);
       if(hairImgEl){ hairImgEl.src = src; hairImgEl.style.display='block';
-        hairImgEl.style.top = slots.hair.item.hairStyle === 'bob' ? '10%' : '5%'; }
+        hairImgEl.style.top = slots.hair.item.hairStyle === 'bob' ? '8.5%' : '5%'; }
       document.getElementById('svg-hair-back').style.display = 'none';
       const hf = document.getElementById('svg-hair-front');
       if(hf) hf.style.display = 'none';
