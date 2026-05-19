@@ -783,8 +783,8 @@ function selectItem(itemId, cat){
   if(cat==='dresses'){ slots.top.item=null; slots.bottom.item=null; }
   else if(cat==='tops'||cat==='bottoms'){ slots.dress.item=null; }
 
-  // Toggle
-  slot.item = slot.item?.id===item.id ? null : item;
+  // Hair items always select (never toggle off); all others toggle
+  slot.item = (cat !== 'hair' && slot.item?.id===item.id) ? null : item;
 
   updateDoll();
   renderAll();
@@ -1157,7 +1157,7 @@ function renderP2Choices(idx){
   const b=p2Blanks[idx];
   document.getElementById('p2-prompt').textContent=b.prompt;
   document.getElementById('p2-choices').innerHTML=b.options.map(opt=>`
-    <button class="choice-btn" onclick="handleChoice(${idx},'${opt.replace(/'/g,"\\'")}')">${opt}</button>`).join('');
+    <button class="choice-btn" onclick="handleChoice(${idx},'${opt.replace(/'/g,"\\'")}')"> ${opt}</button>`).join('');
 }
 
 function startPhase2(){
