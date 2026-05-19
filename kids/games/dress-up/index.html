@@ -570,7 +570,7 @@ function getHairImgSrc(hairStyle, colorName){
 /* ── STATE ───────────────────────────────────────────── */
 // Each outfit slot tracks item, color, pattern independently
 const slots = {
-  hair:      {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white default
+  hair:      {item:ITEMS.hair[0], color:COLORS[12], pattern:PATTERNS[0]}, // white pixie cut default
   face:      {item:null, color:COLORS[1],  pattern:PATTERNS[0]},
   top:       {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white (underwear look)
   bottom:    {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white
@@ -927,7 +927,8 @@ function updateDoll(){
       // PNG-based hair: resolve color variant, show overlay <img>, hide SVG hair shapes
       const src = getHairImgSrc(slots.hair.item.hairStyle, slots.hair.color?.name);
       if(hairImgEl){ hairImgEl.src = src; hairImgEl.style.display='block';
-        hairImgEl.style.top = slots.hair.item.hairStyle === 'bob' ? '7.9%' : '5%'; }
+        hairImgEl.style.top = slots.hair.item.hairStyle === 'bob' ? '7.9%' : '5%';
+        hairImgEl.style.width = slots.hair.item.hairStyle === 'bob' ? '32%' : '31%'; }
       document.getElementById('svg-hair-back').style.display = 'none';
       const hf = document.getElementById('svg-hair-front');
       if(hf) hf.style.display = 'none';
