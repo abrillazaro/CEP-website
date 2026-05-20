@@ -39,11 +39,12 @@
       height:70px;
     }
     .logo-link{
-      font-size:26px;font-weight:900;color:#fff;
-      text-decoration:none;letter-spacing:-0.5px;white-space:nowrap;
-      text-shadow:0 2px 8px rgba(0,0,0,.2);
+      text-decoration:none;display:flex;align-items:center;
     }
-    .logo-link span{color:var(--yellow);}
+    .logo-img{
+      height:52px;width:auto;display:block;
+      mix-blend-mode:multiply;
+    }
     .search-wrap{
       flex:1;max-width:480px;margin:0 auto;position:relative;
     }
@@ -208,7 +209,7 @@
 
 <header class="site-header">
   <div class="header-inner">
-    <a class="logo-link" href="index.html">CEP <span>Kids</span> 🌟</a>
+    <a class="logo-link" href="index.html"><img class="logo-img" src="CEPKIDSLOGO.png" alt="CEP Kids"/></a>
     <div class="search-wrap">
       <input type="text" id="searchInput" placeholder="Search activities…" oninput="filterCards()" autocomplete="off"/>
       <span class="search-icon">🔍</span>
