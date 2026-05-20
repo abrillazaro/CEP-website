@@ -82,28 +82,7 @@
     }
     .hero p{font-size:18px;font-weight:600;opacity:.9;margin-bottom:0;}
 
-    /* ── CATEGORY FILTERS ── */
-    .filters{
-      max-width:1200px;margin:0 auto;
-      padding:28px 24px 0;
-      display:flex;gap:10px;flex-wrap:wrap;
-    }
-    .filter-btn{
-      padding:9px 20px;border-radius:24px;border:2.5px solid transparent;
-      font-family:var(--font);font-size:14px;font-weight:800;
-      cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;
-      background:#fff;color:#444;
-      box-shadow:0 2px 8px rgba(0,0,0,.08);
-    }
-    .filter-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.12);}
-    .filter-btn.active{color:#fff;border-color:transparent;transform:translateY(-2px);}
-    .filter-btn[data-cat="All"].active{background:linear-gradient(135deg,#6C3DDB,#0099FF);}
-    .filter-btn[data-cat="Letters"].active{background:var(--orange);}
-    .filter-btn[data-cat="Numbers"].active{background:var(--green);}
-    .filter-btn[data-cat="Animals"].active{background:var(--teal);}
-    .filter-btn[data-cat="Colors"].active{background:var(--pink);}
-    .filter-btn[data-cat="Phrases"].active{background:var(--purple);}
-    .filter-btn[data-cat="Games"].active{background:var(--red);}
+
 
     /* ── GRID ── */
     .grid-wrap{
@@ -222,16 +201,6 @@
   <h1>Let's Learn English! <span class="wave">👋</span></h1>
   <p>Fun activities for kids aged 6–10 &bull; ¡Actividades divertidas!</p>
 </section>
-
-<div class="filters" id="filterRow">
-  <button class="filter-btn active" data-cat="All"    onclick="setFilter('All')">⭐ All</button>
-  <button class="filter-btn"        data-cat="Letters" onclick="setFilter('Letters')">🔤 Letters</button>
-  <button class="filter-btn"        data-cat="Numbers" onclick="setFilter('Numbers')">🔢 Numbers</button>
-  <button class="filter-btn"        data-cat="Animals" onclick="setFilter('Animals')">🐾 Animals</button>
-  <button class="filter-btn"        data-cat="Colors"  onclick="setFilter('Colors')">🎨 Colors</button>
-  <button class="filter-btn"        data-cat="Phrases" onclick="setFilter('Phrases')">💬 Phrases</button>
-  <button class="filter-btn"        data-cat="Games"   onclick="setFilter('Games')">🎮 Games</button>
-</div>
 
 <div class="grid-wrap">
   <div class="activities-grid" id="activitiesGrid">
