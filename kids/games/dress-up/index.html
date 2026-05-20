@@ -472,6 +472,13 @@ const ITEMS = {
     {id:'h1', label:'Pixie Cut',    hairStyle:'pixiecut',        img:'hair/whitepixiecut.png',        voice:'pixie cut',        noun:'pixie cut'},
     {id:'h2', label:'Bob',         hairStyle:'bob',             img:'hair/whitebob.png',             voice:'bob',              noun:'bob'},
     {id:'h3', label:'Long Straight',hairStyle:'longstraighthair',img:'hair/longstraighthairblack.png',voice:'long straight hair',noun:'long straight hair'},
+    {id:'h4', label:'Curly Bob',   hairStyle:'',                img:'',                              voice:'curly bob',        noun:'curly bob'},
+    {id:'h5', label:'Space Buns',  hairStyle:'',                img:'',                              voice:'space buns',       noun:'space buns'},
+    {id:'h6', label:'Long Curly',  hairStyle:'',                img:'',                              voice:'long curly hair',  noun:'long curly hair'},
+    {id:'h7', label:'Bun',         hairStyle:'',                img:'',                              voice:'bun',              noun:'bun'},
+    {id:'h8', label:'Pony Hair',   hairStyle:'',                img:'',                              voice:'pony hair',        noun:'pony hair'},
+    {id:'h9', label:'Crown Braids',hairStyle:'',                img:'',                              voice:'crown braids',     noun:'crown braids'},
+    {id:'h10',label:'French Braids',hairStyle:'',               img:'',                              voice:'french braids',    noun:'french braids'},
   ],
   face:[],
   tops:[],
@@ -716,7 +723,7 @@ function renderItems(cat, gridId){
       onmouseenter="onItemHover(event,'${item.id}','${cat}')"
       onmousemove="moveTip(event)"
       onmouseleave="hideTip()">
-      ${item.img ? `<img src="${item.img}" style="width:44px;height:44px;object-fit:contain;border-radius:8px;" alt="${item.label}"/>` : `<span class="item-emoji">${item.emoji||''}</span>`}
+      ${item.img ? `<img src="${item.img}" style="width:44px;height:44px;object-fit:contain;border-radius:8px;" alt="${item.label}"/>` : `<span class="item-emoji">💇</span>`}
       <span class="item-label">${item.label}</span>
     </div>`).join('');
 }
