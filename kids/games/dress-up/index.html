@@ -955,7 +955,7 @@ function updateDoll(){
       const src = getHairImgSrc(slots.hair.item.hairStyle, slots.hair.color?.name);
       if(hairImgEl){ hairImgEl.src = src; hairImgEl.style.display='block';
         hairImgEl.style.top = slots.hair.item.hairStyle === 'bob' ? '7.9%' : '5%';
-        hairImgEl.style.width = slots.hair.item.hairStyle === 'bob' ? '32%' : '31%'; }
+        hairImgEl.style.width = slots.hair.item.hairStyle === 'bob' ? '32%' : slots.hair.item.hairStyle === 'longstraighthair' ? '58.9%' : '31%'; }
       document.getElementById('svg-hair-back').style.display = 'none';
       const hf = document.getElementById('svg-hair-front');
       if(hf) hf.style.display = 'none';
