@@ -468,18 +468,7 @@ const CATEGORIES = [
 ];
 
 const ITEMS = {
-  hair:[
-    {id:'h1', label:'Pixie Cut',    hairStyle:'',                img:'',                              voice:'pixie cut',        noun:'pixie cut'},
-    {id:'h2', label:'Bob',         hairStyle:'',                img:'',                              voice:'bob',              noun:'bob'},
-    {id:'h3', label:'Long Straight',hairStyle:'',               img:'',                              voice:'long straight hair',noun:'long straight hair'},
-    {id:'h4', label:'Curly Bob',   hairStyle:'',                img:'',                              voice:'curly bob',        noun:'curly bob'},
-    {id:'h5', label:'Space Buns',  hairStyle:'',                img:'',                              voice:'space buns',       noun:'space buns'},
-    {id:'h6', label:'Long Curly',  hairStyle:'',                img:'',                              voice:'long curly hair',  noun:'long curly hair'},
-    {id:'h7', label:'Bun',         hairStyle:'',                img:'',                              voice:'bun',              noun:'bun'},
-    {id:'h8', label:'Pony Hair',   hairStyle:'',                img:'',                              voice:'pony hair',        noun:'pony hair'},
-    {id:'h9', label:'Crown Braids',hairStyle:'',                img:'',                              voice:'crown braids',     noun:'crown braids'},
-    {id:'h10',label:'French Braids',hairStyle:'',               img:'',                              voice:'french braids',    noun:'french braids'},
-  ],
+  hair:[],
   face:[],
   tops:[],
   bottoms:[],
@@ -597,7 +586,7 @@ function getHairImgSrc(hairStyle, colorName){
 /* ── STATE ───────────────────────────────────────────── */
 // Each outfit slot tracks item, color, pattern independently
 const slots = {
-  hair:      {item:ITEMS.hair[0], color:COLORS[12], pattern:PATTERNS[0]}, // white pixie cut default
+  hair:      {item:null, color:COLORS[12], pattern:PATTERNS[0]},
   face:      {item:null, color:COLORS[1],  pattern:PATTERNS[0]},
   top:       {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white (underwear look)
   bottom:    {item:null, color:COLORS[12], pattern:PATTERNS[0]}, // white
