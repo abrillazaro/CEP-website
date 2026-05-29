@@ -305,6 +305,17 @@
   .foot-cep{text-align:center;color:var(--muted);font-size:14px;padding:38px 0 8px;
     letter-spacing:.01em;}
 
+  /* Word-by-word breakdown */
+  .bdt-wrap{margin-top:26px;padding-top:26px;border-top:1px solid var(--line);}
+  .bdt{width:100%;border-collapse:collapse;font-size:14.5px;}
+  .bdt th{text-align:left;padding:0 14px 8px;font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:2px solid var(--line);}
+  .bdt td{padding:9px 14px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45;}
+  .bdt tr:last-child td{border-bottom:none;}
+  .bdt .w-sp{font-weight:600;color:var(--ink);}
+  .bdt .w-en{color:var(--navy-soft);}
+  .bdt .w-note{color:var(--muted);font-style:italic;font-size:13px;}
+
   @media (max-width:820px){
     .shell,.nav{padding-left:20px;padding-right:20px;}
     .locked-grid{grid-template-columns:1fr;}
@@ -441,6 +452,24 @@ function detectLang(text) {
   return "en";
 }
 
+async function getBreakdown(spanishText) {
+  const words = spanishText.match(/[\wáéíóúüñÁÉÍÓÚÜÑ]+/g) || [];
+  if (!words.length || words.length > 10) return [];
+  const rows = await Promise.all(words.map(async word => {
+    try {
+      const r = await fetch(
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=en&dt=t&dt=bd&q=${encodeURIComponent(word)}`
+      );
+      if (!r.ok) return null;
+      const d = await r.json();
+      const meaning = d[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
+      const note = Array.isArray(d[3]) && d[3]?.[0]?.[0] ? d[3][0][0] : "";
+      return meaning ? { word, meaning, note } : null;
+    } catch { return null; }
+  }));
+  return rows.filter(Boolean);
+}
+
 async function translatePhrase(input, forced) {
   let sourceLang, targetLang;
   if (forced === "en2es") {
@@ -459,6 +488,10 @@ async function translatePhrase(input, forced) {
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
   if (!translation) throw new Error("Empty response");
 
+  const spanishText = targetLang === "es" ? translation : input;
+  let breakdown = [];
+  try { breakdown = await getBreakdown(spanishText); } catch {}
+
   return {
     input,
     sourceLang,
@@ -468,8 +501,37 @@ async function translatePhrase(input, forced) {
     register: "",
     pronunciation: "",
     examples: [],
-    idioms: []
+    idioms: [],
+    breakdown
   };
+}
+
+function WordBreakdown({ t, rows }) {
+  if (!rows || !rows.length) return null;
+  const isEs = t === STR.es;
+  return (
+    <div className="bdt-wrap">
+      <div className="sec-label">{isEs ? "Palabra por palabra" : "Word by word"}</div>
+      <table className="bdt">
+        <thead>
+          <tr>
+            <th>{isEs ? "Español" : "Spanish"}</th>
+            <th>{isEs ? "Inglés" : "English"}</th>
+            <th>{isEs ? "Notas" : "Notes"}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i}>
+              <td className="w-sp">{row.word}</td>
+              <td className="w-en">{row.meaning}</td>
+              <td className="w-note">{row.note}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 function speak(text, lang) {
@@ -601,6 +663,7 @@ function Result({ t, data, onSave, onPro, onNew }) {
               </div>
             )}
           </> : null}
+          <WordBreakdown t={t} rows={data.breakdown} />
         </div>
         <div className="gate">
           <div className="gate-head">
