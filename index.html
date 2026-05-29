@@ -452,10 +452,131 @@ function detectLang(text) {
   return "en";
 }
 
+const ES_GRAMMAR = {
+  // Prepositions
+  a:["to / at","preposition"], de:["of / from","preposition"], en:["in / on / at","preposition"],
+  con:["with","preposition"], sin:["without","preposition"], por:["by / for / through","preposition"],
+  para:["for / in order to","preposition"], sobre:["about / on top of","preposition"],
+  entre:["between / among","preposition"], hasta:["until / up to","preposition"],
+  desde:["from / since","preposition"], hacia:["toward","preposition"],
+  bajo:["under","preposition"], ante:["before / in front of","preposition"],
+  al:["to the","a + el (contraction)"], del:["of the","de + el (contraction)"],
+  // Articles
+  el:["the","masc. definite article"], la:["the","fem. definite article"],
+  los:["the","masc. pl. definite article"], las:["the","fem. pl. definite article"],
+  un:["a / an","masc. indefinite article"], una:["a / an","fem. indefinite article"],
+  unos:["some","masc. pl. indefinite article"], unas:["some","fem. pl. indefinite article"],
+  // Conjunctions / subordinators
+  y:["and","conjunction"], e:["and","conjunction (before i-/hi-)"],
+  o:["or","conjunction"], u:["or","conjunction (before o-/ho-)"],
+  pero:["but","conjunction"], sino:["but rather","conjunction"],
+  que:["that / which","conjunction / relative pronoun"],
+  porque:["because","conjunction"], aunque:["although","conjunction"],
+  cuando:["when","conjunction (relative)"], donde:["where","conjunction (relative)"],
+  como:["as / like","comparison conjunction"], si:["if","conditional conjunction"],
+  // Negation & key adverbs
+  no:["not / no","negation"], sí:["yes","affirmation"],
+  ya:["already / now","adverb"], también:["also / too","adverb"],
+  tampoco:["neither / not either","adverb"], muy:["very","adverb"],
+  más:["more / anymore","adverb"], menos:["less / fewer","adverb"],
+  tan:["so / as","comparison adverb"], bien:["well","adverb"],
+  mal:["badly","adverb"], siempre:["always","adverb"],
+  nunca:["never","adverb"], jamás:["never (emphatic)","adverb"],
+  ahora:["now","adverb"], después:["after / later","adverb"],
+  antes:["before / earlier","adverb"], aquí:["here","adverb"],
+  allí:["there","adverb"], allá:["over there","adverb"],
+  hoy:["today","adverb"], mañana:["tomorrow","adverb"],
+  ayer:["yesterday","adverb"],
+  // Interrogatives
+  cómo:["how","interrogative adverb"],
+  cuándo:["when","interrogative adverb"],
+  dónde:["where","interrogative adverb"],
+  qué:["what","interrogative pronoun"],
+  quién:["who","interrogative pronoun"],
+  quiénes:["who","interrogative pronoun (pl.)"],
+  cuál:["which one","interrogative pronoun"],
+  cuáles:["which ones","interrogative pronoun (pl.)"],
+  cuánto:["how much","interrogative adjective"],
+  cuántos:["how many","interrogative adjective (masc.)"],
+  cuántas:["how many","interrogative adjective (fem.)"],
+  // Subject pronouns
+  yo:["I","subject pronoun"], tú:["you","subject pronoun (informal)"],
+  él:["he","subject pronoun"], ella:["she","subject pronoun"],
+  nosotros:["we","subject pronoun (masc.)"], nosotras:["we","subject pronoun (fem.)"],
+  ellos:["they","subject pronoun (masc.)"], ellas:["they","subject pronoun (fem.)"],
+  usted:["you","formal subject pronoun"], ustedes:["you all","formal plural"],
+  // Object / reflexive pronouns
+  me:["me / myself","reflexive / object pronoun"],
+  te:["you / yourself","reflexive / object pronoun"],
+  se:["himself / herself / itself","reflexive pronoun"],
+  le:["him / her / you (indirect)","indirect object pronoun"],
+  lo:["him / it (direct, masc.)","direct object pronoun"],
+  nos:["us / ourselves","reflexive / object pronoun"],
+  les:["them / you (indirect)","indirect object pronoun (pl.)"],
+  // Demonstratives
+  este:["this","demonstrative (masc.)"], esta:["this","demonstrative (fem.)"],
+  esto:["this","demonstrative (neuter)"],
+  ese:["that","demonstrative (masc.)"], esa:["that","demonstrative (fem.)"],
+  eso:["that","demonstrative (neuter)"],
+  // Quantifiers
+  todo:["all / everything","quantifier"], todos:["all / everyone","quantifier (masc.)"],
+  toda:["all / everything","quantifier (fem.)"], todas:["all / everyone","quantifier (fem. pl.)"],
+  mucho:["a lot / much","quantifier"], mucha:["a lot / much","quantifier (fem.)"],
+  muchos:["many","quantifier (masc.)"], muchas:["many","quantifier (fem.)"],
+  poco:["a little","quantifier"], poca:["a little","quantifier (fem.)"],
+  // ser — to be (permanent/identity)
+  soy:["I am","ser (to be — permanent)"], eres:["you are","ser (to be — permanent)"],
+  es:["he/she/it is","ser (to be — permanent)"], somos:["we are","ser (to be — permanent)"],
+  sois:["you all are","ser (to be — permanent, Spain)"], son:["they are","ser (to be — permanent)"],
+  era:["was / used to be","ser, imperfect"], fue:["was / went","ser/ir, preterite"],
+  // estar — to be (state/location)
+  estoy:["I am","estar (to be — state/location)"], estás:["you are","estar (to be — state/location)"],
+  está:["he/she/it is","estar (to be — state/location)"],
+  estamos:["we are","estar (to be — state/location)"],
+  están:["they are","estar (to be — state/location)"],
+  estaba:["was","estar, imperfect"],
+  // tener — to have
+  tengo:["I have","tener (to have)"], tienes:["you have","tener (to have)"],
+  tiene:["he/she has","tener (to have)"], tenemos:["we have","tener (to have)"],
+  tienen:["they have","tener (to have)"],
+  // haber — auxiliary / 'there is'
+  hay:["there is / there are","haber (impersonal)"],
+  había:["there was / there were","haber, imperfect"],
+  he:["I have (done)","haber, auxiliary"], has:["you have (done)","haber, auxiliary"],
+  // ir — to go
+  voy:["I go","ir (to go)"], vas:["you go","ir (to go)"],
+  va:["he/she goes","ir (to go)"], vamos:["we go / let's go","ir (to go)"],
+  van:["they go","ir (to go)"],
+  // poder — to be able to / can
+  puedo:["I can","poder (to be able to)"], puedes:["you can","poder (to be able to)"],
+  puede:["he/she can","poder (to be able to)"], podemos:["we can","poder (to be able to)"],
+  pueden:["they can","poder (to be able to)"],
+  // querer — to want / to love
+  quiero:["I want / I love","querer (to want)"], quieres:["you want","querer (to want)"],
+  quiere:["he/she wants","querer (to want)"], queremos:["we want","querer (to want)"],
+  quieren:["they want","querer (to want)"],
+  // hacer — to do / to make
+  hago:["I do / I make","hacer (to do/make)"], haces:["you do","hacer (to do/make)"],
+  hace:["he/she does / it makes","hacer (to do/make)"],
+  hacemos:["we do","hacer (to do/make)"], hacen:["they do","hacer (to do/make)"],
+  // decir — to say
+  digo:["I say","decir (to say)"], dices:["you say","decir (to say)"],
+  dice:["he/she says","decir (to say)"], decimos:["we say","decir (to say)"],
+  dicen:["they say","decir (to say)"],
+  // Common greetings / discourse
+  hola:["hello","greeting"], adiós:["goodbye","farewell"],
+  gracias:["thank you","expression of gratitude"],
+  favor:["favor","in 'por favor' = please"],
+  saber:["to know","infinitive (facts/information)"],
+  conocer:["to know / to meet","infinitive (people/places)"],
+};
+
 async function getBreakdown(spanishText) {
   const words = spanishText.match(/[\wáéíóúüñÁÉÍÓÚÜÑ]+/g) || [];
   if (!words.length || words.length > 10) return [];
   const rows = await Promise.all(words.map(async word => {
+    const lookup = ES_GRAMMAR[word.toLowerCase()];
+    if (lookup) return { word, meaning: lookup[0], note: lookup[1] };
     try {
       const r = await fetch(
         `https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=en&dt=t&dt=bd&q=${encodeURIComponent(word)}`
