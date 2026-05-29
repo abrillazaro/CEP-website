@@ -434,7 +434,7 @@ const STR = {
   }
 };
 
-/* ---- Translator — MyMemory (free, no API key, browser-side) ---- */
+/* ---- Translator — Google Translate (free, no API key, browser-side) ---- */
 function detectLang(text) {
   if (/[áéíóúüñ¿¡àèìòùâêîôûäëïöü]/i.test(text)) return "es";
   if (/\b(el|la|los|las|un|una|de|en|que|es|por|para|con|no|se|al|del|más|pero|yo|te|me|le|su|sus|este|esta|hay|muy|bien|como|todo|cuando|porque|también|si|ya)\b/i.test(text)) return "es";
@@ -452,19 +452,18 @@ async function translatePhrase(input, forced) {
     targetLang = sourceLang === "es" ? "en" : "es";
   }
 
-  const r = await fetch(
-    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(input)}&langpair=${sourceLang}|${targetLang}`
-  );
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(input)}`;
+  const r = await fetch(url);
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   const data = await r.json();
-  if (data.responseStatus !== 200 && data.responseStatus !== "200")
-    throw new Error(`${data.responseStatus}`);
+  const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
+  if (!translation) throw new Error("Empty response");
 
   return {
     input,
     sourceLang,
     targetLang,
-    translation: data.responseData?.translatedText || "",
+    translation,
     partOfSpeech: "",
     register: "",
     pronunciation: "",
