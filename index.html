@@ -434,51 +434,48 @@ const STR = {
   }
 };
 
-/* ---- Translator — POST to serverless function ---- */
-// Deploy netlify/functions/translate.js and set ANTHROPIC_API_KEY in Netlify env vars.
-// The redirect in netlify.toml maps this path to /.netlify/functions/translate.
-const TRANSLATE_ENDPOINT = "/api/translate";
+/* ---- Translator — LibreTranslate (free, no API key, browser-side) ---- */
+const LIBRE_BASE = "https://translate.argosopentech.com";
 
 async function translatePhrase(input, forced) {
-  const dirNote = forced === "en2es"
-    ? "The input is English; translate INTO Spanish."
-    : forced === "es2en"
-    ? "The input is Spanish; translate INTO English."
-    : "Detect whether the input is Spanish or English. If Spanish, translate into English; if English, translate into Spanish.";
+  let sourceLang, targetLang;
 
-  const prompt =
-`You are a careful bilingual Spanish<->English dictionary for language learners.
-${dirNote}
-Input: """${input}"""
+  if (forced === "en2es") {
+    sourceLang = "en"; targetLang = "es";
+  } else if (forced === "es2en") {
+    sourceLang = "es"; targetLang = "en";
+  } else {
+    const detRes = await fetch(`${LIBRE_BASE}/detect`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ q: input })
+    });
+    if (!detRes.ok) throw new Error(`HTTP ${detRes.status}`);
+    const detData = await detRes.json();
+    const detected = detData[0]?.language || "es";
+    sourceLang = detected === "en" ? "en" : "es";
+    targetLang = detected === "en" ? "es" : "en";
+  }
 
-Reply with STRICT JSON only, no markdown, no commentary. Shape:
-{
- "sourceLang": "en" | "es",
- "targetLang": "en" | "es",
- "translation": "the best translation of the input in the target language",
- "partOfSpeech": "short part of speech or grammatical note, or empty string for phrases",
- "register": "neutral" | "formal" | "informal" | "colloquial",
- "pronunciation": "simple phonetic respelling of the TRANSLATION (not IPA)",
- "examples": [ {"source":"natural sentence in the SOURCE language using the input","target":"its translation in the TARGET language"} ],
- "idioms": [ {"phrase":"a related idiom or natural collocation in the target language","meaning":"plain-language meaning","example":"short example sentence"} ],
- "note": "one short tip on natural usage (max 18 words)"
-}
-Give exactly 2 examples and exactly 2 idioms. Keep everything concise and accurate.`;
-
-  const res = await fetch(TRANSLATE_ENDPOINT, {
+  const transRes = await fetch(`${LIBRE_BASE}/translate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt })
+    body: JSON.stringify({ q: input, source: sourceLang, target: targetLang, format: "text" })
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  let txt = (await res.text()).trim();
-  const fence = txt.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fence) txt = fence[1].trim();
-  const s = txt.indexOf("{"), e = txt.lastIndexOf("}");
-  if (s !== -1 && e !== -1) txt = txt.slice(s, e + 1);
-  const data = JSON.parse(txt);
-  data.input = input;
-  return data;
+  if (!transRes.ok) throw new Error(`HTTP ${transRes.status}`);
+  const transData = await transRes.json();
+
+  return {
+    input,
+    sourceLang,
+    targetLang,
+    translation: transData.translatedText || "",
+    partOfSpeech: "",
+    register: "",
+    pronunciation: "",
+    examples: [],
+    idioms: []
+  };
 }
 
 function speak(text, lang) {
