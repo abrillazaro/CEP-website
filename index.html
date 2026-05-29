@@ -434,42 +434,37 @@ const STR = {
   }
 };
 
-/* ---- Translator — LibreTranslate (free, no API key, browser-side) ---- */
-const LIBRE_BASE = "https://translate.argosopentech.com";
+/* ---- Translator — MyMemory (free, no API key, browser-side) ---- */
+function detectLang(text) {
+  if (/[áéíóúüñ¿¡àèìòùâêîôûäëïöü]/i.test(text)) return "es";
+  if (/\b(el|la|los|las|un|una|de|en|que|es|por|para|con|no|se|al|del|más|pero|yo|te|me|le|su|sus|este|esta|hay|muy|bien|como|todo|cuando|porque|también|si|ya)\b/i.test(text)) return "es";
+  return "en";
+}
 
 async function translatePhrase(input, forced) {
   let sourceLang, targetLang;
-
   if (forced === "en2es") {
     sourceLang = "en"; targetLang = "es";
   } else if (forced === "es2en") {
     sourceLang = "es"; targetLang = "en";
   } else {
-    const detRes = await fetch(`${LIBRE_BASE}/detect`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ q: input })
-    });
-    if (!detRes.ok) throw new Error(`HTTP ${detRes.status}`);
-    const detData = await detRes.json();
-    const detected = detData[0]?.language || "es";
-    sourceLang = detected === "en" ? "en" : "es";
-    targetLang = detected === "en" ? "es" : "en";
+    sourceLang = detectLang(input);
+    targetLang = sourceLang === "es" ? "en" : "es";
   }
 
-  const transRes = await fetch(`${LIBRE_BASE}/translate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ q: input, source: sourceLang, target: targetLang, format: "text" })
-  });
-  if (!transRes.ok) throw new Error(`HTTP ${transRes.status}`);
-  const transData = await transRes.json();
+  const r = await fetch(
+    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(input)}&langpair=${sourceLang}|${targetLang}`
+  );
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const data = await r.json();
+  if (data.responseStatus !== 200 && data.responseStatus !== "200")
+    throw new Error(`${data.responseStatus}`);
 
   return {
     input,
     sourceLang,
     targetLang,
-    translation: transData.translatedText || "",
+    translation: data.responseData?.translatedText || "",
     partOfSpeech: "",
     register: "",
     pronunciation: "",
