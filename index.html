@@ -315,6 +315,11 @@
   .bdt .w-sp{font-weight:600;color:var(--ink);}
   .bdt .w-en{color:var(--navy-soft);}
   .bdt .w-note{color:var(--muted);font-style:italic;font-size:13px;}
+  .ow-wrap{margin-top:26px;padding-top:26px;border-top:1px solid var(--line);}
+  .ow-row{display:flex;align-items:baseline;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);}
+  .ow-row:last-child{border-bottom:none;}
+  .ow-tag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);min-width:76px;flex-shrink:0;}
+  .ow-text{color:var(--ink);line-height:1.5;}
 
   @media (max-width:820px){
     .shell,.nav{padding-left:20px;padding-right:20px;}
@@ -848,21 +853,37 @@ async function translatePhrase(input, forced) {
     targetLang = sourceLang === "es" ? "en" : "es";
   }
 
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(input)}`;
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
   const r = await fetch(url);
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   const data = await r.json();
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
   if (!translation) throw new Error("Empty response");
 
+  const alternatives = [];
+  if (Array.isArray(data[5])) {
+    data[5].forEach(group => {
+      if (Array.isArray(group[1])) {
+        group[1].forEach(alt => {
+          const t = alt?.[0];
+          if (t && t !== translation && !alternatives.includes(t) && alternatives.length < 3) alternatives.push(t);
+        });
+      }
+    });
+  }
+
   let breakdown = [];
   try { breakdown = await getBreakdown(input, sourceLang, targetLang); } catch {}
+
+  const literal = breakdown.length ? breakdown.map(r => r.tgt).join(" ") : "";
 
   return {
     input,
     sourceLang,
     targetLang,
     translation,
+    literal,
+    alternatives,
     partOfSpeech: "",
     register: "",
     pronunciation: "",
@@ -898,6 +919,33 @@ function WordBreakdown({ t, rows, sourceLang, targetLang }) {
           ))}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function OtherWays({ t, natural, literal, alternatives, sourceLang, targetLang }) {
+  const isEs = t === STR.es;
+  const items = [];
+  const lowerNatural = natural?.toLowerCase().trim();
+  if (literal && literal.toLowerCase().trim() !== lowerNatural) {
+    items.push({ label: isEs ? "Literal" : "Literal", text: literal });
+  }
+  items.push({ label: isEs ? "Natural" : "Natural", text: natural });
+  (alternatives || []).forEach(a => {
+    if (a.toLowerCase().trim() !== lowerNatural) {
+      items.push({ label: isEs ? "Alternativa" : "Alternative", text: a });
+    }
+  });
+  if (items.length < 2) return null;
+  return (
+    <div className="ow-wrap">
+      <div className="sec-label">{isEs ? "Otras formas de decirlo" : "Other ways to say this"}</div>
+      {items.map((item, i) => (
+        <div key={i} className="ow-row">
+          <span className="ow-tag">{item.label}</span>
+          <span className="ow-text">{item.text}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -1032,6 +1080,7 @@ function Result({ t, data, onSave, onPro, onNew }) {
             )}
           </> : null}
           <WordBreakdown t={t} rows={data.breakdown} sourceLang={data.sourceLang} targetLang={data.targetLang} />
+          <OtherWays t={t} natural={data.translation} literal={data.literal} alternatives={data.alternatives} sourceLang={data.sourceLang} targetLang={data.targetLang} />
         </div>
         <div className="gate">
           <div className="gate-head">
