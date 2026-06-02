@@ -369,7 +369,7 @@ function Icon({ name, size = 22, stroke = 2 }) {
 /* ---- Copy (EN / ES) ---- */
 const STR = {
   en: {
-    conjugate: "Conjugate", login: "Log in",
+    conjugate: "Conjugate", login: "Log in", about: "About",
     eyebrow: "The Corporate English Project",
     h1pre: "At last, ", h1b: "embody", h1c: " English.", h1a: "Translate now.",
     sub: "Instant Spanish ⇄ English, built for learners.",
@@ -409,7 +409,7 @@ const STR = {
     footer: "© The Corporate English Project · CEP · México, México"
   },
   es: {
-    conjugate: "Conjugar", login: "Entrar",
+    conjugate: "Conjugar", login: "Entrar", about: "Nosotros",
     eyebrow: "The Corporate English Project",
     h1pre: "Por fin, ", h1b: "encarna", h1c: " el inglés.", h1a: "Tradúcelo ya.",
     sub: "Español ⇄ inglés al instante, para quienes aprenden.",
@@ -981,6 +981,7 @@ function Nav({ t, lang, setLang, onLogin, onHome }) {
           <button className="seg" onClick={() => setLang("en")} style={segStyle(lang === "en")}>EN</button>
           <button className="seg" onClick={() => setLang("es")} style={segStyle(lang === "es")}>ES</button>
         </div>
+        <a className="nav-link hide-sm" href="about.html">{t.about}</a>
         <button className="nav-link hide-sm" onClick={e => e.preventDefault()}>{t.conjugate}</button>
         <button className="btn-login" onClick={onLogin}>{t.login}</button>
       </div>
@@ -1121,37 +1122,6 @@ function Result({ t, data, onSave, onPro, onNew }) {
 function StorySections({ t, onContact }) {
   return (
     <>
-      <section className="section" id="ethos">
-        <div className="sec-wrap ethos" style={{ padding:"104px 10px 88px" }}>
-          <h2 className="sec-title" style={{ margin:"0 0 30px 10px" }}>{t.ethosTitle}</h2>
-          <div className="sec-rule" style={{ margin:"0 0 30px 10px" }} />
-          <div className="prose">
-            <p style={{ margin:"0 0 22px 10px" }}>{t.ethos1}</p>
-            <p style={{ padding:"0 0 0 10px" }}>{t.ethos2}</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="section alt" id="founder">
-        <div className="sec-wrap founder" style={{ padding:"72px 0 72px 20px" }}>
-          <img className="watermark" src="logo-navy.png" alt="" style={{ top:40, right:40 }} />
-          <h2 className="sec-title" style={{ padding:"0 15px 0 10px" }}>{t.founderTitle}</h2>
-          <div className="sec-rule" style={{ margin:"0 0 30px 10px" }} />
-          <div className="founder-grid" style={{ padding:"0 0 0 40px" }}>
-            <div className="video-col">
-              <div className="video-ph" role="button" tabIndex={0} title={t.founderVideoCap}>
-                <div className="play"><Icon name="play" size={30} /></div>
-              </div>
-              <div className="video-cap">{t.founderVideoCap}</div>
-            </div>
-            <div className="founder-bio">
-              <p className="kicker">{t.founderKicker}</p>
-              <div className="prose"><p>{t.founderBio}</p></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="section" id="contact">
         <div className="sec-wrap contact" style={{ padding:"88px 30px 56px 20px" }}>
           <img className="watermark" src="logo-navy.png" alt="" style={{ bottom:0, right:40 }} />
