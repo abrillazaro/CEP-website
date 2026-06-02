@@ -452,6 +452,112 @@ function detectLang(text) {
   return "en";
 }
 
+/* ---- English cultural / colloquial notes ---- */
+const EN_CULTURE = {
+  howdy:"informal greeting; mainly used in Texas and other western US states",
+  yall:"contraction of 'you all'; colloquial in the American South",
+  "y'all":"contraction of 'you all'; colloquial in the American South",
+  gonna:"informal contraction of 'going to'",
+  wanna:"informal contraction of 'want to'",
+  gotta:"informal contraction of 'got to / have to'",
+  kinda:"informal contraction of 'kind of'",
+  sorta:"informal contraction of 'sort of'",
+  ain:"root of 'ain't' — informal negation; dialectal",
+  "ain't":"informal negation ('am not / is not / are not / have not'); dialectal",
+  reckon:"informal 'think / suppose'; common in southern and rural US",
+  fixin:"in 'fixin to': informal 'about to'; common in southern US",
+  yonder:"'over there'; archaic / dialectal, common in the South and Appalachia",
+  holler:"'valley' or 'to call out'; Appalachian and southern US dialect",
+  dude:"informal term of address; popularized on the US West Coast",
+  bro:"informal term for a male friend or peer",
+  nope:"informal 'no'", yep:"informal 'yes'", yup:"informal 'yes'",
+  nah:"informal 'no'", yeah:"informal 'yes'",
+  dunno:"informal 'don't know'",
+  lemme:"informal 'let me'", gimme:"informal 'give me'",
+  buddy:"informal term of address; common in northern US and Canada",
+  hon:"informal 'honey'; common term of endearment in the South",
+  honey:"term of endearment; translates as 'cariño'",
+  sugar:"southern US term of endearment",
+  bless:"in 'bless your heart': southern expression; can be sincere or gently patronizing",
+  "don't":"contraction of 'do not'", "can't":"contraction of 'cannot'",
+  "won't":"contraction of 'will not'", "isn't":"contraction of 'is not'",
+  "aren't":"contraction of 'are not'", "wasn't":"contraction of 'was not'",
+  "weren't":"contraction of 'were not'", "didn't":"contraction of 'did not'",
+  "doesn't":"contraction of 'does not'", "haven't":"contraction of 'have not'",
+  "hasn't":"contraction of 'has not'", "hadn't":"contraction of 'had not'",
+  "i'm":"contraction of 'I am'", "i'll":"contraction of 'I will'",
+  "i've":"contraction of 'I have'", "i'd":"contraction of 'I would / I had'",
+  "you're":"contraction of 'you are'", "you'll":"contraction of 'you will'",
+  "it's":"contraction of 'it is / it has'", "that's":"contraction of 'that is'",
+  "there's":"contraction of 'there is'", "what's":"contraction of 'what is'",
+  "let's":"contraction of 'let us'",
+};
+
+/* ---- English grammar notes ---- */
+const EN_GRAMMAR = {
+  // Subject pronouns
+  i:"subject pronoun (1st person singular)",
+  you:"subject pronoun (2nd person singular / plural)",
+  he:"subject pronoun (3rd person masc.)", she:"subject pronoun (3rd person fem.)",
+  it:"subject pronoun (3rd person neuter)", we:"subject pronoun (1st person plural)",
+  they:"subject pronoun (3rd person plural)",
+  // Object pronouns
+  me:"object pronoun (1st person)", him:"object pronoun (3rd person masc.)",
+  her:"object / possessive (3rd person fem.)", us:"object pronoun (1st person plural)",
+  them:"object pronoun (3rd person plural)",
+  // Possessives
+  my:"possessive adjective (1st person)", your:"possessive adjective (2nd person)",
+  his:"possessive adjective (3rd person masc.)", its:"possessive adjective (3rd person neuter)",
+  our:"possessive adjective (1st person plural)", their:"possessive adjective (3rd person plural)",
+  // Articles
+  the:"definite article", a:"indefinite article", an:"indefinite article (before vowel sounds)",
+  // To be
+  am:"to be (1st person singular present)", is:"to be (3rd person singular present)",
+  are:"to be (2nd person / plural present)", was:"to be (1st / 3rd person singular past)",
+  were:"to be (2nd person / plural past)", been:"to be (past participle)", being:"to be (present participle)",
+  // To do / have
+  do:"to do / auxiliary verb", does:"to do (3rd person singular)", did:"to do (simple past)",
+  doing:"present participle of 'do'",
+  have:"to have", has:"to have (3rd person singular)", had:"to have (simple past)",
+  having:"present participle of 'have'",
+  // Modals
+  can:"modal verb (ability)", could:"modal verb (past ability / polite request)",
+  will:"modal verb (future)", would:"modal verb (conditional)",
+  should:"modal verb (recommendation)", may:"modal verb (permission / possibility)",
+  might:"modal verb (weak possibility)", must:"modal verb (necessity / deduction)",
+  shall:"modal verb (formal future / suggestion)",
+  // Prepositions
+  in:"preposition (location / time)", on:"preposition (surface / scheduled time)",
+  at:"preposition (specific place or time)", to:"preposition / infinitive marker",
+  for:"preposition (purpose / duration / recipient)", of:"preposition (belonging / composition)",
+  with:"preposition (accompaniment)", from:"preposition (origin)",
+  by:"preposition (agent / means / deadline)", about:"preposition (topic)",
+  // Conjunctions
+  and:"conjunction (addition)", but:"conjunction (contrast)", or:"conjunction (alternative)",
+  so:"conjunction (result) / intensifier", because:"conjunction (reason)",
+  if:"conjunction (condition)", when:"conjunction (time / condition)",
+  while:"conjunction (simultaneous action)", that:"conjunction / demonstrative / relative pronoun",
+  // Key adverbs
+  not:"negation", no:"negation / determiner", never:"absolute negation of time",
+  always:"adverb of frequency", already:"before expected time",
+  still:"continuation", just:"recent past / exactly / only",
+  now:"present time", very:"intensifier", too:"also / excessively",
+  also:"addition", only:"limiting adverb",
+  // Interrogatives
+  how:"interrogative adverb (manner / degree)", what:"interrogative pronoun",
+  where:"interrogative adverb (place)", who:"interrogative pronoun (person)",
+  why:"interrogative adverb (reason)", which:"interrogative / relative pronoun",
+  // Demonstratives
+  this:"demonstrative (near, singular)", those:"demonstrative (far, plural)",
+  these:"demonstrative (near, plural)",
+  // Common participles / gerunds
+  going:"present participle of 'go'", coming:"present participle of 'come'",
+  doing:"present participle of 'do'", saying:"present participle of 'say'",
+  getting:"present participle of 'get'", making:"present participle of 'make'",
+  taking:"present participle of 'take'", looking:"present participle of 'look'",
+  trying:"present participle of 'try'",
+};
+
 const ES_GRAMMAR = {
   // Prepositions
   a:["to / at","preposition"], de:["of / from","preposition"], en:["in / on / at","preposition"],
@@ -571,22 +677,41 @@ const ES_GRAMMAR = {
   conocer:["to know / to meet","infinitive (people/places)"],
 };
 
-async function getBreakdown(spanishText) {
-  const words = spanishText.match(/[\wáéíóúüñÁÉÍÓÚÜÑ]+/g) || [];
-  if (!words.length || words.length > 10) return [];
+async function getBreakdown(inputText, sourceLang, targetLang) {
+  // Include apostrophes so contractions like "y'all", "don't" stay as one token
+  const rawWords = inputText.match(/[\w'áéíóúüñÁÉÍÓÚÜÑ]+/g) || [];
+  // Deduplicate while preserving first-occurrence order
+  const seen = new Set();
+  const words = rawWords.filter(w => {
+    const k = w.toLowerCase(); return seen.has(k) ? false : (seen.add(k), true);
+  });
+  if (!words.length || words.length > 12) return [];
+
   const rows = await Promise.all(words.map(async word => {
-    const lookup = ES_GRAMMAR[word.toLowerCase()];
-    if (lookup) return { word, meaning: lookup[0], note: lookup[1] };
+    const key = word.toLowerCase();
+    // Spanish input: grammar lookup gives both translation and note — skip API call
+    if (sourceLang === "es") {
+      const hit = ES_GRAMMAR[key];
+      if (hit) return { src: word, tgt: hit[0], note: hit[1] };
+    }
+    // Fetch translation for this word
+    let tgt = "", apiNote = "";
     try {
       const r = await fetch(
-        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=es&tl=en&dt=t&dt=bd&q=${encodeURIComponent(word)}`
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=bd&q=${encodeURIComponent(word)}`
       );
-      if (!r.ok) return null;
-      const d = await r.json();
-      const meaning = d[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
-      const note = Array.isArray(d[3]) && d[3]?.[0]?.[0] ? d[3][0][0] : "";
-      return meaning ? { word, meaning, note } : null;
-    } catch { return null; }
+      if (r.ok) {
+        const d = await r.json();
+        tgt = d[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
+        apiNote = Array.isArray(d[3]) && d[3]?.[0]?.[0] ? d[3][0][0] : "";
+      }
+    } catch {}
+    if (!tgt) return null;
+    // Best note: culture lookup → grammar lookup → API POS → empty
+    const note = sourceLang === "en"
+      ? (EN_CULTURE[key] || EN_GRAMMAR[key] || apiNote)
+      : (ES_GRAMMAR[key]?.[1] || apiNote);
+    return { src: word, tgt, note };
   }));
   return rows.filter(Boolean);
 }
@@ -609,9 +734,8 @@ async function translatePhrase(input, forced) {
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
   if (!translation) throw new Error("Empty response");
 
-  const spanishText = targetLang === "es" ? translation : input;
   let breakdown = [];
-  try { breakdown = await getBreakdown(spanishText); } catch {}
+  try { breakdown = await getBreakdown(input, sourceLang, targetLang); } catch {}
 
   return {
     input,
@@ -627,25 +751,27 @@ async function translatePhrase(input, forced) {
   };
 }
 
-function WordBreakdown({ t, rows }) {
+function WordBreakdown({ t, rows, sourceLang, targetLang }) {
   if (!rows || !rows.length) return null;
   const isEs = t === STR.es;
+  const srcLabel = sourceLang === "en" ? "English" : (isEs ? "Español" : "Spanish");
+  const tgtLabel = targetLang === "en" ? (isEs ? "Inglés" : "English") : (isEs ? "Español" : "Spanish");
   return (
     <div className="bdt-wrap">
       <div className="sec-label">{isEs ? "Palabra por palabra" : "Word by word"}</div>
       <table className="bdt">
         <thead>
           <tr>
-            <th>{isEs ? "Español" : "Spanish"}</th>
-            <th>{isEs ? "Inglés" : "English"}</th>
+            <th>{srcLabel}</th>
+            <th>{tgtLabel}</th>
             <th>{isEs ? "Notas" : "Notes"}</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((row, i) => (
             <tr key={i}>
-              <td className="w-sp">{row.word}</td>
-              <td className="w-en">{row.meaning}</td>
+              <td className="w-sp">{row.src}</td>
+              <td className="w-en">{row.tgt}</td>
               <td className="w-note">{row.note}</td>
             </tr>
           ))}
@@ -784,7 +910,7 @@ function Result({ t, data, onSave, onPro, onNew }) {
               </div>
             )}
           </> : null}
-          <WordBreakdown t={t} rows={data.breakdown} />
+          <WordBreakdown t={t} rows={data.breakdown} sourceLang={data.sourceLang} targetLang={data.targetLang} />
         </div>
         <div className="gate">
           <div className="gate-head">
