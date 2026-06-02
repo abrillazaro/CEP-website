@@ -118,13 +118,21 @@
 <script type="text/babel">
 const { useState, useEffect } = React;
 
+function renderItalic(str) {
+  if (!str) return null;
+  return str.split(/(\*[^*]+\*)/g).map((part, i) =>
+    /^\*[^*]+\*$/.test(part) ? <em key={i}>{part.slice(1,-1)}</em> : part
+  );
+}
+
 const STR = {
   en: {
     about: "About",
     home: "Home",
     ethosTitle: "Ethos",
-    ethos1: "The Corporate English Project is a holistic English-language learning initiative rooted in the Latin concept of corpus, or body — the idea that language is a whole body of communication, not a collection of isolated skills. The goal is to develop complete communicators — not just grammar students or conversation practitioners, but individuals who can read, write, speak, listen, and think in English with confidence.",
-    ethos2: "Language is inherently communal. True fluency requires not just technical knowledge but the ability to communicate with others in real time, across topics, levels, and contexts. The CEP is built on the belief that the best learning happens when students are immersed in the full experience of the language — together.",
+    ethos1: "Welcome to the Corporate English Project—or the CEP for short. Our project gets its name from the literal, etymological root, *corpus*. Based in lifestyle incorporation and community, the project's philosophy is centered on a body of people, a global community, a diaspora. Our mission is to enable English learners to join the diaspora by incorporating English into their everyday routines and habits so they can fully enjoy being a part of this global English-speaking community.",
+    ethos2: "Deep language learning can be challenging, but our goal is never to make it complex. Instead, the goal of our project is to make the process approachable. The CEP approach is completely holistic and intertwined within its own parts—blending the practice of classes and tutoring, the daily habits of drills, and the deep-dive context of cross-reference all into one seamless experience.",
+    ethos3: "Ultimately, language is inherently communal. Therefore, the ability to communicate with others in real time—across topics, levels, and contexts—is a vital tool for embodying this unique new skill. The CEP is built on the belief that the best learning happens when students are immersed in the full experience of the language, with all the necessary tools, and together.",
     founderTitle: "Our Founder", founderKicker: "Meet Abril",
     founderBio: "Abril is a Texas native and native English speaker with a Bachelor of Arts in Philosophy from the University of Texas at Austin. She has over 15 years of experience helping Spanish-speaking family members develop their English communication skills, has volunteered as a Spanish interpreter for pro bono legal services, and studied paralegal studies and American law at her local community college. She is currently based in EdoMéx, Mexico, where she is pursuing law school while building The Corporate English Project from the ground up.",
     founderVideoCap: "Founder intro · video coming soon",
@@ -198,8 +206,11 @@ function AboutPage() {
           <h2 className="sec-title" style={{ margin:"0 0 30px 10px" }}>{t.ethosTitle}</h2>
           <div className="sec-rule" style={{ margin:"0 0 30px 10px" }} />
           <div className="prose">
-            <p style={{ margin:"0 0 22px 10px" }}>{t.ethos1}</p>
-            <p style={{ padding:"0 0 0 10px" }}>{t.ethos2}</p>
+            {[t.ethos1, t.ethos2, t.ethos3].filter(Boolean).map((para, i, arr) => (
+              <p key={i} style={{ margin: i < arr.length - 1 ? "0 0 22px 10px" : "0 0 0 10px" }}>
+                {renderItalic(para)}
+              </p>
+            ))}
           </div>
         </div>
       </section>
