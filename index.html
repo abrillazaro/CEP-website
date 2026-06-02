@@ -507,8 +507,10 @@ const STR = {
 
 /* ---- Translator — Google Translate (free, no API key, browser-side) ---- */
 function detectLang(text) {
-  if (/[áéíóúüñ¿¡àèìòùâêîôûäëïöü]/i.test(text)) return "es";
-  if (/\b(el|la|los|las|un|una|de|en|que|es|por|para|con|no|se|al|del|más|pero|yo|te|me|le|su|sus|este|esta|hay|muy|bien|como|todo|cuando|porque|también|si|ya)\b/i.test(text)) return "es";
+  // Accented characters and Spanish-only punctuation are definitive
+  if (/[áéíóúüñ¿¡]/i.test(text)) return "es";
+  // Only words that are not common standalone English words
+  if (/\b(los|las|del|una|que|por|para|pero|sus|mis|este|esta|ese|esa|muy|bien|como|todo|todos|toda|cuando|porque|tambien|conmigo|contigo|consigo|tengo|tienes|tiene|tenemos|quiero|quieres|queremos|voy|vas|vamos|soy|eres|somos|estoy|estamos|nosotros|ellos|ellas|siempre|nunca|hola|gracias|buenos|buenas|donde|cuanto|mucho|muchos|mucha|muchas|poco|poca)\b/i.test(text)) return "es";
   return "en";
 }
 
