@@ -99,6 +99,29 @@
   .foot-cep{text-align:center;color:var(--muted);font-size:14px;padding:38px 0 18px;
     letter-spacing:.01em;}
 
+  /* Clickable word definitions */
+  @keyframes defPop{
+    from{opacity:0;transform:translateX(-50%) translateY(5px);}
+    to{opacity:1;transform:translateX(-50%) translateY(0);}}
+  .def-anchor{position:relative;display:inline;}
+  .def-word{cursor:pointer;border-radius:3px;padding:1px 2px;margin:0 -2px;
+    transition:background .15s;text-decoration-color:var(--sage);}
+  .def-word:hover,.def-word.open{font-weight:700;background:rgba(93,124,105,.13);
+    text-decoration:underline;text-decoration-color:var(--sage);text-underline-offset:3px;}
+  .def-pop{position:absolute;bottom:calc(100% + 10px);left:50%;
+    transform:translateX(-50%);background:#fff;border:1px solid var(--line-strong);
+    border-radius:13px;padding:13px 16px;width:max-content;max-width:280px;
+    white-space:normal;
+    box-shadow:0 8px 28px rgba(21,40,64,.13),0 2px 8px rgba(21,40,64,.07);
+    z-index:200;animation:defPop .15s ease both;}
+  .def-pop-word{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--sage-deep);margin-bottom:6px;}
+  .def-pop-text{display:block;font-size:13.5px;color:var(--muted);line-height:1.55;}
+  .def-pop::after{content:"";position:absolute;bottom:-5px;left:50%;
+    transform:translateX(-50%) rotate(45deg);width:9px;height:9px;
+    background:#fff;border-right:1px solid var(--line-strong);
+    border-bottom:1px solid var(--line-strong);}
+
   @media (max-width:820px){
     .nav{padding-left:20px;padding-right:20px;}
     .sec-wrap{padding-left:22px;padding-right:22px;}
@@ -116,13 +139,69 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script type="text/babel">
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
-function renderItalic(str) {
-  if (!str) return null;
-  return str.split(/(\*[^*]+\*)/g).map((part, i) =>
-    /^\*[^*]+\*$/.test(part) ? <em key={i}>{part.slice(1,-1)}</em> : part
+const WORD_DEFS = {
+  "literal":        "used here in its exact, true form — the project name really does come from this root, without exaggeration or metaphor",
+  "etymological":   "relating to a word's origin and historical development — tracing 'corporate' back to its Latin source",
+  "corpus":         "Latin for body — the root of 'corporate'; both the origin of the project's name and a metaphor for a living community",
+  "incorporation":  "the act of making something a natural part of daily life — weaving English into everyday habits rather than treating it as a separate subject",
+  "philosophy":     "the guiding beliefs and principles behind the project — its core 'why' that shapes how everything is designed and run",
+  "diaspora":       "a community united by a shared language or culture, spread across many places — here, the global English-speaking world",
+  "approachable":   "easy to begin and engage with, never intimidating — designed to feel natural and achievable no matter where you start",
+  "holistic":       "addressing the whole person and the whole language together — reading, writing, speaking, and listening as one connected system",
+  "intertwined":    "woven together so each part reinforces the others — classes, daily drills, and cross-reference are one experience, not separate tracks",
+  "cross-reference":"connecting a word or concept across different subjects and contexts, so its meaning deepens with every new encounter",
+  "seamless":       "flowing from one part to the next without visible breaks — all components blend into a single, unified journey",
+  "communal":       "shaped by and shared within a community — language only becomes real when exchanged between people, not studied in isolation",
+  "embodying":      "making an abstract skill real through lived practice — not just knowing English in theory, but using it naturally without thinking",
+  "immersed":       "surrounded by all sides of the language at once — speaking, hearing, reading, and writing in real contexts, not just studying rules",
+};
+
+const _dk = Object.keys(WORD_DEFS).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+const TEXT_RX = new RegExp(`(\\*[^*]+\\*|\\b(?:${_dk.join('|')})\\b)`, 'gi');
+
+function WordDef({ word, def }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = e => { if (!ref.current?.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open]);
+
+  return (
+    <span ref={ref} className="def-anchor">
+      <span className={"def-word" + (open ? " open" : "")}
+        role="button" tabIndex={0}
+        onClick={() => setOpen(o => !o)}
+        onKeyDown={e => (e.key === "Enter" || e.key === " ") && setOpen(o => !o)}>
+        {word}
+      </span>
+      {open && (
+        <span className="def-pop">
+          <span className="def-pop-word">{word}</span>
+          <span className="def-pop-text">{def}</span>
+        </span>
+      )}
+    </span>
   );
+}
+
+function renderText(str) {
+  if (!str) return null;
+  return str.split(TEXT_RX).map((part, i) => {
+    if (/^\*[^*]+\*$/.test(part)) {
+      const inner = part.slice(1, -1);
+      const def = WORD_DEFS[inner.toLowerCase()];
+      return def ? <em key={i}><WordDef word={inner} def={def} /></em> : <em key={i}>{inner}</em>;
+    }
+    const def = WORD_DEFS[part.toLowerCase()];
+    if (def) return <WordDef key={i} word={part} def={def} />;
+    return part;
+  });
 }
 
 const STR = {
@@ -208,7 +287,7 @@ function AboutPage() {
           <div className="prose">
             {[t.ethos1, t.ethos2, t.ethos3].filter(Boolean).map((para, i, arr) => (
               <p key={i} style={{ margin: i < arr.length - 1 ? "0 0 22px 10px" : "0 0 0 10px" }}>
-                {renderItalic(para)}
+                {renderText(para)}
               </p>
             ))}
           </div>
