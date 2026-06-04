@@ -79,7 +79,7 @@
     <span class="icon">✅</span>
     <div class="title">Email confirmed!</div>
     <div class="sub">You're all set! Taking you to your dashboard…</div>
-    <a class="btn" href="teacher.html">Go to dashboard</a>
+    <a class="btn" id="dashLink" href="teacher.html">Go to dashboard</a>
   </div>
 
   <!-- Error -->
@@ -107,10 +107,18 @@ function show(state, errMsg) {
 }
 
 function redirectSoon() {
-  setTimeout(function() {
-    window.location.href = 'teacher.html';
-  }, 2500);
+  var next = new URLSearchParams(window.location.search).get('next') || 'teacher.html';
+  // only allow relative paths to this same origin
+  if (next.startsWith('http') || next.includes('//')) next = 'teacher.html';
+  setTimeout(function() { window.location.href = next; }, 2500);
 }
+
+(function() {
+  var next = new URLSearchParams(window.location.search).get('next') || 'teacher.html';
+  if (next.startsWith('http') || next.includes('//')) next = 'teacher.html';
+  var link = document.getElementById('dashLink');
+  if (link) link.href = next;
+})();
 
 (async function() {
   try {
