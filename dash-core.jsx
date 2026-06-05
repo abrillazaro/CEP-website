@@ -159,11 +159,23 @@ function TeamsMark({ size = 18 }) {
 }
 
 /* ---------------- Data ---------------- */
-const STUDENT = {
-  name: "Abril Ramírez", first: "Abril", initials: "AR",
-  level: "B1 · Intermediate", levelEs: "B1 · Intermedio",
-  instructor: "Abril Lázaro"
-};
+// Read real user name from Supabase session stored in localStorage
+const STUDENT = (function() {
+  const fallback = { name: "Student", first: "Student", initials: "S" };
+  try {
+    const raw = localStorage.getItem("sb-qkxhzpicqjxodeadhcvw-auth-token");
+    if (!raw) return { ...fallback, level: "B1 · Intermediate", levelEs: "B1 · Intermedio", instructor: "Abril Lázaro" };
+    const session = JSON.parse(raw);
+    const meta = (session.user && session.user.user_metadata) || {};
+    const email = (session.user && session.user.email) || "";
+    const fullName = meta.full_name || meta.name || email.split("@")[0].replace(/[._]/g, " ");
+    const first = fullName.split(" ")[0];
+    const initials = fullName.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+    return { name: fullName, first, initials, level: "B1 · Intermediate", levelEs: "B1 · Intermedio", instructor: "Abril Lázaro" };
+  } catch(e) {
+    return { ...fallback, level: "B1 · Intermediate", levelEs: "B1 · Intermedio", instructor: "Abril Lázaro" };
+  }
+})();
 
 const NAV = [
 { id: "home", icon: "home", en: "Home", es: "Inicio" },
