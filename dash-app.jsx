@@ -115,7 +115,7 @@ function DashApp() {
               <button className="btn btn-navy" onClick={() => {
                 setLogoutOpen(false);
                 try { localStorage.removeItem('sb-qkxhzpicqjxodeadhcvw-auth-token'); } catch(e) {}
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
               }}>{t.logout}</button>
             </div>
           </div>
