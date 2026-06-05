@@ -725,13 +725,6 @@ function Sidebar({ view, go, t, lang, expanded, setExpanded, profileOpen, setPro
             <div className="av" style={instr ? { background: "var(--navy)" } : undefined}>{me.initials}</div>
             <div><b>{me.name}</b><small>{instr ? t.roleInstructor : lang === "es" ? STUDENT.levelEs : STUDENT.level}</small></div>
           </div>
-          <div className="pop-role">
-            <span className="pop-role-l">{t.viewingAs}</span>
-            <div className="role-seg">
-              <button className={!instr ? "on" : ""} onClick={() => setRole("student")}>{t.roleStudent}</button>
-              <button className={instr ? "on" : ""} onClick={() => setRole("instructor")}>{t.roleInstructor}</button>
-            </div>
-          </div>
           <button className="pop-item" onClick={() => {go("account");setProfileOpen(false);}}>
             <Icon name="gear" size={18} /> {t.settings}
           </button>
