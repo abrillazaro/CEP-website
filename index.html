@@ -355,6 +355,7 @@
 </head>
 <body>
 <div id="root"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -1165,6 +1166,8 @@ const INSTRUCTOR_PASS  = "CEP-instructor-2026";
 
 function Modal({ t, mode, onClose, onSubmit, onInstructor }) {
   const [instrErr, setInstrErr] = useState("");
+  const [loginErr, setLoginErr] = useState("");
+  const [loginBusy, setLoginBusy] = useState(false);
   const emailRef = useRef(null);
   const passRef  = useRef(null);
   const isInstr  = mode === "instructor";
@@ -1175,7 +1178,7 @@ function Modal({ t, mode, onClose, onSubmit, onInstructor }) {
               : t.mSaveTitle;
   const lead  = mode === "pro" ? t.mProLead : (!isInstr && mode !== "login") ? t.mSaveLead : "";
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (isInstr) {
       const em = emailRef.current?.value || "";
       const pw = passRef.current?.value  || "";
@@ -1185,6 +1188,20 @@ function Modal({ t, mode, onClose, onSubmit, onInstructor }) {
       } else {
         setInstrErr(t.instrErr);
       }
+      return;
+    }
+    if (mode === "login") {
+      const em = emailRef.current?.value || "";
+      const pw = passRef.current?.value  || "";
+      setLoginErr(""); setLoginBusy(true);
+      const _sb = window.supabase.createClient(
+        'https://qkxhzpicqjxodeadhcvw.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFreGh6cGljcWp4b2RlYWRoY3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNTg2NTUsImV4cCI6MjA5MjgzNDY1NX0.wLL0h9vQ8W5xp7mKFbq-CphiqE4cRVGTQ-KayuteHt8'
+      );
+      const { error } = await _sb.auth.signInWithPassword({ email: em, password: pw });
+      setLoginBusy(false);
+      if (error) { setLoginErr("Incorrect email or password."); return; }
+      window.location.href = "dashboard.html";
       return;
     }
     onSubmit();
@@ -1200,15 +1217,16 @@ function Modal({ t, mode, onClose, onSubmit, onInstructor }) {
         <form onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
           <div className="field">
             <label>{t.email}</label>
-            <input ref={isInstr ? emailRef : null} type="email" placeholder="name@email.com" required />
+            <input ref={isInstr || mode === "login" ? emailRef : null} type="email" placeholder="name@email.com" required />
           </div>
           <div className="field">
             <label>{t.password}</label>
-            <input ref={isInstr ? passRef : null} type="password" placeholder="••••••••" required />
+            <input ref={isInstr || mode === "login" ? passRef : null} type="password" placeholder="••••••••" required />
           </div>
           {instrErr ? <p className="instr-err">{instrErr}</p> : null}
-          <button className="btn-primary" type="submit">
-            {mode === "login" || isInstr ? t.login : t.create}
+          {loginErr ? <p className="instr-err">{loginErr}</p> : null}
+          <button className="btn-primary" type="submit" disabled={loginBusy}>
+            {loginBusy ? "Logging in…" : (mode === "login" || isInstr ? t.login : t.create)}
           </button>
         </form>
         {!isInstr && <>
@@ -1303,7 +1321,7 @@ function App() {
         style={{ background: glowBg, top: hasResult ? "30%" : "42%" }} />
 
       <Nav t={t} lang={lang} setLang={setLang}
-        onLogin={() => window.location.href = "login.html"} onHome={onHome} />
+        onLogin={() => setModal("login")} onHome={onHome} />
 
       <main className={"hero" + (hasResult ? " compact" : "")}>
         <div className="shell">
