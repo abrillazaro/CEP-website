@@ -9,6 +9,23 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="dash.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Auth gate — redirect to login if no active session
+(async function() {
+  const _sb = window.supabase.createClient(
+    'https://qkxhzpicqjxodeadhcvw.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFreGh6cGljcWp4b2RlYWRoY3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNTg2NTUsImV4cCI6MjA5MjgzNDY1NX0.wLL0h9vQ8W5xp7mKFbq-CphiqE4cRVGTQ-KayuteHt8'
+  );
+  const { data } = await _sb.auth.getSession();
+  if (!data.session) window.location.replace('login.html');
+  // Wire logout to Supabase sign-out
+  window.__cepLogout = async function() {
+    await _sb.auth.signOut();
+    window.location.href = 'login.html';
+  };
+})();
+</script>
 </head>
 <body>
 <div id="root"></div>
