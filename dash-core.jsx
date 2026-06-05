@@ -340,7 +340,9 @@ function fmtWhen(ts, lang) {
 const INSTRUCTOR = { name: "Abril Lázaro", first: "Abril", initials: "AL", color: "#5d7c69",
   level: "Instructor", levelEs: "Instructora" };
 const ROLE_KEY = "cep_role_v1";
-let _role = (() => { try { return localStorage.getItem(ROLE_KEY) || "student"; } catch (e) { return "student"; } })();
+// Student dashboard always starts as student — clear any stored instructor role
+let _role = "student";
+try { localStorage.removeItem(ROLE_KEY); } catch (e) {}
 const _roleSubs = new Set();
 function getRole() { return _role; }
 function setRole(r) {
