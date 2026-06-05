@@ -141,6 +141,10 @@ function Icon({ name, size = 22, stroke = 2 }) {
     case "link":return <svg {...p}><path d="M10 13a3 3 0 0 0 4.2 0l3-3a3 3 0 0 0-4.2-4.2L11.5 7" /><path d="M14 11a3 3 0 0 0-4.2 0l-3 3A3 3 0 0 0 11 18.2L12.5 17" /></svg>;
     case "switch":return <svg {...p}><path d="M16 3l4 4-4 4" /><path d="M20 7H8a4 4 0 0 0-4 4" /><path d="M8 21l-4-4 4-4" /><path d="M4 17h12a4 4 0 0 0 4-4" /></svg>;
     case "shield":return <svg {...p}><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z" /><path d="m9 12 2 2 4-4" /></svg>;
+    case "users":return <svg {...p}><circle cx="9" cy="8" r="3.4" /><path d="M3.5 19.2a5.5 5.5 0 0 1 11 0" /><path d="M16.2 5.3a3 3 0 0 1 0 5.8" /><path d="M17.8 13.6a5.5 5.5 0 0 1 3.2 5" /></svg>;
+    case "clipboard":return <svg {...p}><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 3h6v3H9z" /><path d="M8.5 12h7M8.5 16h4" /></svg>;
+    case "flag":return <svg {...p}><path d="M5 21V4" /><path d="M5 4.5h11l-2.2 3.5L16 11.5H5" /></svg>;
+    case "megaphone":return <svg {...p}><path d="m3 11 18-5v12L3 14v-3z" /><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" /><path d="M7 11.5v3.5" /></svg>;
     default:return null;
   }
 }
@@ -184,6 +188,7 @@ const NAV = [
 { id: "deck", icon: "deck", en: "Study Deck", es: "Mazo" },
 { id: "assignments", icon: "task", en: "Tasks", es: "Tareas" },
 { id: "progress", icon: "chart", en: "Progress", es: "Progreso" },
+{ id: "announce", icon: "megaphone", en: "Announcements", es: "Anuncios" },
 { id: "feed", icon: "feed", en: "Feed", es: "Muro" },
 { id: "meetings", icon: "video", en: "Meetings", es: "Clases" }];
 
@@ -270,6 +275,19 @@ function useDeck() {
 function removeCard(term) {
   const key = (term || "").trim().toLowerCase();
   _commitDeck(_deck.filter((c) => (c.term || "").trim().toLowerCase() !== key));
+}
+/* patch a card in place (used for instructor flag / unflag) */
+function updateCard(term, patch) {
+  const key = (term || "").trim().toLowerCase();
+  _commitDeck(_deck.map((c) => (c.term || "").trim().toLowerCase() === key ? { ...c, ...patch } : c));
+}
+/* instructor suggests a card into the student's deck (deduped by term) */
+function suggestCard(card) {
+  const key = (card.term || "").trim().toLowerCase();
+  if (!key) return false;
+  if (_deck.some((c) => (c.term || "").trim().toLowerCase() === key)) return false;
+  _commitDeck([{ ...card, due: true, suggested: true, by: INSTRUCTOR.name, suggestedAt: Date.now() }, ..._deck]);
+  return true;
 }
 
 /* ============================================================
@@ -421,6 +439,43 @@ function useMeetings() {
 }
 
 /* ============================================================
+   Announcements store — SEPARATE from the social class feed.
+   Only instructors post here. Each announcement auto-expires one
+   week after it's posted: students see it in their Announcements
+   tab for 7 days, then it disappears. Expired items are pruned
+   from storage on load and on every write.
+   ============================================================ */
+const ANNOUNCE_KEY = "cep_announcements_v1";
+const ANNOUNCE_TTL = 7 * 864e5; // one week, in ms
+function _pruneAnnounce(arr) {
+  const cut = Date.now() - ANNOUNCE_TTL;
+  return arr.filter((a) => (a.ts || 0) >= cut);
+}
+function loadAnnounce() {
+  try { const r = JSON.parse(localStorage.getItem(ANNOUNCE_KEY) || "null"); if (Array.isArray(r)) return _pruneAnnounce(r); } catch (e) {}
+  return [];
+}
+let _announce = loadAnnounce();
+const _annSubs = new Set();
+function _commitAnnounce(next) {
+  _announce = _pruneAnnounce(next);
+  try { localStorage.setItem(ANNOUNCE_KEY, JSON.stringify(_announce)); } catch (e) {}
+  _annSubs.forEach((fn) => fn(_announce));
+}
+function getAnnouncements() { return _pruneAnnounce(_announce); }
+function addAnnouncement(a) {
+  _commitAnnounce([{ id: "an" + Date.now() + Math.random().toString(36).slice(2, 5), ts: Date.now(), ...a }, ..._announce]);
+}
+function removeAnnouncement(id) { _commitAnnounce(_announce.filter((a) => a.id !== id)); }
+/* hook returns only the announcements still within their 7-day window */
+function useAnnouncements() {
+  const [v, set] = React.useState(_announce);
+  React.useEffect(() => { const fn = (n) => set(n); _annSubs.add(fn); set(_announce); return () => { _annSubs.delete(fn); }; }, []);
+  const cut = Date.now() - ANNOUNCE_TTL;
+  return v.filter((a) => (a.ts || 0) >= cut);
+}
+
+/* ============================================================
    Translation engine — same prompt/JSON shape as the landing
    page; powered by the environment's window.claude.complete.
    ============================================================ */
@@ -519,7 +574,7 @@ const STR = {
     pDeck: "Study Deck", pDeckSub: "The words you've saved. Flip to review.",
     pProgress: "Progress", pProgressSub: "Your fluency, tracked over time.",
     pAssign: "Tasks", pAssignSub: "Everything due, submitted, and graded.",
-    pFeed: "Class Feed", pFeedSub: "Announcements and your cohort.",
+    pFeed: "Class Feed", pFeedSub: "Share and connect with your classmates.",
     pMeet: "Meetings", pMeetSub: "Live classes hosted on Microsoft Teams.",
     pAccount: "Account Settings", pAccountSub: "Manage your profile and preferences.",
     back: "Back",
@@ -547,6 +602,16 @@ const STR = {
     fdComment: "Comment", commentPh: "Write a comment…", fdReply: "Reply",
     commentsN: "comments", commentN: "comment", noComments: "No comments yet — start the conversation.",
     fdDelComment: "Delete comment",
+    // announcements (instructor-posted, auto-expire after one week)
+    pAnnounce: "Announcements",
+    pAnnounceSubStu: "Important updates from your instructor — from the last 7 days.",
+    pAnnounceSubInstr: "Post updates to your class. Each one stays visible to students for one week.",
+    annComposePh: "Write an announcement for your class…", annTitlePh: "Add a headline (optional)",
+    annPost: "Post announcement",
+    annEmptyStu: "No announcements right now", annEmptyStuSub: "When your instructor posts an announcement, it'll show up here for a week.",
+    annEmptyInstr: "No active announcements", annEmptyInstrSub: "Post an update and your whole class will see it for the next 7 days.",
+    annExpires: "Expires in", annExpiresToday: "Expires today", annDay: "d",
+    annTtlNote: "Visible to students for 7 days", annDelete: "Delete announcement",
     // role
     viewingAs: "Viewing as", roleStudent: "Student", roleInstructor: "Instructor",
     switchInstr: "Switch to Instructor", switchStudent: "Switch to Student", instrMode: "Instructor mode",
@@ -601,7 +666,7 @@ const STR = {
     pDeck: "Mazo de estudio", pDeckSub: "Las palabras que guardaste. Voltea para repasar.",
     pProgress: "Progreso", pProgressSub: "Tu fluidez, medida en el tiempo.",
     pAssign: "Tareas", pAssignSub: "Todo lo pendiente, entregado y calificado.",
-    pFeed: "Muro de clase", pFeedSub: "Anuncios y tu grupo.",
+    pFeed: "Muro de clase", pFeedSub: "Comparte y conecta con tus compañeros.",
     pMeet: "Clases", pMeetSub: "Clases en vivo en Microsoft Teams.",
     pAccount: "Configuración de cuenta", pAccountSub: "Administra tu perfil y preferencias.",
     back: "Atrás",
@@ -625,6 +690,16 @@ const STR = {
     fdComment: "Comentar", commentPh: "Escribe un comentario…", fdReply: "Responder",
     commentsN: "comentarios", commentN: "comentario", noComments: "Aún no hay comentarios — inicia la conversación.",
     fdDelComment: "Eliminar comentario",
+    // announcements (publicados por la instructora, expiran tras una semana)
+    pAnnounce: "Anuncios",
+    pAnnounceSubStu: "Avisos importantes de tu instructora — de los últimos 7 días.",
+    pAnnounceSubInstr: "Publica avisos para tu clase. Cada uno es visible para los estudiantes durante una semana.",
+    annComposePh: "Escribe un anuncio para tu clase…", annTitlePh: "Agrega un título (opcional)",
+    annPost: "Publicar anuncio",
+    annEmptyStu: "No hay anuncios por ahora", annEmptyStuSub: "Cuando tu instructora publique un anuncio, aparecerá aquí durante una semana.",
+    annEmptyInstr: "No hay anuncios activos", annEmptyInstrSub: "Publica un aviso y toda tu clase lo verá durante los próximos 7 días.",
+    annExpires: "Expira en", annExpiresToday: "Expira hoy", annDay: "d",
+    annTtlNote: "Visible para estudiantes durante 7 días", annDelete: "Eliminar anuncio",
     // role
     viewingAs: "Viendo como", roleStudent: "Estudiante", roleInstructor: "Instructora",
     switchInstr: "Cambiar a Instructora", switchStudent: "Cambiar a Estudiante", instrMode: "Modo instructora",
@@ -733,6 +808,9 @@ function Sidebar({ view, go, t, lang, expanded, setExpanded, profileOpen, setPro
           <button className="pop-item" onClick={() => {go("progress");setProfileOpen(false);}}>
             <Icon name="chart" size={18} /> {t.pProgress}
           </button>
+          <a className="pop-item" href="Instructor Dashboard.html">
+            <Icon name="users" size={18} /> {lang === "es" ? "Panel de instructora" : "Instructor dashboard"}
+          </a>
           <button className="pop-item danger" onClick={() => {setProfileOpen(false);window.__cepLogout && window.__cepLogout();}}>
             <Icon name="logout" size={18} /> {t.logout}
           </button>
@@ -873,7 +951,7 @@ Object.assign(window, {
   MONTHS, SERIES, SERIES_META, STR, greeting, todayStr, speak,
   useStats, getStats, setStats, recordActivity, normalizeStats,
   fluencyChange, seriesValue, todayKey,
-  useDeck, getDeck, addCard, removeCard, translatePhrase,
+  useDeck, getDeck, addCard, removeCard, updateCard, suggestCard, translatePhrase,
   useFeed, getFeed, addPost, removePost, updatePost, relTime, fmtWhen,
   INSTRUCTOR, getRole, setRole, useRole, isInstructor, currentUser,
   useAssignments, getAssignments, addAssignment, updateAssignment, removeAssignment,

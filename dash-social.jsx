@@ -73,8 +73,7 @@ function PostCard({ post: p, me, instr, t, lang }) {
   };
 
   return (
-    <div className={"post" + (p.pin ? " pinned-post" : "")}>
-      {p.pin ? <div className="pin-flag"><Icon name="pin" size={13} /> {t.pinned}</div> : null}
+    <div className="post">
       <div className="post-head">
         <Avatar name={p.who} color={p.color || (isInstr ? "var(--navy)" : "var(--sage)")} />
         <div className="post-id">
@@ -150,7 +149,6 @@ function FeedPage({ t, lang, go, toast }) {
   const instr = role === "instructor";
   const [text, setText] = uS("");
   const [media, setMedia] = uS([]);
-  const [pin, setPin] = uS(false);
   const [busy, setBusy] = uS(false);
   const fileRef = uR(null);
 
@@ -168,17 +166,15 @@ function FeedPage({ t, lang, go, toast }) {
     if (!text.trim() && media.length === 0) return;
     addPost({
       who: me.name, initials: me.initials, color: me.color,
-      role: instr ? "instructor" : null, pin: instr ? pin : false,
+      role: instr ? "instructor" : null,
       body: text.trim(), media, likes: 0, liked: false, ts: Date.now()
     });
     if (!instr) recordActivity({ points: 2 });
-    setText("");setMedia([]);setPin(false);
+    setText("");setMedia([]);
     toast(lang === "es" ? "Publicado" : "Posted");
   };
 
-  const pinned = posts.filter((p) => p.pin);
-  const rest = posts.filter((p) => !p.pin);
-  const ordered = [...pinned, ...rest];
+  const ordered = posts;
 
   return (
     <div className="view-enter">
@@ -215,11 +211,6 @@ function FeedPage({ t, lang, go, toast }) {
               <button className="tool" onClick={() => fileRef.current && fileRef.current.click()}>
                 <Icon name="video" size={18} /> {t.fdVideo}
               </button>
-              {instr ?
-              <button className={"tool" + (pin ? " on" : "")} onClick={() => setPin((v) => !v)}>
-                  <Icon name="pin" size={16} /> {lang === "es" ? "Fijar" : "Pin"}
-                </button> :
-              null}
               <input ref={fileRef} type="file" accept="image/*,video/*" multiple hidden onChange={pickFiles} />
             </div>
             <button className="btn btn-navy" onClick={submit} disabled={busy || !text.trim() && !media.length}>
@@ -237,6 +228,89 @@ function FeedPage({ t, lang, go, toast }) {
         )
         }
       </div>
+    </div>);
+}
+
+/* ============================================================
+   ANNOUNCEMENTS — separate from the social feed.
+   Instructors post; students read. Each announcement lives for one
+   week, then drops off automatically (handled by the store).
+   ============================================================ */
+function annDaysLeft(ts) {
+  return Math.max(0, Math.ceil((ANNOUNCE_TTL - (Date.now() - (ts || 0))) / 864e5));
+}
+
+function AnnouncementCard({ a, t, lang, instr }) {
+  const left = annDaysLeft(a.ts);
+  return (
+    <div className="announce-card">
+      <span className="ann-accent" />
+      <div className="ann-body">
+        <div className="ann-head">
+          <Avatar name={a.who} color={a.color || "var(--navy)"} size={40} />
+          <div className="ann-id">
+            <b>{a.who}<span className="role-badge"><Icon name="shield" size={11} /> {t.roleInstructor}</span></b>
+            <small>{relTime(a.ts || Date.now(), lang)}</small>
+          </div>
+          {instr ?
+          <button className="post-del" title={t.annDelete} onClick={() => removeAnnouncement(a.id)}>
+              <Icon name="trash" size={16} />
+            </button> :
+          null}
+        </div>
+        {a.title ? <div className="ann-title">{a.title}</div> : null}
+        {a.body ? <div className="ann-text">{a.body}</div> : null}
+        <div className="ann-foot">
+          <span className="ann-expiry">
+            <Icon name="clock" size={13} /> {left <= 0 ? t.annExpiresToday : `${t.annExpires} ${left}${t.annDay}`}
+          </span>
+        </div>
+      </div>
+    </div>);
+}
+
+function AnnouncementComposer({ t, lang, toast }) {
+  const [title, setTitle] = uS("");
+  const [body, setBody] = uS("");
+  const me = currentUser();
+  const post = () => {
+    if (!body.trim()) return;
+    addAnnouncement({ who: me.name, initials: me.initials, color: me.color, title: title.trim(), body: body.trim() });
+    setTitle(""); setBody("");
+    toast && toast(lang === "es" ? "Anuncio publicado" : "Announcement posted");
+  };
+  return (
+    <div className="ann-composer">
+      <input className="ann-title-input" value={title} maxLength={90}
+        onChange={(e) => setTitle(e.target.value)} placeholder={t.annTitlePh} />
+      <textarea className="ann-body-input" rows={3} value={body}
+        onChange={(e) => setBody(e.target.value)} placeholder={t.annComposePh} />
+      <div className="ann-composer-foot">
+        <span className="ann-ttl-note"><Icon name="clock" size={13} /> {t.annTtlNote}</span>
+        <button className="btn btn-navy" onClick={post} disabled={!body.trim()}>
+          <Icon name="megaphone" size={15} /> {t.annPost}
+        </button>
+      </div>
+    </div>);
+}
+
+function AnnouncementsPage({ t, lang, go, toast }) {
+  const list = useAnnouncements();
+  const role = useRole();
+  const instr = role === "instructor";
+  const sorted = [...list].sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  return (
+    <div className="view-enter">
+      <PageHead t={t} title={t.pAnnounce} sub={instr ? t.pAnnounceSubInstr : t.pAnnounceSubStu} />
+      {instr ? <AnnouncementComposer t={t} lang={lang} toast={toast} /> : null}
+      {sorted.length === 0 ?
+      <EmptyState icon="megaphone" title={instr ? t.annEmptyInstr : t.annEmptyStu}
+        sub={instr ? t.annEmptyInstrSub : t.annEmptyStuSub} /> :
+
+      <div className="ann-list">
+          {sorted.map((a) => <AnnouncementCard key={a.id} a={a} t={t} lang={lang} instr={instr} />)}
+        </div>
+      }
     </div>);
 }
 
@@ -580,4 +654,4 @@ function MeetingsPage({ t, lang, go, toast }) {
     </div>);
 }
 
-Object.assign(window, { FeedPage, AssignmentsPage, MeetingsPage });
+Object.assign(window, { FeedPage, AnnouncementsPage, AssignmentsPage, MeetingsPage });

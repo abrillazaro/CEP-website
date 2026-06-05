@@ -1185,7 +1185,7 @@ function Modal({ t, mode, onClose, onSubmit, onInstructor }) {
       const pw = passRef.current?.value  || "";
       if (em === INSTRUCTOR_EMAIL && pw === INSTRUCTOR_PASS) {
         localStorage.setItem("cep-instructor-session", JSON.stringify({ em, ts: Date.now() }));
-        window.location.href = "teacher.html";
+        window.location.href = "instructor-dashboard.html";
       } else {
         setInstrErr(t.instrErr);
       }

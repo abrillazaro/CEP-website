@@ -1,0 +1,120 @@
+/* ===========================================================
+   The Corporate English Project — Instructor Dashboard
+   Instructor-only layout. Extends dash.css tokens; nothing here
+   overrides the shared design system, only adds new pieces.
+   =========================================================== */
+
+/* instructor accent on the rail avatar */
+.rail.instr .rail-avatar{background:var(--navy)!important;color:#fff;}
+.rail-grade{display:flex;flex-direction:column;align-items:center;gap:2px;color:#9bd0ad;font-size:11px;font-weight:700;}
+.rail.expanded .rail-grade{flex-direction:row;align-items:center;gap:8px;padding:8px 14px;background:rgba(155,208,173,.12);border-radius:11px;font-size:13px;}
+.rail-grade b{font-family:var(--serif);font-size:15px;color:#cfe8d6;}
+
+/* ===================== Overview: grading-queue hero ===================== */
+.queue-list{margin-top:14px;display:flex;flex-direction:column;gap:2px;}
+.queue-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-top:1px solid rgba(255,255,255,.10);font-size:14px;color:#dce6f3;}
+.queue-row:first-child{border-top:none;}
+.queue-row .q-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;font-size:12px;}
+.queue-row .q-main{flex:1;min-width:0;}
+.queue-row .q-main b{display:block;color:#fff;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.queue-row .q-main span{color:#9fb0c9;font-size:12.5px;}
+.queue-row .q-when{color:#9bd0ad;font-size:12.5px;font-weight:700;white-space:nowrap;}
+
+/* caught-up empty inside hero */
+.hero-empty{display:flex;align-items:center;gap:14px;margin-top:8px;}
+.hero-empty .he-ic{width:50px;height:50px;border-radius:14px;background:rgba(155,208,173,.16);color:#9bd0ad;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hero-empty p{margin:2px 0 0;color:#9fb0c9;font-size:13.5px;}
+
+/* ===================== Quick actions ===================== */
+.ov-actions{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+.ov-action{display:flex;align-items:center;gap:13px;width:100%;padding:13px 15px;border-radius:14px;
+  border:1.5px solid var(--line-strong);background:#fff;color:var(--navy);font-weight:700;font-size:14.5px;
+  text-align:left;transition:border-color .14s,background .14s,transform .12s;}
+.ov-action:hover{border-color:var(--sage);background:var(--surface-soft);transform:translateY(-1px);}
+.ov-action .ic{width:38px;height:38px;border-radius:11px;background:var(--sage-tint);color:var(--sage-deep);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ov-action .ic.navy{background:#e7ecf4;color:var(--navy);}
+.ov-action .ic.teams{background:#e7e8f7;color:#4b53bc;}
+.ov-action small{display:block;font-weight:500;color:var(--muted);font-size:12.5px;margin-top:1px;}
+.ov-action .chev{margin-left:auto;color:var(--navy-soft);opacity:.55;}
+
+/* ===================== Roster preview rows (overview) ===================== */
+.roster-mini{display:flex;flex-direction:column;}
+.roster-mini .rm-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid var(--line);}
+.roster-mini .rm-row:first-child{border-top:none;}
+.roster-mini .rm-main{flex:1;min-width:0;}
+.roster-mini .rm-main b{display:block;font-size:15px;color:var(--ink);font-weight:600;}
+.roster-mini .rm-main span{font-size:13px;color:var(--muted);}
+
+/* ===================== Roster page ===================== */
+.roster-layout{display:flex;gap:24px;align-items:flex-start;}
+.roster-list{width:330px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;}
+.student-row{display:flex;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--line);
+  border-radius:16px;padding:14px 15px;box-shadow:var(--shadow-sm);cursor:pointer;
+  transition:border-color .14s,box-shadow .18s,transform .12s;}
+.student-row:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.student-row.active{border-color:var(--sage);box-shadow:0 0 0 1px var(--sage-tint),var(--shadow-sm);}
+.student-row .sr-main{flex:1;min-width:0;}
+.student-row .sr-main b{display:block;font-size:15.5px;color:var(--navy);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.student-row .sr-main span{font-size:13px;color:var(--muted);}
+
+.roster-detail{flex:1;min-width:0;}
+.stu-head{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+.stu-head .stu-id b{display:block;font-family:var(--serif);font-size:24px;color:var(--navy);font-weight:600;line-height:1.1;}
+.stu-head .stu-id span{color:var(--muted);font-size:14px;}
+.stu-head .stu-act{margin-left:auto;}
+
+.stu-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.stu-stat{background:var(--surface-soft);border:1px solid var(--line);border-radius:15px;padding:15px 16px;}
+.stu-stat .k{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:6px;}
+.stu-stat .k .ci{color:var(--sage);display:flex;}
+.stu-stat .v{font-family:var(--serif);font-size:28px;color:var(--navy);font-weight:600;margin-top:7px;line-height:1;}
+.stu-stat .v small{font-size:14px;color:var(--muted);font-family:var(--sans);font-weight:600;}
+
+.stu-sec-h{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--sage-deep);margin:6px 0 12px;}
+.stu-sec-h .ci{color:var(--sage);display:flex;}
+
+.stu-work .lrow .grade-btn{flex-shrink:0;}
+
+@media (max-width:920px){
+  .roster-layout{flex-direction:column;}
+  .roster-list{width:100%;flex-direction:row;flex-wrap:wrap;}
+  .roster-list .student-row{flex:1 1 220px;}
+  .stu-stats{grid-template-columns:repeat(2,1fr);}
+  .idk-row{flex-wrap:wrap;}
+}
+
+/* ===================== Instructor study-deck page ===================== */
+.idk-banner{display:flex;align-items:center;gap:13px;background:var(--surface-soft);border:1px solid var(--line);
+  border-radius:16px;padding:14px 18px;margin-bottom:18px;}
+.idk-banner .av{width:42px;height:42px;}
+.idk-banner b{font-size:15px;color:var(--navy);}
+.idk-banner span{font-size:13px;color:var(--muted);display:block;}
+
+/* language segmented control inside the composer */
+.seg-lang{display:inline-flex;background:var(--bg-2);border-radius:10px;padding:3px;gap:3px;}
+.seg-lang button{font-size:13px;font-weight:700;color:var(--navy-soft);padding:8px 16px;border-radius:8px;transition:all .14s;}
+.seg-lang button.on{background:#fff;color:var(--navy);box-shadow:var(--shadow-sm);}
+
+.idk-list{display:flex;flex-direction:column;gap:12px;}
+.idk-row{display:flex;align-items:flex-start;gap:14px;background:var(--surface);border:1px solid var(--line);
+  border-radius:16px;padding:16px 18px;box-shadow:var(--shadow-sm);transition:border-color .15s;}
+.idk-row.flagged{border-color:#e3c7c0;background:#fdf3f1;}
+.idk-main{flex:1;min-width:0;}
+.idk-term{font-family:var(--serif);font-size:20px;color:var(--navy);font-weight:600;line-height:1.15;}
+.idk-tr{font-size:14.5px;color:var(--muted);margin-top:2px;}
+.idk-ex{font-size:13.5px;color:var(--navy-soft);margin-top:7px;line-height:1.45;border-left:3px solid var(--sage-tint);padding-left:11px;}
+.idk-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
+.idk-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.idk-flagbtn{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--rose);
+  border:1.5px solid #e3c7c0;border-radius:10px;padding:8px 13px;background:#fff;transition:all .14s;}
+.idk-flagbtn:hover{background:#fdf3f1;}
+.idk-flagform{flex-basis:100%;display:flex;gap:10px;margin-top:4px;width:100%;}
+.idk-flagform input{flex:1;font-family:var(--sans);font-size:14px;color:var(--ink);background:var(--bg);
+  border:1.5px solid var(--line-strong);border-radius:11px;padding:10px 13px;outline:none;}
+.idk-flagform input:focus{border-color:var(--rose);box-shadow:0 0 0 3px #f7e3df;}
+.btn-rose{background:var(--rose);color:#fff;}
+.btn-rose:hover{background:#9c4339;transform:translateY(-1px);}

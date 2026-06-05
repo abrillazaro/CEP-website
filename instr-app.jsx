@@ -1,14 +1,21 @@
 /* ============================================================
-   dash-app.jsx — routing, language, tweaks, mount
+   instr-app.jsx — Instructor Dashboard shell: routing, language,
+   tweaks, mount. Asserts the instructor role so the shared
+   social pages (assignments / meetings / feed) render in
+   create-and-grade mode.
    ============================================================ */
-const TWEAKS_DEFAULT = /*EDITMODE-BEGIN*/{
+
+/* Assert instructor role BEFORE first render so shared pages start correct. */
+try { setRole("instructor"); } catch (e) {}
+
+const TWEAKS_DEFAULT_I = /*EDITMODE-BEGIN*/{
   "defaultLang": "en",
-  "accent": "sage",
+  "accent": "navy",
   "density": "comfortable"
 }/*EDITMODE-END*/;
 
-function DashApp() {
-  const [tw, setTweak] = useTweaks(TWEAKS_DEFAULT);
+function InstrApp() {
+  const [tw, setTweak] = useTweaks(TWEAKS_DEFAULT_I);
   const [lang, setLang] = React.useState(tw.defaultLang || "en");
   React.useEffect(() => { setLang(tw.defaultLang || "en"); }, [tw.defaultLang]);
 
@@ -31,7 +38,7 @@ function DashApp() {
     if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "auto" });
   };
   React.useEffect(() => { window.__cepLogout = () => setLogoutOpen(true); }, []);
-  React.useEffect(() => { normalizeStats(); }, []);
+  React.useEffect(() => { setRole("instructor"); normalizeStats(); }, []);
 
   // accent tweak
   React.useEffect(() => {
@@ -47,59 +54,40 @@ function DashApp() {
     document.documentElement.style.setProperty("--rail-w", tw.density === "compact" ? "84px" : "96px");
   }, [tw.density]);
 
+  const L = (en, es) => (lang === "es" ? es : en);
   const titles = {
-    home: { title: `${greeting(t)}, ${STUDENT.first}`, sub: t.todayis },
-    lessons: { title: t.pLessons, sub: t.pLessonsSub },
-    drills: { title: t.pDrills, sub: t.pDrillsSub },
-    deck: { title: t.pDeck, sub: t.pDeckSub },
-    assignments: { title: t.pAssign, sub: t.pAssignSub },
-    progress: { title: t.pProgress, sub: t.pProgressSub },
-    announce: { title: t.pAnnounce, sub: t.pAnnounceSubStu },
-    feed: { title: t.pFeed, sub: t.pFeedSub },
-    meetings: { title: t.pMeet, sub: t.pMeetSub },
-    account: { title: t.pAccount, sub: t.pAccountSub },
+    home: { title: `${greeting(t)}, ${INSTRUCTOR.first}`, sub: L("Here's what needs your attention.", "Esto necesita tu atención.") },
+    assignments: { title: L("Grading", "Calificar"), sub: L("Create and grade your class's work.", "Crea y califica el trabajo de tu clase.") },
+    meetings: { title: L("Sessions", "Clases"), sub: L("Schedule live classes for your cohort.", "Programa clases en vivo para tu grupo.") },
+    announce: { title: L("Announcements", "Anuncios"), sub: L("Post updates to your class — each one is visible for one week.", "Publica avisos para tu clase — cada uno es visible durante una semana.") },
+    feed: { title: L("Class Feed", "Muro de clase"), sub: L("Share updates and connect with your class.", "Comparte y conecta con tu clase.") },
+    students: { title: L("Students", "Estudiantes"), sub: L("Track each student's submissions and progress.", "Sigue las entregas y el progreso.") },
+    account: { title: L("Account Settings", "Configuración"), sub: L("Manage your instructor profile.", "Administra tu perfil.") }
   };
   // pages that render their own header
-  const ownHeader = ["lessons", "deck", "drills", "progress", "assignments", "announce", "feed", "meetings", "account"];
-  const showTopbar = !["drills", "deck"].includes(view);
+  const ownHeader = ["students", "account"];
+  const showHomeTopbar = view === "home" || view === "assignments" || view === "meetings" || view === "feed";
 
-  let Page = Dashboard;
-  if (view === "lessons") Page = LessonsPage;
-  else if (view === "drills") Page = DrillsPage;
-  else if (view === "deck") Page = DeckPage;
-  else if (view === "progress") Page = ProgressPage;
-  else if (view === "assignments") Page = AssignmentsPage;
+  let Page = InstrHome;
+  if (view === "assignments") Page = AssignmentsPage;
+  else if (view === "meetings") Page = MeetingsPage;
   else if (view === "announce") Page = AnnouncementsPage;
   else if (view === "feed") Page = FeedPage;
-  else if (view === "meetings") Page = MeetingsPage;
-  else if (view === "account") Page = AccountPage;
+  else if (view === "students") Page = RosterPage;
+  else if (view === "account") Page = InstrAccountPage;
+
+  // assignments/meetings/feed render their own page-head-row but no topbar chrome,
+  // so we always show the topbar (greeting only on home) for search + lang + bell.
+  const tbTitle = view === "home" ? titles.home.title : "";
+  const tbSub = view === "home" ? titles.home.sub : "";
 
   return (
     <div className={"app lang-" + lang}>
-      <Sidebar view={view} go={go} t={t} lang={lang} expanded={expanded} setExpanded={setExpanded} profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
+      <InstrSidebar view={view} go={go} lang={lang} expanded={expanded} setExpanded={setExpanded}
+        profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
       <div className="main" ref={mainRef}>
         <div className="content">
-          {showTopbar ? (
-            <Topbar t={t} lang={lang} setLang={setLang} go={go}
-              title={view === "home" ? titles.home.title : ""}
-              sub={view === "home" ? titles.home.sub : ""} />
-          ) : null}
-          {/* For non-home pages the topbar shows only chrome; titles render inside the page head.
-              But we still want lang toggle reachable on deck/drills, so show a slim bar there. */}
-          {!showTopbar ? (
-            <div className="topbar" style={{ marginBottom: 10 }}>
-              <button className="back-link" onClick={() => go("home")} style={{ margin: 0 }}>
-                <Icon name="chevron-l" size={18} /> {t.back}
-              </button>
-              <div className="tb-right">
-                <div className="lang-seg">
-                  <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
-                  <button className={lang === "es" ? "on" : ""} onClick={() => setLang("es")}>ES</button>
-                </div>
-              </div>
-            </div>
-          ) : null}
-
+          <InstrTopbar lang={lang} setLang={setLang} go={go} title={tbTitle} sub={tbSub} />
           <Page t={t} lang={lang} go={go} toast={toast} />
         </div>
       </div>
@@ -110,15 +98,15 @@ function DashApp() {
         <div className="overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) setLogoutOpen(false); }}>
           <div className="modal">
             <div className="celebrate" style={{ background: "#f7e3df", color: "var(--rose)" }}><Icon name="logout" size={32} /></div>
-            <div className="big">{t.logoutQ}</div>
-            <p>{t.logoutSub}</p>
+            <div className="big">{L("Log out of CEP?", "¿Cerrar sesión en CEP?")}</div>
+            <p>{L("You can pick up right where you left off next time.", "La próxima vez retomas justo donde lo dejaste.")}</p>
             <div className="row">
-              <button className="btn btn-ghost" onClick={() => setLogoutOpen(false)}>{t.cancel}</button>
+              <button className="btn btn-ghost" onClick={() => setLogoutOpen(false)}>{L("Cancel", "Cancelar")}</button>
               <button className="btn btn-navy" onClick={() => {
                 setLogoutOpen(false);
-                try { localStorage.removeItem('sb-qkxhzpicqjxodeadhcvw-auth-token'); } catch(e) {}
+                try { localStorage.removeItem('sb-qkxhzpicqjxodeadhcvw-auth-token'); localStorage.removeItem('cep-instructor-session'); } catch(e) {}
                 window.location.href = 'index.html';
-              }}>{t.logout}</button>
+              }}>{L("Log out", "Cerrar sesión")}</button>
             </div>
           </div>
         </div>
@@ -138,8 +126,4 @@ function DashApp() {
   );
 }
 
-/* This file owns the Student experience — assert the student role on load so
-   the Instructor Dashboard (a separate page sharing the same stores) stays
-   independent. The in-session role toggle in the profile popover still works. */
-try { setRole("student"); } catch (e) {}
-ReactDOM.createRoot(document.getElementById("root")).render(<DashApp />);
+ReactDOM.createRoot(document.getElementById("root")).render(<InstrApp />);

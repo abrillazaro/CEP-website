@@ -467,10 +467,15 @@ function DeckPage({ t, lang, go, toast }) {
           </div>
           <div className="deck-list">
             {cards.map((c, i) => (
-              <div key={c.term + i} className={"deck-row" + (i === sel ? " active" : "")} onClick={() => goCard(i)}>
+              <div key={c.term + i} className={"deck-row" + (i === sel ? " active" : "") + (c.flagged ? " flagged" : "")} onClick={() => goCard(i)}>
                 <div className="deck-row-main">
                   <div className="dr-en">{enOf(c)}</div>
                   <div className="dr-es es-text">{esOf(c)}</div>
+                  {(c.suggested || c.flagged) ?
+                    <div className="dr-tags">
+                      {c.suggested ? <span className="card-tag sug"><Icon name="shield" size={11} /> {lang === "es" ? "Sugerida" : "Suggested"}</span> : null}
+                      {c.flagged ? <span className="card-tag flag"><Icon name="flag" size={11} /> {lang === "es" ? "Marcada" : "Flagged"}</span> : null}
+                    </div> : null}
                 </div>
                 <button className="dr-del" title={t.dkDelete} aria-label={t.dkDelete}
                   onClick={(e) => { e.stopPropagation(); del(c.term); }}>
@@ -487,6 +492,8 @@ function DeckPage({ t, lang, go, toast }) {
             <div className="fc-inner">
               <div className="fc-face">
                 <span className="lang-pill">English</span>
+                {card.suggested ? <span className="fc-badge"><Icon name="shield" size={12} /> {lang === "es" ? `Sugerida por ${card.by || "tu instructora"}` : `Suggested by ${card.by || "your instructor"}`}</span> : null}
+                {card.flagged ? <div className="fc-flag"><Icon name="flag" size={14} /> {(lang === "es" ? "Marcada por tu instructora" : "Flagged by your instructor") + (card.flagReason ? ": " + card.flagReason : "")}</div> : null}
                 <div className="fc-term">{enText}</div>
                 <div className="fc-pos">{card.pos}</div>
                 <button className="btn btn-ghost" style={{ marginTop: 16, padding: "8px 14px" }}
