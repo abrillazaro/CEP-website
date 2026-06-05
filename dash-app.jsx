@@ -112,7 +112,11 @@ function DashApp() {
             <p>{t.logoutSub}</p>
             <div className="row">
               <button className="btn btn-ghost" onClick={() => setLogoutOpen(false)}>{t.cancel}</button>
-              <button className="btn btn-navy" onClick={() => { setLogoutOpen(false); go("home"); toast(lang === "es" ? "Sesión cerrada (demo)" : "Logged out (demo)"); }}>{t.logout}</button>
+              <button className="btn btn-navy" onClick={() => {
+                setLogoutOpen(false);
+                try { localStorage.removeItem('sb-qkxhzpicqjxodeadhcvw-auth-token'); } catch(e) {}
+                window.location.href = 'login.html';
+              }}>{t.logout}</button>
             </div>
           </div>
         </div>

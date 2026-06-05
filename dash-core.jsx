@@ -674,7 +674,7 @@ function Sidebar({ view, go, t, lang, expanded, setExpanded, profileOpen, setPro
     <aside className={"rail" + (expanded ? " expanded" : "") + (instr ? " instr" : "")}>
       <div className="rail-top">
         <div className="rail-logo" onClick={() => go("home")} title="CEP">
-          <img src="assets/logo-navy.png" alt="CEP" />
+          <img src="logo-navy.png" alt="CEP" />
         </div>
         {expanded ?
         <div className="rail-word">Corporate English<small>The CEP</small></div> :
