@@ -1183,12 +1183,21 @@ function Modal({ t, mode, onClose, onSubmit, onInstructor }) {
     if (isInstr) {
       const em = emailRef.current?.value || "";
       const pw = passRef.current?.value  || "";
-      if (em === INSTRUCTOR_EMAIL && pw === INSTRUCTOR_PASS) {
-        localStorage.setItem("cep-instructor-session", JSON.stringify({ em, ts: Date.now() }));
-        window.location.href = "instructor-dashboard.html";
-      } else {
-        setInstrErr(t.instrErr);
+      setInstrErr(""); setLoginBusy(true);
+      const _sb = window.supabase.createClient(
+        'https://qkxhzpicqjxodeadhcvw.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFreGh6cGljcWp4b2RlYWRoY3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNTg2NTUsImV4cCI6MjA5MjgzNDY1NX0.wLL0h9vQ8W5xp7mKFbq-CphiqE4cRVGTQ-KayuteHt8'
+      );
+      const { data, error } = await _sb.auth.signInWithPassword({ email: em, password: pw });
+      setLoginBusy(false);
+      if (error) { setInstrErr("Incorrect email or password."); return; }
+      const role = data.user?.user_metadata?.role;
+      if (role !== 'instructor') {
+        await _sb.auth.signOut();
+        setInstrErr("This account is not an instructor account.");
+        return;
       }
+      window.location.href = "instructor-dashboard.html";
       return;
     }
     if (mode === "login") {
