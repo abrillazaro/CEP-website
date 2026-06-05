@@ -1303,7 +1303,7 @@ function App() {
         style={{ background: glowBg, top: hasResult ? "30%" : "42%" }} />
 
       <Nav t={t} lang={lang} setLang={setLang}
-        onLogin={() => setModal("login")} onHome={onHome} />
+        onLogin={() => window.location.href = "login.html"} onHome={onHome} />
 
       <main className={"hero" + (hasResult ? " compact" : "")}>
         <div className="shell">
