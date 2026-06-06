@@ -760,9 +760,13 @@ a{color:inherit;text-decoration:none;}
   /* Content — full-width, tighter padding */
   .content{padding:16px 16px 80px;}
 
-  /* Topbar */
-  .tb-greet h1{font-size:20px;}
-  .tb-greet p{font-size:13px;}
+  /* Topbar — greeting wraps to its own row below the controls */
+  .topbar{flex-wrap:wrap;gap:10px 0;margin-bottom:16px;}
+  .mob-menu-btn{order:1;}
+  .tb-right{order:2;margin-left:auto;}
+  .tb-greet{order:3;width:100%;padding-top:4px;}
+  .tb-greet h1{font-size:26px;white-space:normal;overflow:visible;text-overflow:clip;}
+  .tb-greet p{font-size:14px;white-space:normal;overflow:visible;text-overflow:clip;}
 
   /* Flashcard */
   .flashcard{height:270px;}
