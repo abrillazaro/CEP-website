@@ -55,80 +55,89 @@ function buildRoster(assignments) {
 /* ============================================================
    SIDEBAR
    ============================================================ */
-function InstrSidebar({ view, go, lang, expanded, setExpanded, profileOpen, setProfileOpen }) {
+function InstrSidebar({ view, go, lang, expanded, setExpanded, profileOpen, setProfileOpen, mobileOpen, setMobileOpen }) {
   const assignments = useAssignments();
   const toGrade = assignments.filter((a) => a.submission && !a.grade).length;
   const me = INSTRUCTOR;
+  const isExpanded = expanded || mobileOpen;
+  const closeDrawer = () => setMobileOpen && setMobileOpen(false);
+  const navGo = (id) => { go(id); closeDrawer(); };
   return (
-    <aside className={"rail instr" + (expanded ? " expanded" : "")}>
-      <div className="rail-top">
-        <div className="rail-logo" onClick={() => go("home")} title="CEP">
-          <img src="logo-navy.png" alt="CEP" />
-        </div>
-        {expanded ?
-          <div className="rail-word">Corporate English<small>Instructor</small></div> :
-          null}
-        <button className="rail-toggle" onClick={() => setExpanded((e) => !e)}
-          aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
-          title={expanded ? L(lang, "Collapse", "Contraer") : L(lang, "Expand", "Expandir")}>
-          <Icon name={expanded ? "chevron-l" : "menu"} size={18} />
-        </button>
-      </div>
-
-      <nav className="rail-nav">
-        {INSTR_NAV.map((n) =>
-          <button key={n.id} className={"rail-item" + (view === n.id ? " active" : "")}
-            onClick={() => go(n.id)} title={!expanded ? L(lang, n.en, n.es) : undefined}>
-            <Icon name={n.icon} size={22} />
-            <span>{L(lang, n.en, n.es)}</span>
-            {n.id === "assignments" && toGrade ? <i className="rail-badge">{toGrade}</i> : null}
-          </button>
-        )}
-      </nav>
-
-      <div className="rail-foot">
-        <div className="rail-grade" title={L(lang, "Submissions to grade", "Entregas por calificar")}>
-          {expanded ?
-            <><Icon name="clipboard" size={15} /><span><b>{toGrade}</b> {L(lang, "to grade", "por calificar")}</span></> :
-            <><Icon name="clipboard" size={16} /><b>{toGrade}</b></>}
-        </div>
-        <button className="rail-profile" onClick={() => setProfileOpen((o) => !o)} title={me.name}>
-          <span className={"rail-avatar" + (profileOpen || view === "account" ? " active" : "")}>{me.initials}</span>
-          {expanded ?
-            <span className="rail-id"><b>{me.name}</b><small>{L(lang, "Instructor", "Instructora")}</small></span> :
-            null}
-        </button>
-      </div>
-
-      {profileOpen ?
-        <div className="pop" onMouseLeave={() => setProfileOpen(false)}>
-          <div className="pop-head">
-            <div className="av" style={{ background: "var(--navy)" }}>{me.initials}</div>
-            <div><b>{me.name}</b><small>{L(lang, "Instructor", "Instructora")}</small></div>
+    <>
+      {mobileOpen ? <div className="mobile-backdrop" onClick={closeDrawer} /> : null}
+      <aside className={"rail instr" + (isExpanded ? " expanded" : "") + (mobileOpen ? " mobile-open" : "")}>
+        <div className="rail-top">
+          <div className="rail-logo" onClick={() => navGo("home")} title="CEP">
+            <img src="logo-navy.png" alt="CEP" />
           </div>
-          <a className="pop-item" href="Student Dashboard.html">
-            <Icon name="switch" size={18} /> {L(lang, "Open student dashboard", "Abrir panel del estudiante")}
-          </a>
-          <button className="pop-item" onClick={() => { go("students"); setProfileOpen(false); }}>
-            <Icon name="users" size={18} /> {L(lang, "Students", "Estudiantes")}
+          {isExpanded ?
+            <div className="rail-word">Corporate English<small>Instructor</small></div> :
+            null}
+          <button className="rail-toggle" onClick={() => setExpanded((e) => !e)}
+            aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
+            title={expanded ? L(lang, "Collapse", "Contraer") : L(lang, "Expand", "Expandir")}>
+            <Icon name={expanded ? "chevron-l" : "menu"} size={18} />
           </button>
-          <button className="pop-item" onClick={() => { go("account"); setProfileOpen(false); }}>
-            <Icon name="gear" size={18} /> {L(lang, "Account settings", "Configuración")}
+        </div>
+
+        <nav className="rail-nav">
+          {INSTR_NAV.map((n) =>
+            <button key={n.id} className={"rail-item" + (view === n.id ? " active" : "")}
+              onClick={() => navGo(n.id)} title={!isExpanded ? L(lang, n.en, n.es) : undefined}>
+              <Icon name={n.icon} size={22} />
+              <span>{L(lang, n.en, n.es)}</span>
+              {n.id === "assignments" && toGrade ? <i className="rail-badge">{toGrade}</i> : null}
+            </button>
+          )}
+        </nav>
+
+        <div className="rail-foot">
+          <div className="rail-grade" title={L(lang, "Submissions to grade", "Entregas por calificar")}>
+            {isExpanded ?
+              <><Icon name="clipboard" size={15} /><span><b>{toGrade}</b> {L(lang, "to grade", "por calificar")}</span></> :
+              <><Icon name="clipboard" size={16} /><b>{toGrade}</b></>}
+          </div>
+          <button className="rail-profile" onClick={() => setProfileOpen((o) => !o)} title={me.name}>
+            <span className={"rail-avatar" + (profileOpen || view === "account" ? " active" : "")}>{me.initials}</span>
+            {isExpanded ?
+              <span className="rail-id"><b>{me.name}</b><small>{L(lang, "Instructor", "Instructora")}</small></span> :
+              null}
           </button>
-          <button className="pop-item danger" onClick={() => { setProfileOpen(false); window.__cepLogout && window.__cepLogout(); }}>
-            <Icon name="logout" size={18} /> {L(lang, "Log out", "Cerrar sesión")}
-          </button>
-        </div> :
-        null}
-    </aside>);
+        </div>
+
+        {profileOpen ?
+          <div className="pop" onMouseLeave={() => setProfileOpen(false)}>
+            <div className="pop-head">
+              <div className="av" style={{ background: "var(--navy)" }}>{me.initials}</div>
+              <div><b>{me.name}</b><small>{L(lang, "Instructor", "Instructora")}</small></div>
+            </div>
+            <a className="pop-item" href="Student Dashboard.html">
+              <Icon name="switch" size={18} /> {L(lang, "Open student dashboard", "Abrir panel del estudiante")}
+            </a>
+            <button className="pop-item" onClick={() => { navGo("students"); setProfileOpen(false); }}>
+              <Icon name="users" size={18} /> {L(lang, "Students", "Estudiantes")}
+            </button>
+            <button className="pop-item" onClick={() => { navGo("account"); setProfileOpen(false); }}>
+              <Icon name="gear" size={18} /> {L(lang, "Account settings", "Configuración")}
+            </button>
+            <button className="pop-item danger" onClick={() => { setProfileOpen(false); closeDrawer(); window.__cepLogout && window.__cepLogout(); }}>
+              <Icon name="logout" size={18} /> {L(lang, "Log out", "Cerrar sesión")}
+            </button>
+          </div> :
+          null}
+      </aside>
+    </>);
 }
 
 /* ============================================================
    TOPBAR
    ============================================================ */
-function InstrTopbar({ lang, setLang, go, title, sub }) {
+function InstrTopbar({ lang, setLang, go, title, sub, onMobileMenu }) {
   return (
     <div className="topbar">
+      <button className="mob-menu-btn" onClick={onMobileMenu} aria-label="Open menu">
+        <Icon name="menu" size={22} />
+      </button>
       <div className="tb-greet">
         <h1>{title}</h1>
         <p>{sub}</p>

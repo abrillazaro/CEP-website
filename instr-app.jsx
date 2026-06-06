@@ -29,12 +29,13 @@ function InstrApp() {
   }, [expanded]);
   const [toastMsg, setToastMsg] = React.useState("");
   const [logoutOpen, setLogoutOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
   const mainRef = React.useRef(null);
   const t = STR[lang] || STR.en;
 
   const toast = (m) => { setToastMsg(m); setTimeout(() => setToastMsg(""), 2600); };
   const go = (v) => {
-    setView(v); setProfileOpen(false);
+    setView(v); setProfileOpen(false); setMobileOpen(false);
     if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "auto" });
   };
   React.useEffect(() => { window.__cepLogout = () => setLogoutOpen(true); }, []);
@@ -84,10 +85,10 @@ function InstrApp() {
   return (
     <div className={"app lang-" + lang}>
       <InstrSidebar view={view} go={go} lang={lang} expanded={expanded} setExpanded={setExpanded}
-        profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
+        profileOpen={profileOpen} setProfileOpen={setProfileOpen} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       <div className="main" ref={mainRef}>
         <div className="content">
-          <InstrTopbar lang={lang} setLang={setLang} go={go} title={tbTitle} sub={tbSub} />
+          <InstrTopbar lang={lang} setLang={setLang} go={go} title={tbTitle} sub={tbSub} onMobileMenu={() => setMobileOpen(true)} />
           <Page t={t} lang={lang} go={go} toast={toast} />
         </div>
       </div>
