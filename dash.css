@@ -636,6 +636,20 @@ a{color:inherit;text-decoration:none;}
 /* In ES mode the gloss text is English — keep it in the serif accent face */
 .app.lang-es .cl-gloss{font-family:var(--serif)!important;font-style:italic;}
 
+/* ===================== Mobile hamburger button ===================== */
+.mob-menu-btn{
+  display:none;width:42px;height:42px;border-radius:12px;
+  background:var(--surface);border:1px solid var(--line-strong);
+  align-items:center;justify-content:center;
+  color:var(--navy);box-shadow:var(--shadow-sm);flex-shrink:0;
+  transition:border-color .15s,transform .12s;}
+.mob-menu-btn:hover{border-color:var(--sage);transform:translateY(-1px);}
+
+/* Mobile drawer backdrop */
+.mobile-backdrop{
+  position:fixed;inset:0;z-index:99;
+  background:rgba(21,40,64,.45);animation:fadeIn .2s ease;}
+
 /* responsive */
 /* ===================== Dashboard translate card ===================== */
 .tr-card{background:linear-gradient(140deg,#fbfdfa,#f1f5ef);border:1px solid var(--line);}
@@ -722,9 +736,52 @@ a{color:inherit;text-decoration:none;}
   .deck-main{width:100%;}
 }
 @media (max-width:680px){
-  :root{--rail-w:72px;}
-  .rail-item span{display:none;}
-  .rail-item{width:52px;}
-  .tb-greet h1{font-size:24px;}
-  .flashcard{height:300px;}
+  /* Rail becomes a fixed off-screen drawer; content fills full width */
+  :root{--rail-w:0px;}
+
+  .rail{
+    position:fixed;top:0;left:0;
+    height:100vh;height:100dvh;
+    width:260px !important;
+    transform:translateX(-100%);
+    z-index:100;box-shadow:none;
+    transition:transform .28s cubic-bezier(.4,0,.2,1),box-shadow .28s;
+  }
+  .rail.mobile-open{
+    transform:translateX(0);
+    box-shadow:8px 0 40px rgba(21,40,64,.28);
+  }
+  /* Hide the desktop expand/collapse toggle — drawer is always expanded */
+  .rail .rail-toggle{display:none;}
+
+  /* Show hamburger in topbar */
+  .mob-menu-btn{display:flex;}
+
+  /* Content — full-width, tighter padding */
+  .content{padding:16px 16px 80px;}
+
+  /* Topbar */
+  .tb-greet h1{font-size:20px;}
+  .tb-greet p{font-size:13px;}
+
+  /* Flashcard */
+  .flashcard{height:270px;}
+  .fc-term{font-size:36px;}
+
+  /* Drills: single-column options on small screens */
+  .opts{grid-template-columns:1fr;}
+
+  /* Form grids */
+  .form-grid2{grid-template-columns:1fr;}
+
+  /* Account */
+  .acct-grid{grid-template-columns:1fr;}
+
+  /* Deck layout */
+  .deck-layout{flex-direction:column;}
+  .deck-side{width:100%;max-height:220px;}
+
+  /* Section heading */
+  .sec-h h2{font-size:20px;}
+  .page-h h1{font-size:26px;}
 }

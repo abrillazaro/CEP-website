@@ -22,12 +22,13 @@ function DashApp() {
   }, [expanded]);
   const [toastMsg, setToastMsg] = React.useState("");
   const [logoutOpen, setLogoutOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
   const mainRef = React.useRef(null);
   const t = STR[lang] || STR.en;
 
   const toast = (m) => { setToastMsg(m); setTimeout(() => setToastMsg(""), 2600); };
   const go = (v) => {
-    setView(v); setProfileOpen(false);
+    setView(v); setProfileOpen(false); setMobileOpen(false);
     if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "auto" });
   };
   React.useEffect(() => { window.__cepLogout = () => setLogoutOpen(true); }, []);
@@ -76,18 +77,22 @@ function DashApp() {
 
   return (
     <div className={"app lang-" + lang}>
-      <Sidebar view={view} go={go} t={t} lang={lang} expanded={expanded} setExpanded={setExpanded} profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
+      <Sidebar view={view} go={go} t={t} lang={lang} expanded={expanded} setExpanded={setExpanded} profileOpen={profileOpen} setProfileOpen={setProfileOpen} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       <div className="main" ref={mainRef}>
         <div className="content">
           {showTopbar ? (
             <Topbar t={t} lang={lang} setLang={setLang} go={go}
               title={view === "home" ? titles.home.title : ""}
-              sub={view === "home" ? titles.home.sub : ""} />
+              sub={view === "home" ? titles.home.sub : ""}
+              onMobileMenu={() => setMobileOpen(true)} />
           ) : null}
           {/* For non-home pages the topbar shows only chrome; titles render inside the page head.
               But we still want lang toggle reachable on deck/drills, so show a slim bar there. */}
           {!showTopbar ? (
             <div className="topbar" style={{ marginBottom: 10 }}>
+              <button className="mob-menu-btn" onClick={() => setMobileOpen(true)} aria-label="Open menu">
+                <Icon name="menu" size={22} />
+              </button>
               <button className="back-link" onClick={() => go("home")} style={{ margin: 0 }}>
                 <Icon name="chevron-l" size={18} /> {t.back}
               </button>
