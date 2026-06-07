@@ -52,7 +52,6 @@ function TranslateCard({ t, lang, go, toast }) {
     if (!val) return;
     setBusy(true); setErr(""); setSaved(false); setRes(null);
     try {
-      if (!window.claude || !window.claude.complete) throw new Error("offline");
       const data = await translatePhrase(val, dir);
       setRes(data);
     } catch (e) {

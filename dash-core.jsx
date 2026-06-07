@@ -476,42 +476,32 @@ function useAnnouncements() {
 }
 
 /* ============================================================
-   Translation engine — same prompt/JSON shape as the landing
-   page; powered by the environment's window.claude.complete.
+   Translation engine — uses Google Translate free API, same as
+   the landing page. No API key required.
    ============================================================ */
 async function translatePhrase(input, forced) {
-  const dirNote = forced === "en2es" ?
-  "The input is English; translate INTO Spanish." :
-  forced === "es2en" ?
-  "The input is Spanish; translate INTO English." :
-  "Detect whether the input is Spanish or English. If Spanish, translate into English; if English, translate into Spanish.";
-  const prompt =
-  `You are a careful bilingual Spanish<->English dictionary for language learners.
-${dirNote}
-Input: """${input}"""
+  let sourceLang, targetLang;
+  if (forced === "en2es") {
+    sourceLang = "en"; targetLang = "es";
+  } else if (forced === "es2en") {
+    sourceLang = "es"; targetLang = "en";
+  } else {
+    sourceLang = /[áéíóúüñ¿¡]/i.test(input) ? "es" : "en";
+    targetLang = sourceLang === "es" ? "en" : "es";
+  }
 
-Reply with STRICT JSON only, no markdown, no commentary. Shape:
-{
- "sourceLang": "en" | "es",
- "targetLang": "en" | "es",
- "translation": "the best translation of the input in the target language",
- "partOfSpeech": "short part of speech or grammatical note, or empty string for phrases",
- "register": "neutral" | "formal" | "informal" | "colloquial",
- "pronunciation": "simple phonetic respelling of the TRANSLATION (not IPA)",
- "examples": [ {"source":"natural sentence in the SOURCE language using the input","target":"its translation in the TARGET language"} ],
- "note": "one short tip on natural usage (max 18 words)"
-}
-Give exactly 2 examples. Keep everything concise and accurate.`;
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const data = await r.json();
 
-  const raw = await window.claude.complete(prompt);
-  let txt = (raw || "").trim();
-  const fence = txt.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  if (fence) txt = fence[1].trim();
-  const s = txt.indexOf("{"), e = txt.lastIndexOf("}");
-  if (s !== -1 && e !== -1) txt = txt.slice(s, e + 1);
-  const data = JSON.parse(txt);
-  data.input = input;
-  return data;
+  const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
+  if (!translation) throw new Error("Empty response");
+
+  let partOfSpeech = "";
+  if (Array.isArray(data[1])) partOfSpeech = data[1][0]?.[0] || "";
+
+  return { input, sourceLang, targetLang, translation, partOfSpeech, register: "", pronunciation: "", examples: [], note: "" };
 }
 
 const DRILLS = [
