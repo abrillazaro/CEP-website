@@ -37,6 +37,19 @@
   window.location.replace(redirectTo);
 })();
 </script>
+<script>
+window.claude = {
+  complete: async function(prompt) {
+    const res = await fetch("/api/translate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    });
+    if (!res.ok) throw new Error("Translation service error");
+    return res.text();
+  }
+};
+</script>
 </head>
 <body>
 <div id="root"></div>
