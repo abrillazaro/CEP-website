@@ -165,17 +165,18 @@ function TeamsMark({ size = 18 }) {
 /* ---------------- Data ---------------- */
 // Read real user name from Supabase session stored in localStorage
 const STUDENT = (function() {
-  const fallback = { name: "Student", first: "Student", initials: "S" };
+  const fallback = { id: null, name: "Student", first: "Student", initials: "S" };
   try {
     const raw = localStorage.getItem("sb-qkxhzpicqjxodeadhcvw-auth-token");
     if (!raw) return { ...fallback, level: "B1 · Intermediate", levelEs: "B1 · Intermedio", instructor: "Abril Lázaro" };
     const session = JSON.parse(raw);
     const meta = (session.user && session.user.user_metadata) || {};
     const email = (session.user && session.user.email) || "";
+    const id = (session.user && session.user.id) || null;
     const fullName = meta.full_name || meta.name || email.split("@")[0].replace(/[._]/g, " ");
     const first = fullName.split(" ")[0];
     const initials = fullName.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
-    return { name: fullName, first, initials, level: "B1 · Intermediate", levelEs: "B1 · Intermedio", instructor: "Abril Lázaro" };
+    return { id, name: fullName, first, initials, level: "B1 · Intermediate", levelEs: "B1 · Intermedio", instructor: "Abril Lázaro" };
   } catch(e) {
     return { ...fallback, level: "B1 · Intermediate", levelEs: "B1 · Intermedio", instructor: "Abril Lázaro" };
   }
@@ -291,41 +292,141 @@ function suggestCard(card) {
 }
 
 /* ============================================================
-   Class-feed store — starts empty; every post is user-generated
-   (text + optional image/video). Persisted locally; if media is
-   too large for storage, text/meta still persist across reloads.
+   Supabase client — shared by all live data stores
    ============================================================ */
-const FEED_KEY = "cep_feed_v1";
-function loadFeed() {
+const _SB_URL = "https://qkxhzpicqjxodeadhcvw.supabase.co";
+const _SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFreGh6cGljcWp4b2RlYWRoY3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNTg2NTUsImV4cCI6MjA5MjgzNDY1NX0.wLL0h9vQ8W5xp7mKFbq-CphiqE4cRVGTQ-KayuteHt8";
+const _sbClient = window.supabase ? window.supabase.createClient(_SB_URL, _SB_KEY) : null;
+
+function _uid() {
   try {
-    const raw = JSON.parse(localStorage.getItem(FEED_KEY) || "null");
-    if (Array.isArray(raw)) return raw;
-  } catch (e) {}
-  return [];
+    const raw = localStorage.getItem("sb-qkxhzpicqjxodeadhcvw-auth-token");
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    return (s && s.user && s.user.id) || null;
+  } catch(e) { return null; }
 }
-let _feed = loadFeed();
+
+/* Deterministic avatar colour from user UUID */
+function _avatarColor(uid) {
+  const palette = ["var(--sage)", "#4b53bc", "#bd8b3e", "#b4574a", "#2d6a9b"];
+  if (!uid) return palette[0];
+  return palette[Array.from(uid).reduce((n, c) => n + c.charCodeAt(0), 0) % palette.length];
+}
+
+/* ============================================================
+   Class-feed store — Supabase-backed, real-time.
+   Tables: feed_posts, feed_comments, feed_likes
+   ============================================================ */
+let _feedCache = [];
 const _feedSubs = new Set();
-function _commitFeed(next) {
-  _feed = next;
-  try {
-    localStorage.setItem(FEED_KEY, JSON.stringify(_feed));
-  } catch (e) {
-    // quota (large video/image) — keep full posts in memory, persist text-only
-    try { localStorage.setItem(FEED_KEY, JSON.stringify(_feed.map((p) => ({ ...p, media: [] })))); } catch (_) {}
+function _pushFeed(data) { _feedCache = data; _feedSubs.forEach(fn => fn(_feedCache)); }
+
+async function _reloadFeed() {
+  if (!_sbClient) return;
+  const uid = _uid();
+  const [pr, cr, lr] = await Promise.all([
+    _sbClient.from("feed_posts").select("*").order("created_at", { ascending: false }),
+    _sbClient.from("feed_comments").select("*").order("created_at", { ascending: true }),
+    _sbClient.from("feed_likes").select("*")
+  ]);
+  if (pr.error) { console.error("feed_posts:", pr.error); return; }
+  const comments = cr.data || [];
+  const likes = lr.data || [];
+  const feed = (pr.data || []).map(p => {
+    const pComments = comments.filter(c => c.post_id === p.id).map(c => ({
+      id: c.id,
+      who: c.full_name || "",
+      initials: (c.full_name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase(),
+      color: c.color || _avatarColor(c.author_id),
+      role: c.role || "student",
+      body: c.body,
+      ts: new Date(c.created_at).getTime()
+    }));
+    const pLikes = likes.filter(l => l.post_id === p.id);
+    return {
+      id: p.id,
+      who: p.full_name || "",
+      initials: (p.full_name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase(),
+      color: p.color || _avatarColor(p.author_id),
+      role: p.role || "student",
+      body: p.body,
+      media: p.media || [],
+      likes: pLikes.length,
+      liked: uid ? pLikes.some(l => l.user_id === uid) : false,
+      ts: new Date(p.created_at).getTime(),
+      comments: pComments,
+      pinned: p.pinned || false
+    };
+  });
+  _pushFeed(feed);
+}
+
+function getFeed() { return _feedCache; }
+
+async function addPost(post) {
+  if (!_sbClient) return;
+  const cu = currentUser();
+  const uid = _uid();
+  await _sbClient.from("feed_posts").insert({
+    author_id: uid,
+    full_name: post.who || cu.name,
+    color: post.color || cu.color || _avatarColor(uid),
+    role: post.role || cu.role || "student",
+    body: post.body || "",
+    media: post.media || [],
+    pinned: false
+  });
+}
+
+async function removePost(id) {
+  if (!_sbClient) return;
+  await _sbClient.from("feed_posts").delete().eq("id", id);
+}
+
+async function updatePost(id, patch) {
+  if (!_sbClient) return;
+  const uid = _uid();
+  if ("liked" in patch) {
+    _pushFeed(_feedCache.map(p => p.id === id ? { ...p, liked: patch.liked, likes: patch.likes } : p));
+    if (patch.liked) {
+      await _sbClient.from("feed_likes").insert({ post_id: id, user_id: uid });
+    } else {
+      await _sbClient.from("feed_likes").delete().eq("post_id", id).eq("user_id", uid);
+    }
+    return;
   }
-  _feedSubs.forEach((fn) => fn(_feed));
+  if ("comments" in patch) {
+    const cur = _feedCache.find(p => p.id === id);
+    const old = cur ? cur.comments : [];
+    const next = patch.comments || [];
+    const added = next.filter(c => !old.some(o => o.id === c.id));
+    const removed = old.filter(o => !next.some(c => c.id === o.id));
+    const cu = currentUser();
+    for (const c of added) {
+      await _sbClient.from("feed_comments").insert({
+        post_id: id, author_id: uid,
+        full_name: c.who || cu.name,
+        color: c.color || cu.color || _avatarColor(uid),
+        role: c.role || cu.role || "student",
+        body: c.body
+      });
+    }
+    for (const c of removed) {
+      await _sbClient.from("feed_comments").delete().eq("id", c.id);
+    }
+    return;
+  }
+  if ("pinned" in patch) {
+    await _sbClient.from("feed_posts").update({ pinned: patch.pinned }).eq("id", id);
+  }
 }
-function getFeed() { return _feed; }
-function addPost(post) {
-  _commitFeed([{ id: "p" + Date.now() + Math.random().toString(36).slice(2, 6), ...post }, ..._feed]);
-}
-function removePost(id) { _commitFeed(_feed.filter((p) => p.id !== id)); }
-function updatePost(id, patch) { _commitFeed(_feed.map((p) => p.id === id ? { ...p, ...patch } : p)); }
+
 function useFeed() {
-  const [f, set] = React.useState(_feed);
+  const [f, set] = React.useState(_feedCache);
   React.useEffect(() => {
-    const fn = (nf) => set(nf);
-    _feedSubs.add(fn); set(_feed);
+    const fn = nf => set([...nf]);
+    _feedSubs.add(fn); set([..._feedCache]);
     return () => { _feedSubs.delete(fn); };
   }, []);
   return f;
@@ -382,98 +483,242 @@ function currentUser() {
 }
 
 /* ============================================================
-   Assignments store — empty by default. Instructors create them;
-   students submit (text + files); instructors grade + give feedback.
+   Assignments store — Supabase-backed.
+   Tables: assignments, submissions
    ============================================================ */
-const ASSIGN_KEY = "cep_assignments_v1";
-function loadAssign() {
-  try { const r = JSON.parse(localStorage.getItem(ASSIGN_KEY) || "null"); if (Array.isArray(r)) return r; } catch (e) {}
-  return [];
-}
-let _assign = loadAssign();
+let _assignCache = [];
 const _assignSubs = new Set();
-function _commitAssign(next) {
-  _assign = next;
-  try { localStorage.setItem(ASSIGN_KEY, JSON.stringify(_assign)); }
-  catch (e) { try { localStorage.setItem(ASSIGN_KEY, JSON.stringify(_assign.map((a) => ({ ...a, submission: a.submission ? { ...a.submission, files: [] } : null })))); } catch (_) {} }
-  _assignSubs.forEach((fn) => fn(_assign));
+function _notifyAssign(data) { _assignCache = data; _assignSubs.forEach(fn => fn(_assignCache)); }
+
+async function _reloadAssignments() {
+  if (!_sbClient) return;
+  const uid = _uid();
+  const [ar, sr] = await Promise.all([
+    _sbClient.from("assignments").select("*").order("created_at", { ascending: false }),
+    _sbClient.from("submissions").select("*")
+  ]);
+  if (ar.error) { console.error("assignments:", ar.error); return; }
+  const subs = sr.data || [];
+  const result = (ar.data || []).map(a => {
+    const mySub = _role === "instructor"
+      ? subs.filter(s => s.assignment_id === a.id).sort((x, y) => new Date(y.submitted_at) - new Date(x.submitted_at))[0]
+      : subs.find(s => s.assignment_id === a.id && s.student_id === uid);
+    return {
+      id: a.id, title: a.title, desc: a.description,
+      due: a.due ? new Date(a.due).getTime() : null,
+      points: a.points || 100,
+      createdAt: new Date(a.created_at).getTime(),
+      submission: mySub ? { text: mySub.body || "", files: mySub.files || [], at: new Date(mySub.submitted_at).getTime() } : null,
+      grade: mySub && mySub.grade_score != null ? { score: mySub.grade_score, feedback: mySub.grade_feedback || "", at: mySub.graded_at ? new Date(mySub.graded_at).getTime() : null } : null
+    };
+  });
+  _notifyAssign(result);
 }
-function getAssignments() { return _assign; }
-function addAssignment(a) {
-  _commitAssign([{ id: "a" + Date.now() + Math.random().toString(36).slice(2, 5), createdAt: Date.now(), points: 100, submission: null, grade: null, ...a }, ..._assign]);
+
+function getAssignments() { return _assignCache; }
+
+async function addAssignment(a) {
+  if (!_sbClient) return;
+  await _sbClient.from("assignments").insert({
+    title: a.title, description: a.desc,
+    due: a.due ? new Date(a.due).toISOString() : null,
+    points: a.points || 100, created_by: _uid()
+  });
 }
-function updateAssignment(id, patch) { _commitAssign(_assign.map((a) => a.id === id ? { ...a, ...patch } : a)); }
-function removeAssignment(id) { _commitAssign(_assign.filter((a) => a.id !== id)); }
+
+async function updateAssignment(id, patch) {
+  if (!_sbClient) return;
+  const uid = _uid();
+  if ("submission" in patch && patch.submission) {
+    await _sbClient.from("submissions").upsert({
+      assignment_id: id, student_id: uid,
+      body: patch.submission.text || "",
+      files: patch.submission.files || [],
+      submitted_at: new Date().toISOString()
+    }, { onConflict: "assignment_id,student_id" });
+    return;
+  }
+  if ("grade" in patch && patch.grade) {
+    const { data: subs } = await _sbClient.from("submissions").select("id")
+      .eq("assignment_id", id).order("submitted_at", { ascending: false }).limit(1);
+    if (subs && subs[0]) {
+      await _sbClient.from("submissions").update({
+        grade_score: patch.grade.score,
+        grade_feedback: patch.grade.feedback || "",
+        graded_at: new Date().toISOString()
+      }).eq("id", subs[0].id);
+    }
+    return;
+  }
+  const fields = {};
+  if (patch.title !== undefined) fields.title = patch.title;
+  if (patch.desc !== undefined) fields.description = patch.desc;
+  if (patch.due !== undefined) fields.due = patch.due ? new Date(patch.due).toISOString() : null;
+  if (patch.points !== undefined) fields.points = patch.points;
+  if (Object.keys(fields).length) await _sbClient.from("assignments").update(fields).eq("id", id);
+}
+
+async function removeAssignment(id) {
+  if (!_sbClient) return;
+  await _sbClient.from("assignments").delete().eq("id", id);
+}
+
 function useAssignments() {
-  const [v, set] = React.useState(_assign);
-  React.useEffect(() => { const fn = (n) => set(n); _assignSubs.add(fn); set(_assign); return () => { _assignSubs.delete(fn); }; }, []);
+  const [v, set] = React.useState(_assignCache);
+  React.useEffect(() => {
+    const fn = n => set([...n]);
+    _assignSubs.add(fn); set([..._assignCache]);
+    return () => { _assignSubs.delete(fn); };
+  }, []);
   return v;
 }
 
 /* ============================================================
-   Live-sessions store — empty by default. Instructors schedule
-   sessions; students join. Past vs upcoming derived from time.
+   Meetings store — Supabase-backed.
+   Table: meetings
    ============================================================ */
-const MEET_KEY = "cep_meetings_v1";
-function loadMeet() {
-  try { const r = JSON.parse(localStorage.getItem(MEET_KEY) || "null"); if (Array.isArray(r)) return r; } catch (e) {}
-  return [];
-}
-let _meet = loadMeet();
+let _meetCache = [];
 const _meetSubs = new Set();
-function _commitMeet(next) {
-  _meet = next;
-  try { localStorage.setItem(MEET_KEY, JSON.stringify(_meet)); } catch (e) {}
-  _meetSubs.forEach((fn) => fn(_meet));
+function _notifyMeet(data) { _meetCache = data; _meetSubs.forEach(fn => fn(_meetCache)); }
+
+async function _reloadMeetings() {
+  if (!_sbClient) return;
+  const { data, error } = await _sbClient.from("meetings").select("*").order("scheduled_at", { ascending: false });
+  if (error) { console.error("meetings:", error); return; }
+  const result = (data || []).map(m => ({
+    id: m.id, title: m.title,
+    when: m.scheduled_at ? new Date(m.scheduled_at).getTime() : null,
+    durationMin: m.duration_min || 30,
+    link: m.link || "",
+    host: m.host || INSTRUCTOR.name,
+    recordingUrl: m.recording_url || "",
+    createdAt: new Date(m.created_at).getTime()
+  }));
+  _notifyMeet(result);
 }
-function getMeetings() { return _meet; }
-function addMeeting(m) {
-  _commitMeet([{ id: "m" + Date.now() + Math.random().toString(36).slice(2, 5), createdAt: Date.now(), host: INSTRUCTOR.name, ...m }, ..._meet]);
+
+function getMeetings() { return _meetCache; }
+
+async function addMeeting(m) {
+  if (!_sbClient) return;
+  await _sbClient.from("meetings").insert({
+    title: m.title,
+    scheduled_at: m.when ? new Date(m.when).toISOString() : new Date().toISOString(),
+    duration_min: m.durationMin || 30,
+    link: m.link || "",
+    host: INSTRUCTOR.name,
+    recording_url: "",
+    created_by: _uid()
+  });
 }
-function updateMeeting(id, patch) { _commitMeet(_meet.map((m) => m.id === id ? { ...m, ...patch } : m)); }
-function removeMeeting(id) { _commitMeet(_meet.filter((m) => m.id !== id)); }
+
+async function updateMeeting(id, patch) {
+  if (!_sbClient) return;
+  const fields = {};
+  if (patch.recordingUrl !== undefined) fields.recording_url = patch.recordingUrl;
+  if (patch.title !== undefined) fields.title = patch.title;
+  if (patch.when !== undefined) fields.scheduled_at = patch.when ? new Date(patch.when).toISOString() : null;
+  if (patch.durationMin !== undefined) fields.duration_min = patch.durationMin;
+  if (patch.link !== undefined) fields.link = patch.link;
+  if (Object.keys(fields).length) await _sbClient.from("meetings").update(fields).eq("id", id);
+}
+
+async function removeMeeting(id) {
+  if (!_sbClient) return;
+  await _sbClient.from("meetings").delete().eq("id", id);
+}
+
 function useMeetings() {
-  const [v, set] = React.useState(_meet);
-  React.useEffect(() => { const fn = (n) => set(n); _meetSubs.add(fn); set(_meet); return () => { _meetSubs.delete(fn); }; }, []);
+  const [v, set] = React.useState(_meetCache);
+  React.useEffect(() => {
+    const fn = n => set([...n]);
+    _meetSubs.add(fn); set([..._meetCache]);
+    return () => { _meetSubs.delete(fn); };
+  }, []);
   return v;
 }
 
 /* ============================================================
-   Announcements store — SEPARATE from the social class feed.
-   Only instructors post here. Each announcement auto-expires one
-   week after it's posted: students see it in their Announcements
-   tab for 7 days, then it disappears. Expired items are pruned
-   from storage on load and on every write.
+   Announcements store — Supabase-backed, 7-day TTL.
+   Table: announcements
    ============================================================ */
-const ANNOUNCE_KEY = "cep_announcements_v1";
-const ANNOUNCE_TTL = 7 * 864e5; // one week, in ms
-function _pruneAnnounce(arr) {
-  const cut = Date.now() - ANNOUNCE_TTL;
-  return arr.filter((a) => (a.ts || 0) >= cut);
-}
-function loadAnnounce() {
-  try { const r = JSON.parse(localStorage.getItem(ANNOUNCE_KEY) || "null"); if (Array.isArray(r)) return _pruneAnnounce(r); } catch (e) {}
-  return [];
-}
-let _announce = loadAnnounce();
+const ANNOUNCE_TTL = 7 * 864e5;
+let _announceCache = [];
 const _annSubs = new Set();
-function _commitAnnounce(next) {
-  _announce = _pruneAnnounce(next);
-  try { localStorage.setItem(ANNOUNCE_KEY, JSON.stringify(_announce)); } catch (e) {}
-  _annSubs.forEach((fn) => fn(_announce));
+function _notifyAnnounce(data) { _announceCache = data; _annSubs.forEach(fn => fn(_announceCache)); }
+
+async function _reloadAnnouncements() {
+  if (!_sbClient) return;
+  const cutoff = new Date(Date.now() - ANNOUNCE_TTL).toISOString();
+  const { data, error } = await _sbClient.from("announcements").select("*")
+    .gte("created_at", cutoff).order("created_at", { ascending: false });
+  if (error) { console.error("announcements:", error); return; }
+  const result = (data || []).map(a => ({
+    id: a.id,
+    who: a.full_name || "",
+    initials: (a.full_name || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase(),
+    color: a.color || "#5d7c69",
+    title: a.title || "",
+    body: a.body || "",
+    ts: new Date(a.created_at).getTime()
+  }));
+  _notifyAnnounce(result);
 }
-function getAnnouncements() { return _pruneAnnounce(_announce); }
-function addAnnouncement(a) {
-  _commitAnnounce([{ id: "an" + Date.now() + Math.random().toString(36).slice(2, 5), ts: Date.now(), ...a }, ..._announce]);
+
+function getAnnouncements() { return _announceCache; }
+
+async function addAnnouncement(a) {
+  if (!_sbClient) return;
+  const cu = currentUser();
+  await _sbClient.from("announcements").insert({
+    author_id: _uid(),
+    full_name: a.who || cu.name,
+    color: a.color || cu.color || "#5d7c69",
+    title: a.title || "",
+    body: a.body || ""
+  });
 }
-function removeAnnouncement(id) { _commitAnnounce(_announce.filter((a) => a.id !== id)); }
-/* hook returns only the announcements still within their 7-day window */
+
+async function removeAnnouncement(id) {
+  if (!_sbClient) return;
+  await _sbClient.from("announcements").delete().eq("id", id);
+}
+
 function useAnnouncements() {
-  const [v, set] = React.useState(_announce);
-  React.useEffect(() => { const fn = (n) => set(n); _annSubs.add(fn); set(_announce); return () => { _annSubs.delete(fn); }; }, []);
-  const cut = Date.now() - ANNOUNCE_TTL;
-  return v.filter((a) => (a.ts || 0) >= cut);
+  const [v, set] = React.useState(_announceCache);
+  React.useEffect(() => {
+    const fn = n => set([...n]);
+    _annSubs.add(fn); set([..._announceCache]);
+    return () => { _annSubs.delete(fn); };
+  }, []);
+  return v;
 }
+
+/* ── Realtime subscriptions + initial loads ──────────────────────────────── */
+(function() {
+  _reloadFeed();
+  _reloadAssignments();
+  _reloadMeetings();
+  _reloadAnnouncements();
+  /* when role switches (e.g. instr-app sets instructor), reload role-aware stores */
+  _roleSubs.add(() => _reloadAssignments());
+  if (!_sbClient) return;
+  _sbClient.channel("cep-feed")
+    .on("postgres_changes", { event: "*", schema: "public", table: "feed_posts" }, _reloadFeed)
+    .on("postgres_changes", { event: "*", schema: "public", table: "feed_comments" }, _reloadFeed)
+    .on("postgres_changes", { event: "*", schema: "public", table: "feed_likes" }, _reloadFeed)
+    .subscribe();
+  _sbClient.channel("cep-assignments")
+    .on("postgres_changes", { event: "*", schema: "public", table: "assignments" }, _reloadAssignments)
+    .on("postgres_changes", { event: "*", schema: "public", table: "submissions" }, _reloadAssignments)
+    .subscribe();
+  _sbClient.channel("cep-meetings")
+    .on("postgres_changes", { event: "*", schema: "public", table: "meetings" }, _reloadMeetings)
+    .subscribe();
+  _sbClient.channel("cep-announcements")
+    .on("postgres_changes", { event: "*", schema: "public", table: "announcements" }, _reloadAnnouncements)
+    .subscribe();
+})();
 
 /* ============================================================
    Translation engine — uses Google Translate free API, same as
