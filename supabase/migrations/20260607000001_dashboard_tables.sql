@@ -148,3 +148,23 @@ CREATE POLICY "meet_read"   ON public.meetings FOR SELECT TO authenticated USING
 CREATE POLICY "meet_insert" ON public.meetings FOR INSERT TO authenticated WITH CHECK (is_teacher());
 CREATE POLICY "meet_update" ON public.meetings FOR UPDATE TO authenticated USING (is_teacher());
 CREATE POLICY "meet_delete" ON public.meetings FOR DELETE TO authenticated USING (is_teacher());
+
+-- ── Realtime ──────────────────────────────────────────────────────────────────
+-- REPLICA IDENTITY FULL lets postgres_changes carry the old row on UPDATE/DELETE.
+ALTER TABLE public.feed_posts    REPLICA IDENTITY FULL;
+ALTER TABLE public.feed_comments REPLICA IDENTITY FULL;
+ALTER TABLE public.feed_likes    REPLICA IDENTITY FULL;
+ALTER TABLE public.announcements REPLICA IDENTITY FULL;
+ALTER TABLE public.assignments   REPLICA IDENTITY FULL;
+ALTER TABLE public.submissions   REPLICA IDENTITY FULL;
+ALTER TABLE public.meetings      REPLICA IDENTITY FULL;
+
+-- Add tables to the supabase_realtime publication so postgres_changes events fire.
+ALTER PUBLICATION supabase_realtime ADD TABLE
+  public.feed_posts,
+  public.feed_comments,
+  public.feed_likes,
+  public.announcements,
+  public.assignments,
+  public.submissions,
+  public.meetings;
