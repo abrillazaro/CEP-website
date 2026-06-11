@@ -368,7 +368,7 @@ async function addPost(post) {
   if (!_sbClient) return;
   const cu = currentUser();
   const uid = _uid();
-  await _sbClient.from("feed_posts").insert({
+  const { error } = await _sbClient.from("feed_posts").insert({
     author_id: uid,
     full_name: post.who || cu.name,
     color: post.color || cu.color || _avatarColor(uid),
@@ -377,11 +377,15 @@ async function addPost(post) {
     media: post.media || [],
     pinned: false
   });
+  if (error) { console.error("addPost:", error.message, error.details); }
+  await _reloadFeed();
 }
 
 async function removePost(id) {
   if (!_sbClient) return;
-  await _sbClient.from("feed_posts").delete().eq("id", id);
+  const { error } = await _sbClient.from("feed_posts").delete().eq("id", id);
+  if (error) { console.error("removePost:", error.message); }
+  await _reloadFeed();
 }
 
 async function updatePost(id, patch) {
@@ -390,10 +394,13 @@ async function updatePost(id, patch) {
   if ("liked" in patch) {
     _pushFeed(_feedCache.map(p => p.id === id ? { ...p, liked: patch.liked, likes: patch.likes } : p));
     if (patch.liked) {
-      await _sbClient.from("feed_likes").insert({ post_id: id, user_id: uid });
+      const { error } = await _sbClient.from("feed_likes").insert({ post_id: id, user_id: uid });
+      if (error) console.error("like:", error.message);
     } else {
-      await _sbClient.from("feed_likes").delete().eq("post_id", id).eq("user_id", uid);
+      const { error } = await _sbClient.from("feed_likes").delete().eq("post_id", id).eq("user_id", uid);
+      if (error) console.error("unlike:", error.message);
     }
+    await _reloadFeed();
     return;
   }
   if ("comments" in patch) {
@@ -404,21 +411,26 @@ async function updatePost(id, patch) {
     const removed = old.filter(o => !next.some(c => c.id === o.id));
     const cu = currentUser();
     for (const c of added) {
-      await _sbClient.from("feed_comments").insert({
+      const { error } = await _sbClient.from("feed_comments").insert({
         post_id: id, author_id: uid,
         full_name: c.who || cu.name,
         color: c.color || cu.color || _avatarColor(uid),
         role: c.role || cu.role || "student",
         body: c.body
       });
+      if (error) console.error("addComment:", error.message, error.details);
     }
     for (const c of removed) {
-      await _sbClient.from("feed_comments").delete().eq("id", c.id);
+      const { error } = await _sbClient.from("feed_comments").delete().eq("id", c.id);
+      if (error) console.error("removeComment:", error.message);
     }
+    await _reloadFeed();
     return;
   }
   if ("pinned" in patch) {
-    await _sbClient.from("feed_posts").update({ pinned: patch.pinned }).eq("id", id);
+    const { error } = await _sbClient.from("feed_posts").update({ pinned: patch.pinned }).eq("id", id);
+    if (error) console.error("pin:", error.message);
+    await _reloadFeed();
   }
 }
 
@@ -519,35 +531,42 @@ function getAssignments() { return _assignCache; }
 
 async function addAssignment(a) {
   if (!_sbClient) return;
-  await _sbClient.from("assignments").insert({
+  const { error } = await _sbClient.from("assignments").insert({
     title: a.title, description: a.desc,
     due: a.due ? new Date(a.due).toISOString() : null,
     points: a.points || 100, created_by: _uid()
   });
+  if (error) console.error("addAssignment:", error.message, error.details);
+  await _reloadAssignments();
 }
 
 async function updateAssignment(id, patch) {
   if (!_sbClient) return;
   const uid = _uid();
   if ("submission" in patch && patch.submission) {
-    await _sbClient.from("submissions").upsert({
+    const { error } = await _sbClient.from("submissions").upsert({
       assignment_id: id, student_id: uid,
       body: patch.submission.text || "",
       files: patch.submission.files || [],
       submitted_at: new Date().toISOString()
     }, { onConflict: "assignment_id,student_id" });
+    if (error) console.error("submit:", error.message, error.details);
+    await _reloadAssignments();
     return;
   }
   if ("grade" in patch && patch.grade) {
-    const { data: subs } = await _sbClient.from("submissions").select("id")
+    const { data: subs, error: se } = await _sbClient.from("submissions").select("id")
       .eq("assignment_id", id).order("submitted_at", { ascending: false }).limit(1);
+    if (se) console.error("grade fetch:", se.message);
     if (subs && subs[0]) {
-      await _sbClient.from("submissions").update({
+      const { error } = await _sbClient.from("submissions").update({
         grade_score: patch.grade.score,
         grade_feedback: patch.grade.feedback || "",
         graded_at: new Date().toISOString()
       }).eq("id", subs[0].id);
+      if (error) console.error("grade:", error.message, error.details);
     }
+    await _reloadAssignments();
     return;
   }
   const fields = {};
@@ -555,12 +574,18 @@ async function updateAssignment(id, patch) {
   if (patch.desc !== undefined) fields.description = patch.desc;
   if (patch.due !== undefined) fields.due = patch.due ? new Date(patch.due).toISOString() : null;
   if (patch.points !== undefined) fields.points = patch.points;
-  if (Object.keys(fields).length) await _sbClient.from("assignments").update(fields).eq("id", id);
+  if (Object.keys(fields).length) {
+    const { error } = await _sbClient.from("assignments").update(fields).eq("id", id);
+    if (error) console.error("updateAssignment:", error.message, error.details);
+  }
+  await _reloadAssignments();
 }
 
 async function removeAssignment(id) {
   if (!_sbClient) return;
-  await _sbClient.from("assignments").delete().eq("id", id);
+  const { error } = await _sbClient.from("assignments").delete().eq("id", id);
+  if (error) console.error("removeAssignment:", error.message);
+  await _reloadAssignments();
 }
 
 function useAssignments() {
@@ -601,7 +626,7 @@ function getMeetings() { return _meetCache; }
 
 async function addMeeting(m) {
   if (!_sbClient) return;
-  await _sbClient.from("meetings").insert({
+  const { error } = await _sbClient.from("meetings").insert({
     title: m.title,
     scheduled_at: m.when ? new Date(m.when).toISOString() : new Date().toISOString(),
     duration_min: m.durationMin || 30,
@@ -610,6 +635,8 @@ async function addMeeting(m) {
     recording_url: "",
     created_by: _uid()
   });
+  if (error) console.error("addMeeting:", error.message, error.details);
+  await _reloadMeetings();
 }
 
 async function updateMeeting(id, patch) {
@@ -620,12 +647,18 @@ async function updateMeeting(id, patch) {
   if (patch.when !== undefined) fields.scheduled_at = patch.when ? new Date(patch.when).toISOString() : null;
   if (patch.durationMin !== undefined) fields.duration_min = patch.durationMin;
   if (patch.link !== undefined) fields.link = patch.link;
-  if (Object.keys(fields).length) await _sbClient.from("meetings").update(fields).eq("id", id);
+  if (Object.keys(fields).length) {
+    const { error } = await _sbClient.from("meetings").update(fields).eq("id", id);
+    if (error) console.error("updateMeeting:", error.message, error.details);
+  }
+  await _reloadMeetings();
 }
 
 async function removeMeeting(id) {
   if (!_sbClient) return;
-  await _sbClient.from("meetings").delete().eq("id", id);
+  const { error } = await _sbClient.from("meetings").delete().eq("id", id);
+  if (error) console.error("removeMeeting:", error.message);
+  await _reloadMeetings();
 }
 
 function useMeetings() {
@@ -670,18 +703,22 @@ function getAnnouncements() { return _announceCache; }
 async function addAnnouncement(a) {
   if (!_sbClient) return;
   const cu = currentUser();
-  await _sbClient.from("announcements").insert({
+  const { error } = await _sbClient.from("announcements").insert({
     author_id: _uid(),
     full_name: a.who || cu.name,
     color: a.color || cu.color || "#5d7c69",
     title: a.title || "",
     body: a.body || ""
   });
+  if (error) console.error("addAnnouncement:", error.message, error.details);
+  await _reloadAnnouncements();
 }
 
 async function removeAnnouncement(id) {
   if (!_sbClient) return;
-  await _sbClient.from("announcements").delete().eq("id", id);
+  const { error } = await _sbClient.from("announcements").delete().eq("id", id);
+  if (error) console.error("removeAnnouncement:", error.message);
+  await _reloadAnnouncements();
 }
 
 function useAnnouncements() {
