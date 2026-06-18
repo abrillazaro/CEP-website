@@ -1165,10 +1165,10 @@ const CLASS_LINKS = {
   beginner:     "https://wa.me/525572132329?text=Hola%2C%20quiero%20inscribirme%20a%20la%20clase%20de%20ingl%C3%A9s%20del%20mi%C3%A9rcoles%20a%20las%205pm",
   intermediate: "PLACEHOLDER_INTERMEDIATE_WHATSAPP_LINK",
 };
-const CLASS_QR = {
-  beginner:     "qr-beginner.png",
-  intermediate: "qr-intermediate.png",
-};
+
+function qrUrl(link) {
+  return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=" + encodeURIComponent(link);
+}
 
 function CTASection({ t }) {
   const cards = [
@@ -1188,8 +1188,12 @@ function CTASection({ t }) {
                 Join the class
               </a>
               <div className="class-card-divider" />
-              <img className="class-card-qr" src={CLASS_QR[c.key]} alt={`QR – ${c.label}`} />
-              <span className="class-card-qr-label">Scan to join from desktop</span>
+              {CLASS_LINKS[c.key] !== "PLACEHOLDER_INTERMEDIATE_WHATSAPP_LINK" && (
+                <>
+                  <img className="class-card-qr" src={qrUrl(CLASS_LINKS[c.key])} alt={`QR – ${c.label}`} />
+                  <span className="class-card-qr-label">Scan to join from desktop</span>
+                </>
+              )}
             </div>
           ))}
         </div>
