@@ -341,9 +341,13 @@
   .class-card-title{font-family:var(--serif);font-size:28px;font-weight:600;
     color:var(--navy);margin-bottom:6px;line-height:1.1;}
   .class-card-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.5;}
-  .class-card-join{font-size:17px;font-weight:700;color:var(--sage-deep);
-    text-decoration:none;margin-bottom:28px;transition:color .16s;}
-  .class-card-join:hover{color:var(--sage);}
+  .class-card-join{display:inline-block;font-size:15px;font-weight:700;
+    color:#fff;background:var(--navy);text-decoration:none;
+    padding:13px 32px;border-radius:12px;margin-bottom:28px;
+    box-shadow:0 4px 14px rgba(32,57,92,.22);
+    transition:background .18s,transform .14s,box-shadow .18s;}
+  .class-card-join:hover{background:var(--navy-deep);transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(32,57,92,.30);}
   .class-card-divider{width:40px;height:1.5px;background:var(--line);margin-bottom:22px;}
   .class-card-qr{width:120px;height:120px;border-radius:10px;border:1px solid var(--line);
     object-fit:contain;display:block;}
