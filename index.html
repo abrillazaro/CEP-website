@@ -444,6 +444,11 @@ const STR = {
     contactToast: "Thanks — I’ll reach out soon",
     footer: "© The Corporate English Project · CEP · México, México",
     ctaBtn: "Sign up for live online group class — Wednesdays at 5 PM",
+    cardEyebrow: "Live online group class",
+    cardJoin: "Join the class",
+    cardScan: "Scan to join from desktop",
+    cardBeginner: "Beginner", cardBeginnerSub: "Wednesday · 5–6 PM CT · $50 MXN",
+    cardInter: "Intermediate", cardInterSub: "Monday · 5–6 PM CT · $50 MXN",
   },
   es: {
     conjugate: "Conjugar", login: "Entrar", about: "Nosotros",
@@ -487,6 +492,11 @@ const STR = {
     contactToast: "¡Gracias — te escribo pronto!",
     footer: "© The Corporate English Project · CEP · México, México",
     ctaBtn: "Inscríbete en la clase grupal en vivo — miércoles a las 5 PM",
+    cardEyebrow: "Clase grupal en vivo",
+    cardJoin: "Únete a la clase",
+    cardScan: "Escanea para unirte desde tu computadora",
+    cardBeginner: "Principiante", cardBeginnerSub: "Miércoles · 5–6 PM CT · $50 MXN",
+    cardInter: "Intermedio", cardInterSub: "Lunes · 5–6 PM CT · $50 MXN",
   }
 };
 
@@ -1172,8 +1182,8 @@ function qrUrl(link) {
 
 function CTASection({ t }) {
   const cards = [
-    { key:"beginner",     label:"Beginner",     sub:"Wednesday · 5–6 PM CT · $50 MXN" },
-    { key:"intermediate", label:"Intermediate",  sub:"Monday · 5–6 PM CT · $50 MXN" },
+    { key:"beginner",     label: t.cardBeginner, sub: t.cardBeginnerSub },
+    { key:"intermediate", label: t.cardInter,    sub: t.cardInterSub },
   ];
   return (
     <section className="section" id="cta">
@@ -1181,19 +1191,15 @@ function CTASection({ t }) {
         <div className="class-cards">
           {cards.map(c => (
             <div className="class-card" key={c.key}>
-              <div className="class-card-level">Live online group class</div>
+              <div className="class-card-level">{t.cardEyebrow}</div>
               <div className="class-card-title">{c.label}</div>
               <div className="class-card-sub">{c.sub}</div>
               <a className="class-card-join" href={CLASS_LINKS[c.key]} target="_blank" rel="noopener noreferrer">
-                Join the class
+                {t.cardJoin}
               </a>
               <div className="class-card-divider" />
-              {CLASS_LINKS[c.key] !== "PLACEHOLDER_INTERMEDIATE_WHATSAPP_LINK" && (
-                <>
-                  <img className="class-card-qr" src={qrUrl(CLASS_LINKS[c.key])} alt={`QR – ${c.label}`} />
-                  <span className="class-card-qr-label">Scan to join from desktop</span>
-                </>
-              )}
+              <img className="class-card-qr" src={qrUrl(CLASS_LINKS[c.key])} alt={`QR – ${c.label}`} />
+              <span className="class-card-qr-label">{t.cardScan}</span>
             </div>
           ))}
         </div>
