@@ -1518,7 +1518,10 @@ function App() {
         <div className="ticker-track">
           {[0,1].map(copy => (
             <span className="ticker-segment" key={copy}>
-              {["Live","Accessible","Built on Community","Made in Mexico","Made for You","Limited Class Size","Holistic Engagement"].map((phrase, i) => (
+              {(lang === "es"
+                ? ["En Vivo","Accesible","Construido en Comunidad","Hecho en México","Hecho para Ti","Tamaño de Clase Limitado","Aprendizaje Integral"]
+                : ["Live","Accessible","Built on Community","Made in Mexico","Made for You","Limited Class Size","Holistic Engagement"]
+              ).map((phrase, i) => (
                 <span key={i}>
                   <span className="ticker-text">{phrase}</span>
                   <span className="ticker-dot">&middot;</span>
