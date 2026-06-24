@@ -379,6 +379,13 @@
 </head>
 <body>
 <div id="root"></div>
+<script>
+// Kick off geo-detection immediately so the result is ready by the time React mounts.
+window._cepCurrencyPromise = fetch("https://ipapi.co/json/")
+  .then(function(r) { return r.json(); })
+  .then(function(d) { return d.country_code === "MX" ? "MXN" : "USD"; })
+  .catch(function() { return "MXN"; }); // default to MXN on any error
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -456,8 +463,8 @@ const STR = {
     cardEyebrow: "Live online group class",
     cardJoin: "Join the class",
     cardScan: "Scan to join from desktop",
-    cardBeginner: "Beginner", cardBeginnerSub: "Wednesday · 5–6 PM CT · $50 MXN",
-    cardInter: "Intermediate", cardInterSub: "Monday · 5–6 PM CT · $50 MXN",
+    cardBeginner: "Beginner", cardBeginnerSub: "Wednesday · 5–6 PM CT",
+    cardInter: "Intermediate", cardInterSub: "Monday · 5–6 PM CT",
     cardFlexTitle: "Different schedule?", cardFlexSub: "If no schedule works for you, contact us — we'll find a solution.", cardFlexBtn: "Ask about your schedule",
   },
   es: {
@@ -505,8 +512,8 @@ const STR = {
     cardEyebrow: "Clase grupal en vivo",
     cardJoin: "Únete a la clase",
     cardScan: "Escanea para unirte desde tu computadora",
-    cardBeginner: "Principiante", cardBeginnerSub: "Miércoles · 5–6 PM CT · $50 MXN",
-    cardInter: "Intermedio", cardInterSub: "Lunes · 5–6 PM CT · $50 MXN",
+    cardBeginner: "Principiante", cardBeginnerSub: "Miércoles · 5–6 PM CT",
+    cardInter: "Intermedio", cardInterSub: "Lunes · 5–6 PM CT",
     cardFlexTitle: "¿Horario diferente?", cardFlexSub: "Si ningún horario te funciona, contáctanos — encontramos una solución.", cardFlexBtn: "Consulta tu horario",
   }
 };
@@ -1236,11 +1243,12 @@ function qrUrl(link) {
   return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=" + encodeURIComponent(link);
 }
 
-function CTASection({ t }) {
+function CTASection({ t, currency }) {
+  const priceLabel = currency === "USD" ? "$3 USD" : "$50 MXN";
   const cards = [
-    { key:"beginner",     label: t.cardBeginner,  sub: t.cardBeginnerSub, btnText: t.cardJoin,    showQr: true  },
-    { key:"intermediate", label: t.cardInter,     sub: t.cardInterSub,    btnText: t.cardJoin,    showQr: true  },
-    { key:"flex",         label: t.cardFlexTitle, sub: t.cardFlexSub,     btnText: t.cardFlexBtn, showQr: true  },
+    { key:"beginner",     label: t.cardBeginner,  sub: t.cardBeginnerSub + " · " + priceLabel, btnText: t.cardJoin,    showQr: true  },
+    { key:"intermediate", label: t.cardInter,     sub: t.cardInterSub    + " · " + priceLabel, btnText: t.cardJoin,    showQr: true  },
+    { key:"flex",         label: t.cardFlexTitle, sub: t.cardFlexSub,                           btnText: t.cardFlexBtn, showQr: true  },
   ];
   return (
     <section className="section" id="cta">
@@ -1374,6 +1382,7 @@ function Modal({ t, mode, onClose, onSubmit, onInstructor }) {
 /* ---- App ---- */
 function App() {
   const [lang, setLang]         = useState("es");
+  const [currency, setCurrency] = useState("MXN");
   const [query, setQuery]       = useState("");
   const [dir, setDir]           = useState("auto");
   const [busy, setBusy]         = useState(false);
@@ -1384,6 +1393,12 @@ function App() {
   const [listening, setListening] = useState(false);
   const recRef = useRef(null);
   const t = STR[lang] || STR.en;
+
+  useEffect(() => {
+    if (window._cepCurrencyPromise) {
+      window._cepCurrencyPromise.then(cur => setCurrency(cur));
+    }
+  }, []);
 
   const showToast = msg => { setToast(msg); setTimeout(() => setToast(""), 2600); };
   const cycleDir  = () => setDir(d => d === "auto" ? "es2en" : d === "es2en" ? "en2es" : "auto");
@@ -1489,7 +1504,7 @@ function App() {
         </div>
       </main>
 
-      <CTASection t={t} />
+      <CTASection t={t} currency={currency} />
 
       {modal
         ? <Modal t={t} mode={modal} onClose={() => setModal(null)} onSubmit={onModalSubmit} onInstructor={() => setModal("instructor")} />
