@@ -919,8 +919,10 @@ async function translatePhrase(input, forced) {
     }
   }
 
-  let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
-  let r = await fetch(url);
+  const mkUrl = (sl, tl, q) =>
+    `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&dt=at&dt=bd&q=${encodeURIComponent(q)}`;
+
+  let r = await fetch(mkUrl(sourceLang, targetLang, input));
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   let data = await r.json();
 
@@ -932,27 +934,32 @@ async function translatePhrase(input, forced) {
     const sameAsInput = earlyTrans.trim().toLowerCase() === input.trim().toLowerCase();
     if (detected === "en" || sameAsInput) {
       sourceLang = "en"; targetLang = "es";
-      const url2 = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
-      const r2 = await fetch(url2);
+      const r2 = await fetch(mkUrl(sourceLang, targetLang, input));
       if (!r2.ok) throw new Error(`HTTP ${r2.status}`);
       data = await r2.json();
     } else {
       sourceLang = detected || "es";
-      // targetLang stays "en" and the first fetch was correct
     }
   }
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
   if (!translation) throw new Error("Empty response");
 
+  // Collect alternatives from bilingual dictionary (data[1]) and synonyms (data[5])
   const alternatives = [];
+  const addAlt = (w) => {
+    if (w && w.toLowerCase().trim() !== translation.toLowerCase().trim() && !alternatives.includes(w) && alternatives.length < 4)
+      alternatives.push(w);
+  };
+  // data[1] = bilingual dictionary entries: [[pos, [[word, ...], ...]], ...]
+  if (Array.isArray(data[1])) {
+    data[1].forEach(entry => {
+      if (Array.isArray(entry[1])) entry[1].forEach(alt => addAlt(alt[0]));
+    });
+  }
+  // data[5] = synonym groups as fallback
   if (Array.isArray(data[5])) {
     data[5].forEach(group => {
-      if (Array.isArray(group[1])) {
-        group[1].forEach(alt => {
-          const t = alt?.[0];
-          if (t && t !== translation && !alternatives.includes(t) && alternatives.length < 3) alternatives.push(t);
-        });
-      }
+      if (Array.isArray(group[1])) group[1].forEach(alt => addAlt(alt?.[0]));
     });
   }
 
