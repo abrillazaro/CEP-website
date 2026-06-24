@@ -332,16 +332,17 @@
     letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
   .scroll-hint svg{display:block;margin:5px auto 0;animation:bounceDown 1.6s ease-in-out infinite;}
   @keyframes bounceDown{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
-  .cta-section{padding:40px 40px 72px;border-top:1px solid var(--line);
+  .cta-section{padding:40px 40px 72px;
     display:flex;flex-direction:column;align-items:center;text-align:center;}
-  .phrase-carousel{width:100%;max-width:600px;margin-bottom:36px;overflow:hidden;
-    height:2.4em;position:relative;}
-  .phrase-carousel-inner{display:flex;flex-direction:column;
-    transition:transform .55s cubic-bezier(.4,0,.2,1);}
-  .phrase-item{font-family:var(--serif);font-size:22px;font-style:italic;
-    color:var(--navy-soft);letter-spacing:.01em;text-align:center;
-    height:2.4em;display:flex;align-items:center;justify-content:center;flex-shrink:0;
-    opacity:.85;}
+  .ticker-wrap{width:100%;overflow:hidden;border-top:1px solid var(--line);
+    padding:13px 0;background:transparent;}
+  .ticker-track{display:flex;white-space:nowrap;animation:tickerScroll 22s linear infinite;}
+  .ticker-track:hover{animation-play-state:paused;}
+  .ticker-segment{display:inline-flex;align-items:center;gap:0;flex-shrink:0;}
+  .ticker-text{font-family:var(--serif);font-size:14px;font-style:italic;
+    color:var(--navy-soft);letter-spacing:.04em;opacity:.8;padding:0 22px;}
+  .ticker-dot{color:var(--sage);opacity:.55;font-size:13px;}
+  @keyframes tickerScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
   .class-cards{display:flex;gap:24px;justify-content:center;width:100%;max-width:980px;}
   .class-card{flex:1;max-width:300px;background:var(--surface);border-radius:20px;
     border:1.5px solid var(--line);box-shadow:var(--shadow-md);padding:36px 32px 32px;
@@ -1251,22 +1252,6 @@ function qrUrl(link) {
   return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=" + encodeURIComponent(link);
 }
 
-const PHRASES = ["Live","Accessible","Built on Community","Made in Mexico","Made for You","Limited Class Size","Holistic Engagement"];
-
-function PhraseCarousel() {
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setIdx(i => (i + 1) % PHRASES.length), 2000);
-    return () => clearInterval(id);
-  }, []);
-  return (
-    <div className="phrase-carousel">
-      <div className="phrase-carousel-inner" style={{ transform: `translateY(calc(-${idx} * 2.4em))` }}>
-        {PHRASES.map(p => <div className="phrase-item" key={p}>{p}</div>)}
-      </div>
-    </div>
-  );
-}
 
 function CTASection({ t, currency }) {
   const priceLabel = currency === "MXN" ? "$50 MXN" : currency === "CRC" ? "\u20A11,350 CRC" : "$3 USD";
@@ -1278,7 +1263,6 @@ function CTASection({ t, currency }) {
   return (
     <section className="section" id="cta">
       <div className="cta-section">
-        <PhraseCarousel />
         <div className="class-cards">
           {cards.map(c => (
             <div className="class-card" key={c.key}>
@@ -1529,6 +1513,21 @@ function App() {
           ) : null}
         </div>
       </main>
+
+      <div className="ticker-wrap">
+        <div className="ticker-track">
+          {[0,1].map(copy => (
+            <span className="ticker-segment" key={copy}>
+              {["Live","Accessible","Built on Community","Made in Mexico","Made for You","Limited Class Size","Holistic Engagement"].map((phrase, i) => (
+                <span key={i}>
+                  <span className="ticker-text">{phrase}</span>
+                  <span className="ticker-dot">&middot;</span>
+                </span>
+              ))}
+            </span>
+          ))}
+        </div>
+      </div>
 
       <CTASection t={t} currency={currency} />
 
