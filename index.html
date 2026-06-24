@@ -508,8 +508,8 @@ const STR = {
 function detectLang(text) {
   // Accented characters and Spanish-only punctuation are definitive
   if (/[áéíóúüñ¿¡]/i.test(text)) return "es";
-  // Only words that are not common standalone English words
-  if (/\b(los|las|del|una|que|por|para|pero|sus|mis|este|esta|ese|esa|muy|bien|como|todo|todos|toda|cuando|porque|tambien|conmigo|contigo|consigo|tengo|tienes|tiene|tenemos|quiero|quieres|queremos|voy|vas|vamos|soy|eres|somos|estoy|estamos|nosotros|ellos|ellas|siempre|nunca|hola|gracias|buenos|buenas|donde|cuanto|mucho|muchos|mucha|muchas|poco|poca)\b/i.test(text)) return "es";
+  // Spanish function words and pronouns that are never standalone English words
+  if (/\b(mi|su|tu|yo|nos|les|les|los|las|del|una|que|por|para|pero|sus|mis|este|esta|ese|esa|muy|bien|como|todo|todos|toda|cuando|porque|tambien|conmigo|contigo|consigo|tengo|tienes|tiene|tenemos|quiero|quieres|queremos|voy|vas|vamos|soy|eres|somos|estoy|estamos|nosotros|ellos|ellas|siempre|nunca|hola|gracias|buenos|buenas|donde|cuanto|mucho|muchos|mucha|muchas|poco|poca|nuestro|nuestra|vuestro|aqui|alli|ahora|antes|despues|sino|aunque|mientras|hacia|desde|segun|durante|mediante|tras|casa|agua|ciudad|tiempo|trabajo|dinero|persona|gente|mundo|vida|dia|noche|hora|semana|mes|año|cosa|forma|manera|lugar|parte|punto|vez|vez|hombre|mujer|niño|niña|hijo|hija|madre|padre|amigo|amiga|clase|escuela|universidad|empresa|gobierno|pais|ciudad|pueblo|calle|casa|puerta|ventana|mesa|silla|libro|palabra|idioma|lengua|ingles|español)\b/i.test(text)) return "es";
   return "en";
 }
 
@@ -905,8 +905,14 @@ async function translatePhrase(input, forced) {
   } else if (forced === "es2en") {
     sourceLang = "es"; targetLang = "en";
   } else {
-    // Let Google detect the language; default target to English
-    sourceLang = "auto"; targetLang = "en";
+    // Use our local heuristic first; if confident it's Spanish skip auto-detect
+    const local = detectLang(input);
+    if (local === "es") {
+      sourceLang = "es"; targetLang = "en";
+    } else {
+      // Not obviously Spanish — let Google decide
+      sourceLang = "auto"; targetLang = "en";
+    }
   }
 
   let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
@@ -915,10 +921,12 @@ async function translatePhrase(input, forced) {
   let data = await r.json();
 
   // When using auto-detect, Google returns the detected language at data[2].
-  // If it detected English, flip target to Spanish and re-fetch.
+  // Also catch the "translation = input" case — a sure sign the direction was wrong.
   if (sourceLang === "auto") {
-    const detected = data[2] || detectLang(input);
-    if (detected === "en") {
+    const detected = data[2] || "en";
+    const earlyTrans = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
+    const sameAsInput = earlyTrans.trim().toLowerCase() === input.trim().toLowerCase();
+    if (detected === "en" || sameAsInput) {
       sourceLang = "en"; targetLang = "es";
       const url2 = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
       const r2 = await fetch(url2);
@@ -926,7 +934,7 @@ async function translatePhrase(input, forced) {
       data = await r2.json();
     } else {
       sourceLang = detected || "es";
-      // targetLang stays "en" and the first fetch was already correct
+      // targetLang stays "en" and the first fetch was correct
     }
   }
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
