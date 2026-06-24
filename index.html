@@ -334,7 +334,7 @@
   @keyframes bounceDown{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
   .cta-section{padding:40px 40px 72px;border-top:1px solid var(--line);
     display:flex;flex-direction:column;align-items:center;text-align:center;}
-  .class-cards{display:flex;gap:24px;justify-content:center;width:100%;max-width:700px;}
+  .class-cards{display:flex;gap:24px;justify-content:center;width:100%;max-width:980px;}
   .class-card{flex:1;max-width:300px;background:var(--surface);border-radius:20px;
     border:1.5px solid var(--line);box-shadow:var(--shadow-md);padding:36px 32px 32px;
     display:flex;flex-direction:column;align-items:center;text-align:center;
@@ -458,6 +458,7 @@ const STR = {
     cardScan: "Scan to join from desktop",
     cardBeginner: "Beginner", cardBeginnerSub: "Wednesday · 5–6 PM CT · $50 MXN",
     cardInter: "Intermediate", cardInterSub: "Monday · 5–6 PM CT · $50 MXN",
+    cardFlexTitle: "Different schedule?", cardFlexSub: "If no schedule works for you, contact us — we'll find a solution.", cardFlexBtn: "Ask about your schedule",
   },
   es: {
     conjugate: "Conjugar", login: "Entrar", about: "Nosotros",
@@ -506,6 +507,7 @@ const STR = {
     cardScan: "Escanea para unirte desde tu computadora",
     cardBeginner: "Principiante", cardBeginnerSub: "Miércoles · 5–6 PM CT · $50 MXN",
     cardInter: "Intermedio", cardInterSub: "Lunes · 5–6 PM CT · $50 MXN",
+    cardFlexTitle: "¿Horario diferente?", cardFlexSub: "Si ningún horario te funciona, contáctanos — encontramos una solución.", cardFlexBtn: "Consulta tu horario",
   }
 };
 
@@ -1227,6 +1229,7 @@ function Result({ t, data, onSave, onPro, onNew }) {
 const CLASS_LINKS = {
   beginner:     "https://wa.me/525572132329?text=Hola%2C%20me%20gustar%C3%ADa%20inscribirme%20en%20las%20clases%20de%20ingl%C3%A9s%20del%20mi%C3%A9rcoles%20a%20las%205%20de%20la%20tarde",
   intermediate: "https://wa.me/525572132329?text=Hola%2C%20me%20gustar%C3%ADa%20inscribirme%20en%20las%20clases%20de%20ingl%C3%A9s%20del%20lunes%20a%20las%205%20de%20la%20tarde",
+  flex:         "https://wa.me/525572132329?text=Hola%2C%20me%20interesa%20tomar%20clases%20con%20CEP%20pero%20ninguno%20de%20los%20horarios%20disponibles%20me%20funciona.%20%C2%BFPodr%C3%ADamos%20coordinar%20un%20horario%20diferente%3F",
 };
 
 function qrUrl(link) {
@@ -1235,8 +1238,9 @@ function qrUrl(link) {
 
 function CTASection({ t }) {
   const cards = [
-    { key:"beginner",     label: t.cardBeginner, sub: t.cardBeginnerSub },
-    { key:"intermediate", label: t.cardInter,    sub: t.cardInterSub },
+    { key:"beginner",     label: t.cardBeginner,  sub: t.cardBeginnerSub, btnText: t.cardJoin,    showQr: true  },
+    { key:"intermediate", label: t.cardInter,     sub: t.cardInterSub,    btnText: t.cardJoin,    showQr: true  },
+    { key:"flex",         label: t.cardFlexTitle, sub: t.cardFlexSub,     btnText: t.cardFlexBtn, showQr: false },
   ];
   return (
     <section className="section" id="cta">
@@ -1248,11 +1252,13 @@ function CTASection({ t }) {
               <div className="class-card-title">{c.label}</div>
               <div className="class-card-sub">{c.sub}</div>
               <a className="class-card-join" href={CLASS_LINKS[c.key]} target="_blank" rel="noopener noreferrer">
-                {t.cardJoin}
+                {c.btnText}
               </a>
-              <div className="class-card-divider" />
-              <img className="class-card-qr" src={qrUrl(CLASS_LINKS[c.key])} alt={`QR – ${c.label}`} />
-              <span className="class-card-qr-label">{t.cardScan}</span>
+              {c.showQr && <>
+                <div className="class-card-divider" />
+                <img className="class-card-qr" src={qrUrl(CLASS_LINKS[c.key])} alt={`QR – ${c.label}`} />
+                <span className="class-card-qr-label">{t.cardScan}</span>
+              </>}
             </div>
           ))}
         </div>
