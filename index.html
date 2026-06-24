@@ -996,13 +996,24 @@ async function translatePhrase(input, forced) {
   // Only show a literal for single-word lookups — multi-word concatenation
   // produces gibberish because words like "es" translate to "he/she/it is" in isolation.
   const isSingleWord = !input.trim().includes(" ");
-  const literal = (breakdown.length && isSingleWord) ? breakdown.map(r => r.tgt).join(" ") : "";
+  let literal = (breakdown.length && isSingleWord) ? breakdown.map(r => r.tgt).join(" ") : "";
+
+  // Phrase-level overrides: natural colloquial meaning → swap Google's literal result down
+  const PHRASE_OVERRIDES = {
+    "no manches": { natural: "no way / don't lie", literal: "don't stain" },
+  };
+  const phraseKey = input.trim().toLowerCase();
+  let finalTranslation = translation;
+  if (PHRASE_OVERRIDES[phraseKey]) {
+    finalTranslation = PHRASE_OVERRIDES[phraseKey].natural;
+    literal = PHRASE_OVERRIDES[phraseKey].literal;
+  }
 
   return {
     input,
     sourceLang,
     targetLang,
-    translation,
+    translation: finalTranslation,
     literal,
     alternatives,
     partOfSpeech: "",
