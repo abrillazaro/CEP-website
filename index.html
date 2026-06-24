@@ -335,12 +335,12 @@
   .cta-section{padding:40px 40px 72px;
     display:flex;flex-direction:column;align-items:center;text-align:center;}
   .ticker-wrap{width:100%;overflow:hidden;border-top:1px solid var(--line);padding:13px 0;}
-  .ticker-track{display:flex;animation:tickerScroll 28s linear infinite;will-change:transform;}
+  .ticker-track{display:inline-flex;animation:tickerScroll 10s linear infinite;will-change:transform;}
   .ticker-track:hover{animation-play-state:paused;}
-  .ticker-segment{display:flex;align-items:center;flex-shrink:0;white-space:nowrap;}
+  .ticker-segment{display:inline-flex;align-items:center;white-space:nowrap;}
   .ticker-text{font-family:var(--serif);font-size:14px;font-style:italic;
-    color:var(--navy-soft);letter-spacing:.04em;opacity:.8;padding:0 22px;white-space:nowrap;}
-  .ticker-dot{color:var(--sage);opacity:.55;font-size:13px;flex-shrink:0;}
+    color:var(--navy-soft);letter-spacing:.04em;opacity:.8;padding:0 22px;}
+  .ticker-dot{color:var(--sage);opacity:.55;font-size:13px;}
   @keyframes tickerScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   .class-cards{display:flex;gap:24px;justify-content:center;width:100%;max-width:980px;}
   .class-card{flex:1;max-width:300px;background:var(--surface);border-radius:20px;
