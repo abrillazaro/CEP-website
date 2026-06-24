@@ -143,24 +143,43 @@
 const { useState, useEffect, useRef } = React;
 
 const WORD_DEFS = {
-  "literal":        "used here in its exact, true form — the project name really does come from this root, without exaggeration or metaphor",
-  "etymological":   "relating to a word's origin and historical development — tracing 'corporate' back to its Latin source",
-  "corpus":         "Latin for body — the root of 'corporate'; both the origin of the project's name and a metaphor for a living community",
-  "incorporation":  "the act of making something a natural part of daily life — weaving English into everyday habits rather than treating it as a separate subject",
-  "philosophy":     "the guiding beliefs and principles behind the project — its core 'why' that shapes how everything is designed and run",
-  "diaspora":       "a community united by a shared language or culture, spread across many places — here, the global English-speaking world",
-  "approachable":   "easy to begin and engage with, never intimidating — designed to feel natural and achievable no matter where you start",
-  "holistic":       "addressing the whole person and the whole language together — reading, writing, speaking, and listening as one connected system",
-  "intertwined":    "woven together so each part reinforces the others — classes, daily drills, and cross-reference are one experience, not separate tracks",
-  "cross-reference":"connecting a word or concept across different subjects and contexts, so its meaning deepens with every new encounter",
-  "seamless":       "flowing from one part to the next without visible breaks — all components blend into a single, unified journey",
-  "communal":       "shaped by and shared within a community — language only becomes real when exchanged between people, not studied in isolation",
-  "embodying":      "making an abstract skill real through lived practice — not just knowing English in theory, but using it naturally without thinking",
-  "immersed":       "surrounded by all sides of the language at once — speaking, hearing, reading, and writing in real contexts, not just studying rules",
+  en: {
+    "literal":        "used here in its exact, true form — the project name really does come from this root, without exaggeration or metaphor",
+    "etymological":   "relating to a word's origin and historical development — tracing 'corporate' back to its Latin source",
+    "corpus":         "Latin for body — the root of 'corporate'; both the origin of the project's name and a metaphor for a living community",
+    "incorporation":  "the act of making something a natural part of daily life — weaving English into everyday habits rather than treating it as a separate subject",
+    "philosophy":     "the guiding beliefs and principles behind the project — its core 'why' that shapes how everything is designed and run",
+    "diaspora":       "a community united by a shared language or culture, spread across many places — here, the global English-speaking world",
+    "approachable":   "easy to begin and engage with, never intimidating — designed to feel natural and achievable no matter where you start",
+    "holistic":       "addressing the whole person and the whole language together — reading, writing, speaking, and listening as one connected system",
+    "intertwined":    "woven together so each part reinforces the others — classes, daily drills, and cross-reference are one experience, not separate tracks",
+    "cross-reference":"connecting a word or concept across different subjects and contexts, so its meaning deepens with every new encounter",
+    "seamless":       "flowing from one part to the next without visible breaks — all components blend into a single, unified journey",
+    "communal":       "shaped by and shared within a community — language only becomes real when exchanged between people, not studied in isolation",
+    "embodying":      "making an abstract skill real through lived practice — not just knowing English in theory, but using it naturally without thinking",
+    "immersed":       "surrounded by all sides of the language at once — speaking, hearing, reading, and writing in real contexts, not just studying rules",
+  },
+  es: {
+    "corpus":         "Latín para 'cuerpo' — la raíz de 'corporativo'; tanto el origen del nombre del proyecto como una metáfora de una comunidad viva",
+    "literal":        "usado aquí en su sentido exacto y verdadero — el nombre del proyecto sí proviene de esta raíz, sin exageración ni metáfora",
+    "etimológico":    "relacionado con el origen e historia de una palabra — rastreando 'corporate' hasta su fuente latina",
+    "incorporación":  "el acto de hacer algo parte natural de la vida diaria — integrar el inglés en los hábitos cotidianos en lugar de tratarlo como una materia aparte",
+    "filosofía":      "las creencias y principios que guían el proyecto — el 'por qué' central que da forma a todo su diseño y funcionamiento",
+    "diáspora":       "una comunidad unida por un idioma o cultura compartida, dispersa en muchos lugares — aquí, el mundo global de habla inglesa",
+    "accesible":      "fácil de comenzar y de conectar, nunca intimidante — diseñado para sentirse natural y alcanzable sin importar tu punto de partida",
+    "holístico":      "aborda a la persona completa y al idioma completo juntos — leer, escribir, hablar y escuchar como un sistema conectado",
+    "entrelazado":    "tejido de tal forma que cada parte refuerza a las demás — clases, práctica diaria y referencia cruzada forman una sola experiencia",
+    "referencia cruzada": "conectar una palabra o concepto en distintos temas y contextos, para que su significado se profundice con cada nuevo encuentro",
+    "continua":       "fluye de una parte a la siguiente sin interrupciones visibles — todos los componentes se fusionan en un recorrido unificado",
+    "comunal":        "formado y compartido dentro de una comunidad — el idioma solo cobra vida real cuando se intercambia entre personas, no al estudiarse en aislamiento",
+    "encarnar":       "hacer real una habilidad abstracta mediante la práctica vivida — no solo conocer el inglés en teoría, sino usarlo naturalmente sin pensarlo",
+    "sumergidos":     "rodeados de todos los aspectos del idioma a la vez — hablando, escuchando, leyendo y escribiendo en contextos reales, no solo estudiando reglas",
+    "juntos":         "la filosofía central del CEP: el mejor aprendizaje ocurre en comunidad, no en soledad",
+  },
 };
 
-const _dk = Object.keys(WORD_DEFS).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-const TEXT_RX = new RegExp(`(\\*[^*]+\\*|\\b(?:${_dk.join('|')})\\b)`, 'gi');
+const _dkAll = [...new Set([...Object.keys(WORD_DEFS.en), ...Object.keys(WORD_DEFS.es)])].map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+const TEXT_RX = new RegExp(`(\\*[^*]+\\*|\\b(?:${_dkAll.join('|')})\\b)`, 'gi');
 
 function WordDef({ word, def }) {
   const [open, setOpen] = useState(false);
@@ -191,15 +210,16 @@ function WordDef({ word, def }) {
   );
 }
 
-function renderText(str) {
+function renderText(str, lang) {
   if (!str) return null;
+  const defs = WORD_DEFS[lang] || WORD_DEFS.en;
   return str.split(TEXT_RX).map((part, i) => {
     if (/^\*[^*]+\*$/.test(part)) {
       const inner = part.slice(1, -1);
-      const def = WORD_DEFS[inner.toLowerCase()];
+      const def = defs[inner.toLowerCase()];
       return def ? <em key={i}><WordDef word={inner} def={def} /></em> : <em key={i}>{inner}</em>;
     }
-    const def = WORD_DEFS[part.toLowerCase()];
+    const def = defs[part.toLowerCase()];
     if (def) return <WordDef key={i} word={part} def={def} />;
     return part;
   });
@@ -268,7 +288,7 @@ function Nav({ t, lang, setLang }) {
 
 function AboutPage() {
   const [lang, setLang] = useState(() => {
-    try { return localStorage.getItem("cep-lang") || "en"; } catch { return "en"; }
+    try { return localStorage.getItem("cep-lang") || "es"; } catch { return "es"; }
   });
   const t = STR[lang] || STR.en;
 
@@ -289,7 +309,7 @@ function AboutPage() {
           <div className="prose">
             {[t.ethos1, t.ethos2, t.ethos3].filter(Boolean).map((para, i, arr) => (
               <p key={i} style={{ margin: i < arr.length - 1 ? "0 0 22px 10px" : "0 0 0 10px" }}>
-                {renderText(para)}
+                {renderText(para, lang)}
               </p>
             ))}
           </div>
