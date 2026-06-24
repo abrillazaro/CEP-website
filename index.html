@@ -905,14 +905,30 @@ async function translatePhrase(input, forced) {
   } else if (forced === "es2en") {
     sourceLang = "es"; targetLang = "en";
   } else {
-    sourceLang = detectLang(input);
-    targetLang = sourceLang === "es" ? "en" : "es";
+    // Let Google detect the language; default target to English
+    sourceLang = "auto"; targetLang = "en";
   }
 
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
-  const r = await fetch(url);
+  let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
+  let r = await fetch(url);
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const data = await r.json();
+  let data = await r.json();
+
+  // When using auto-detect, Google returns the detected language at data[2].
+  // If it detected English, flip target to Spanish and re-fetch.
+  if (sourceLang === "auto") {
+    const detected = data[2] || detectLang(input);
+    if (detected === "en") {
+      sourceLang = "en"; targetLang = "es";
+      const url2 = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
+      const r2 = await fetch(url2);
+      if (!r2.ok) throw new Error(`HTTP ${r2.status}`);
+      data = await r2.json();
+    } else {
+      sourceLang = detected || "es";
+      // targetLang stays "en" and the first fetch was already correct
+    }
+  }
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
   if (!translation) throw new Error("Empty response");
 
