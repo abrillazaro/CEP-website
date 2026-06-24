@@ -977,7 +977,10 @@ async function translatePhrase(input, forced) {
   let breakdown = [];
   try { breakdown = await getBreakdown(input, sourceLang, targetLang); } catch {}
 
-  const literal = breakdown.length ? breakdown.map(r => r.tgt).join(" ") : "";
+  // Only show a literal for single-word lookups — multi-word concatenation
+  // produces gibberish because words like "es" translate to "he/she/it is" in isolation.
+  const isSingleWord = !input.trim().includes(" ");
+  const literal = (breakdown.length && isSingleWord) ? breakdown.map(r => r.tgt).join(" ") : "";
 
   return {
     input,
