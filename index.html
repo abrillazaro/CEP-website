@@ -383,7 +383,7 @@
 // Kick off geo-detection immediately so the result is ready by the time React mounts.
 window._cepCurrencyPromise = fetch("https://ipapi.co/json/")
   .then(function(r) { return r.json(); })
-  .then(function(d) { return d.country_code === "MX" ? "MXN" : "USD"; })
+  .then(function(d) { return d.country_code === "MX" ? "MXN" : d.country_code === "CR" ? "CRC" : "USD"; })
   .catch(function() { return "MXN"; }); // default to MXN on any error
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1244,7 +1244,7 @@ function qrUrl(link) {
 }
 
 function CTASection({ t, currency }) {
-  const priceLabel = currency === "USD" ? "$3 USD" : "$50 MXN";
+  const priceLabel = currency === "MXN" ? "$50 MXN" : currency === "CRC" ? "₡1,350 CRC" : "$3 USD";
   const cards = [
     { key:"beginner",     label: t.cardBeginner,  sub: t.cardBeginnerSub + " · " + priceLabel, btnText: t.cardJoin,    showQr: true  },
     { key:"intermediate", label: t.cardInter,     sub: t.cardInterSub    + " · " + priceLabel, btnText: t.cardJoin,    showQr: true  },
