@@ -1244,7 +1244,7 @@ function qrUrl(link) {
 }
 
 function CTASection({ t, currency }) {
-  const priceLabel = currency === "MXN" ? "$50 MXN" : currency === "CRC" ? "₡1,350 CRC" : "$3 USD";
+  const priceLabel = currency === "MXN" ? "$50 MXN" : currency === "CRC" ? "\u20A11,350 CRC" : "$3 USD";
   const cards = [
     { key:"beginner",     label: t.cardBeginner,  sub: t.cardBeginnerSub + " · " + priceLabel, btnText: t.cardJoin,    showQr: true  },
     { key:"intermediate", label: t.cardInter,     sub: t.cardInterSub    + " · " + priceLabel, btnText: t.cardJoin,    showQr: true  },
