@@ -944,24 +944,34 @@ async function translatePhrase(input, forced) {
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
   if (!translation) throw new Error("Empty response");
 
-  // Collect alternatives from bilingual dictionary (data[1]) and synonyms (data[5])
+  // Collect alternatives from synonym groups (data[5])
   const alternatives = [];
   const addAlt = (w) => {
-    if (w && w.toLowerCase().trim() !== translation.toLowerCase().trim() && !alternatives.includes(w) && alternatives.length < 4)
+    if (w && typeof w === "string" && w.trim().length > 1 &&
+        w.toLowerCase().trim() !== translation.toLowerCase().trim() &&
+        !alternatives.includes(w) && alternatives.length < 4)
       alternatives.push(w);
   };
-  // data[1] = bilingual dictionary entries: [[pos, [[word, ...], ...]], ...]
-  if (Array.isArray(data[1])) {
-    data[1].forEach(entry => {
-      if (Array.isArray(entry[1])) entry[1].forEach(alt => addAlt(alt[0]));
-    });
-  }
-  // data[5] = synonym groups as fallback
   if (Array.isArray(data[5])) {
     data[5].forEach(group => {
       if (Array.isArray(group[1])) group[1].forEach(alt => addAlt(alt?.[0]));
     });
   }
+  // Manual overrides for cases where Google picks one valid translation
+  // but another equally common one is missing
+  const ALSO = {
+    home: ["house"], house: ["home", "casa"],
+    job: ["work"], work: ["job"],
+    car: ["vehicle", "automobile"], automobile: ["car"],
+    begin: ["start"], start: ["begin"],
+    end: ["finish", "conclude"], finish: ["end", "complete"],
+    close: ["shut"], shut: ["close"],
+    big: ["large", "great"], large: ["big"],
+    small: ["little", "tiny"], little: ["small"],
+    happy: ["glad", "joyful"], glad: ["happy"],
+    sad: ["unhappy", "sorrowful"],
+  };
+  (ALSO[translation.toLowerCase()] || []).forEach(w => addAlt(w));
 
   let breakdown = [];
   try { breakdown = await getBreakdown(input, sourceLang, targetLang); } catch {}
