@@ -335,13 +335,12 @@
   .cta-section{padding:40px 40px 72px;
     display:flex;flex-direction:column;align-items:center;text-align:center;}
   .ticker-wrap{width:100%;overflow:hidden;border-top:1px solid var(--line);padding:13px 0;}
-  .ticker-track{display:inline-flex;animation:tickerScroll 10s linear infinite;will-change:transform;}
+  .ticker-track{display:inline-flex;will-change:transform;}
   .ticker-track:hover{animation-play-state:paused;}
-  .ticker-segment{display:inline-flex;align-items:center;white-space:nowrap;}
+  .ticker-segment{display:inline-flex;align-items:center;white-space:nowrap;flex-shrink:0;}
   .ticker-text{font-family:var(--serif);font-size:14px;font-style:italic;
     color:var(--navy-soft);letter-spacing:.04em;opacity:.8;padding:0 22px;}
   .ticker-dot{color:var(--sage);opacity:.55;font-size:13px;}
-  @keyframes tickerScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   .class-cards{display:flex;gap:24px;justify-content:center;width:100%;max-width:980px;}
   .class-card{flex:1;max-width:300px;background:var(--surface);border-radius:20px;
     border:1.5px solid var(--line);box-shadow:var(--shadow-md);padding:36px 32px 32px;
@@ -1252,6 +1251,47 @@ function qrUrl(link) {
 }
 
 
+function TickerBand({ lang }) {
+  const segRef = useRef(null);
+  const trackRef = useRef(null);
+
+  useEffect(() => {
+    const seg = segRef.current;
+    const track = trackRef.current;
+    if (!seg || !track) return;
+    function start() {
+      const w = seg.offsetWidth;
+      let kf = document.getElementById('ticker-kf');
+      if (!kf) { kf = document.createElement('style'); kf.id = 'ticker-kf'; document.head.appendChild(kf); }
+      kf.textContent = '@keyframes tickerScroll{from{transform:translateX(0);}to{transform:translateX(-' + w + 'px);}}';
+      track.style.animation = 'none';
+      void track.offsetWidth;
+      track.style.animation = 'tickerScroll 15s linear infinite';
+    }
+    document.fonts.ready.then(start);
+  }, [lang]);
+
+  const phrases = lang === "es"
+    ? ["En Vivo","Accesible","Construido en Comunidad","Hecho en México","Hecho para Ti","Tamaño de Clase Limitado","Aprendizaje Integral"]
+    : ["Live","Accessible","Built on Community","Made in Mexico","Made for You","Limited Class Size","Holistic Engagement"];
+
+  const seg = phrases.map((p, i) => (
+    <span key={i}>
+      <span className="ticker-text">{p}</span>
+      <span className="ticker-dot">&middot;</span>
+    </span>
+  ));
+
+  return (
+    <div className="ticker-wrap">
+      <div className="ticker-track" ref={trackRef}>
+        <span className="ticker-segment" ref={segRef}>{seg}</span>
+        <span className="ticker-segment">{seg}</span>
+      </div>
+    </div>
+  );
+}
+
 function CTASection({ t, currency }) {
   const priceLabel = currency === "MXN" ? "$50 MXN" : currency === "CRC" ? "\u20A11,350 CRC" : "$3 USD";
   const cards = [
@@ -1513,23 +1553,7 @@ function App() {
         </div>
       </main>
 
-      <div className="ticker-wrap">
-        <div className="ticker-track">
-          {[0,1].map(copy => (
-            <span className="ticker-segment" key={copy}>
-              {(lang === "es"
-                ? ["En Vivo","Accesible","Construido en Comunidad","Hecho en México","Hecho para Ti","Tamaño de Clase Limitado","Aprendizaje Integral"]
-                : ["Live","Accessible","Built on Community","Made in Mexico","Made for You","Limited Class Size","Holistic Engagement"]
-              ).map((phrase, i) => (
-                <span key={i}>
-                  <span className="ticker-text">{phrase}</span>
-                  <span className="ticker-dot">&middot;</span>
-                </span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
+      <TickerBand lang={lang} />
 
       <CTASection t={t} currency={currency} />
 
