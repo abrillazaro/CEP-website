@@ -248,6 +248,12 @@
   .ethos{padding:104px 0 88px;border-top:1px solid var(--line);}
   .founder{min-height:84vh;display:flex;flex-direction:column;justify-content:center;padding:72px 0;}
   .contact{padding:88px 0 56px;}
+  .how-section{border-top:1px solid var(--line);padding:72px 40px 80px;text-align:center;}
+  .how-title{font-family:var(--serif);font-size:clamp(28px,4vw,42px);font-weight:600;
+    color:var(--navy);letter-spacing:-.01em;margin:0 0 28px;}
+  .how-rule{width:48px;height:3px;background:var(--sage);border-radius:2px;margin:0 auto 32px;}
+  .how-body{max-width:720px;margin:0 auto;font-size:clamp(15px,1.5vw,17px);
+    line-height:1.78;color:var(--navy-soft);text-wrap:pretty;}
   .sec-title{font-family:var(--serif);font-weight:600;color:var(--navy);letter-spacing:-.01em;
     font-size:clamp(40px,6vw,72px);line-height:1;margin:0 0 30px;}
   .sec-rule{width:64px;height:3px;background:var(--sage);border-radius:2px;margin:0 0 30px;}
@@ -1303,8 +1309,24 @@ function TickerBand({ lang }) {
   );
 }
 
+function HowItWorks({ lang, currency }) {
+  const price = currency === "MXN" ? "$50 MXN" : currency === "CRC" ? "1,350 CRC" : "$3 USD";
+  const isEs = lang === "es";
+  const title = isEs ? "C\u00F3mo Funciona" : "How It Works";
+  const body = isEs
+    ? `The Corporate English Project es una comunidad global de hispanohablantes de todo el mundo aprendiendo ingl\u00E9s como segundo idioma, y eso es lo que nos hace especiales. Al ser 100% en l\u00EDnea, aprendemos juntos sin importar d\u00F3nde est\u00E9s. Nos reunimos en vivo por Microsoft Teams, lo que nos permite mantener las clases desde ${price} por sesi\u00F3n y seguir ofreciendo una experiencia de aprendizaje de alta calidad. Nuestros grupos son intencionalmente peque\u00F1os para que cada alumno reciba la atenci\u00F3n que merece. Abrimos nuevos horarios seg\u00FAn el inter\u00E9s, as\u00ED que si no encuentras un horario que te funcione, \u00A1escr\u00EDbenos! Quiz\u00E1s podamos abrir uno para ti. Y como CEP est\u00E1 construido sobre comunidad, \u00A1trae a un amigo! Entre m\u00E1s seamos, m\u00E1s rica es la experiencia. \uD83C\uDF0E`
+    : `The Corporate English Project is a global community of Spanish speakers from all over the world learning English as a second language, and that's what makes us special. Because we're 100% online, we get to learn together no matter where you are. We meet live via Microsoft Teams, which is what allows us to keep classes as accessible as ${price} per session and still deliver a high-quality learning experience. Our groups are intentionally small so that every student gets the attention they deserve. New schedules open based on interest, so if you don't see a time that works for you, reach out! We just might be able to make it happen. And since CEP is built on community, bring a friend. The more the merrier, and the better the learning experience for everyone. \uD83C\uDF0E`;
+  return (
+    <section className="how-section">
+      <h2 className="how-title">{title}</h2>
+      <div className="how-rule" />
+      <p className="how-body">{body}</p>
+    </section>
+  );
+}
+
 function CTASection({ t, currency }) {
-  const priceLabel = currency === "MXN" ? "$50 MXN" : currency === "CRC" ? "\u20A11,350 CRC" : "$3 USD";
+  const priceLabel = currency === "MXN" ? "$50 MXN" : currency === "CRC" ? "1,350 CRC" : "$3 USD";
   const cards = [
     { key:"beginner",     label: t.cardBeginner,  sub: t.cardBeginnerSub + " · " + priceLabel, btnText: t.cardJoin,    showQr: true  },
     { key:"intermediate", label: t.cardInter,     sub: t.cardInterSub    + " · " + priceLabel, btnText: t.cardJoin,    showQr: true  },
@@ -1567,6 +1589,7 @@ function App() {
       <TickerBand lang={lang} />
 
       <CTASection t={t} currency={currency} />
+      <HowItWorks lang={lang} currency={currency} />
 
       {modal
         ? <Modal t={t} mode={modal} onClose={() => setModal(null)} onSubmit={onModalSubmit} onInstructor={() => setModal("instructor")} />
