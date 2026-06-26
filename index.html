@@ -67,6 +67,20 @@
     font-weight:700;font-size:15px;white-space:nowrap;box-shadow:var(--shadow-sm);
     transition:transform .12s,background .2s;}
   .btn-login:hover{background:var(--navy-deep);transform:translateY(-1px);}
+  .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;
+    width:40px;height:40px;background:none;border:1.5px solid var(--line-strong);
+    border-radius:10px;cursor:pointer;padding:8px;box-sizing:border-box;}
+  .hamburger span{display:block;height:2px;background:var(--navy);border-radius:2px;transition:all .2s;}
+  .mobile-menu{display:none;position:absolute;top:calc(100% + 6px);right:40px;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow-lg);padding:8px;min-width:160px;z-index:100;flex-direction:column;gap:4px;}
+  .mobile-menu.open{display:flex;}
+  .mobile-menu a,.mobile-menu button{display:block;width:100%;text-align:left;padding:11px 14px;
+    border-radius:9px;font-size:15px;font-weight:600;color:var(--navy);text-decoration:none;
+    background:none;border:none;cursor:pointer;transition:background .15s;}
+  .mobile-menu a:hover,.mobile-menu button:hover{background:rgba(32,57,92,.07);}
+  .mobile-menu .menu-login{background:var(--navy);color:#fff;text-align:center;margin-top:2px;}
+  .mobile-menu .menu-login:hover{background:var(--navy-deep);}
 
   /* Hero */
   .hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
@@ -383,6 +397,9 @@
     .sec-wrap{padding-left:22px;padding-right:22px;}
     .ethos,.founder,.contact{padding-top:60px;padding-bottom:54px;}
     .nav-link.hide-sm{display:none;}
+    .btn-login{display:none;}
+    .hamburger{display:flex;}
+    .mobile-menu{right:20px;}
     .searchbar input{font-size:18px;}
     .btn-go span.lbl{display:none;}
     .btn-go{padding:0 16px;}
@@ -1108,8 +1125,11 @@ function segStyle(active) {
 }
 
 function Nav({ t, lang, setLang, onLogin, onHome }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const toggleMenu = () => setMenuOpen(o => !o);
+  const handleLogin = () => { setMenuOpen(false); onLogin(); };
   return (
-    <nav className="nav">
+    <nav className="nav" style={{ position:"relative" }}>
       <a className="nav-logo" href="#" onClick={onHome} aria-label="Back to start">
         <img src="logo-navy.png" alt="The Corporate English Project" />
       </a>
@@ -1122,6 +1142,13 @@ function Nav({ t, lang, setLang, onLogin, onHome }) {
         <a className="nav-link hide-sm" href="about.html">{t.about}</a>
         <button className="nav-link hide-sm" onClick={e => e.preventDefault()}>{t.conjugate}</button>
         <button className="btn-login" onClick={onLogin}>{t.login}</button>
+        <button className="hamburger" onClick={toggleMenu} aria-label="Menu">
+          <span /><span /><span />
+        </button>
+        <div className={"mobile-menu" + (menuOpen ? " open" : "")}>
+          <a href="about.html">{t.about}</a>
+          <button className="menu-login" onClick={handleLogin}>{t.login}</button>
+        </div>
       </div>
     </nav>
   );
