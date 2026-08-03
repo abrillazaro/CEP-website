@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blog — The Corporate English Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#20395c;
+    --navy-deep:#152840;
+    --navy-soft:#54688a;
+    --sage:#5d7c69;
+    --sage-deep:#465c4f;
+    --sage-tint:#dce7dd;
+    --bg:#f1f3ef;
+    --surface:#ffffff;
+    --line:#e0e4dd;
+    --line-strong:#cdd4c9;
+    --ink:#1e2a3a;
+    --muted:#6c7787;
+    --serif:"Playfair Display", Georgia, serif;
+    --sans:"Hanken Grotesk", system-ui, sans-serif;
+    --shadow-sm:0 1px 2px rgba(21,40,64,.05), 0 1px 3px rgba(21,40,64,.06);
+    --shadow-md:0 6px 16px rgba(21,40,64,.08), 0 2px 6px rgba(21,40,64,.05);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh;}
+  ::selection{background:var(--sage-tint);color:var(--navy-deep);}
+  button{font-family:inherit;cursor:pointer;}
+
+  .page{min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+
+  /* Nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;
+    padding:0 40px 11px;max-width:1320px;margin:0 auto;width:100%;}
+  .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--navy);}
+  .nav-logo img{height:150px;width:auto;display:block;}
+  .nav-right{display:flex;align-items:center;gap:10px;}
+  .nav-link{padding:9px 14px;border-radius:10px;color:var(--navy);text-decoration:none;
+    font-weight:600;font-size:15px;background:transparent;border:none;transition:background .15s;}
+  .nav-link:hover{background:rgba(32,57,92,.07);}
+  .nav-link.active{background:rgba(32,57,92,.09);}
+  .btn-login{background:var(--navy);color:#fff;border:none;border-radius:11px;padding:11px 22px;
+    font-weight:700;font-size:15px;white-space:nowrap;box-shadow:var(--shadow-sm);
+    text-decoration:none;transition:transform .12s,background .2s;display:inline-block;}
+  .btn-login:hover{background:var(--navy-deep);transform:translateY(-1px);}
+
+  /* Empty state */
+  .blog-main{flex:1;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;padding:80px 40px;text-align:center;}
+  .blog-rule{width:48px;height:3px;background:var(--sage);border-radius:2px;margin:0 auto 32px;}
+  .blog-title{font-family:var(--serif);font-weight:600;color:var(--navy);
+    font-size:clamp(36px,5vw,64px);line-height:1.08;margin:0 0 20px;letter-spacing:-.01em;}
+  .blog-sub{font-size:clamp(16px,1.6vw,19px);color:var(--navy-soft);
+    max-width:480px;line-height:1.65;margin:0 auto;}
+
+  @media(max-width:600px){
+    .nav{padding:0 20px 11px;}
+    .blog-main{padding:60px 24px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="nav">
+    <a class="nav-logo" href="/">
+      <img src="/logo-navy.png" alt="The Corporate English Project" />
+    </a>
+    <div class="nav-right">
+      <a class="nav-link" href="/about.html">About</a>
+      <a class="nav-link active" href="/blog">Blog</a>
+      <a class="btn-login" href="/login.html">Log in</a>
+    </div>
+  </nav>
+
+  <main class="blog-main">
+    <div class="blog-rule"></div>
+    <h1 class="blog-title">Coming Soon</h1>
+    <p class="blog-sub">Articles, tips, and insights on learning English — launching shortly.</p>
+  </main>
+</div>
+</body>
+</html>
