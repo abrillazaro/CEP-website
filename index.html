@@ -361,13 +361,6 @@
   .scroll-hint svg{animation:bounceDown 1.8s ease-in-out infinite;}
 
   /* Ticker */
-  .ticker-wrap{width:100%;overflow:hidden;border-top:1px solid var(--line);padding:8px 0;}
-  .ticker-track{display:inline-flex;will-change:transform;}
-  .ticker-track:hover{animation-play-state:paused;}
-  .ticker-segment{display:inline-flex;align-items:center;white-space:nowrap;flex-shrink:0;}
-  .ticker-text{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--navy-soft);
-    letter-spacing:.04em;opacity:.8;padding:0 22px;}
-  .ticker-dot{color:var(--sage);opacity:.55;font-size:13px;}
 
   /* Class cards */
   .class-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
@@ -1548,42 +1541,6 @@ function EnrollTicker() {
   );
 }
 
-function TickerBand({ lang }) {
-  const segRef = useRef(null);
-  const trackRef = useRef(null);
-  useEffect(() => {
-    const seg = segRef.current;
-    const track = trackRef.current;
-    if (!seg || !track) return;
-    function start() {
-      const w = seg.offsetWidth;
-      let kf = document.getElementById('ticker-kf');
-      if (!kf) { kf = document.createElement('style'); kf.id = 'ticker-kf'; document.head.appendChild(kf); }
-      kf.textContent = '@keyframes tickerScroll{from{transform:translateX(0);}to{transform:translateX(-' + w + 'px);}}';
-      track.style.animation = 'none';
-      void track.offsetWidth;
-      track.style.animation = 'tickerScroll 28s linear infinite';
-    }
-    document.fonts.ready.then(start);
-  }, [lang]);
-  const phrases = lang === "es"
-    ? ["En Vivo","Accesible","Construido en Comunidad","Hecho en México","Hecho para Ti","Tamaño de Clase Limitado","Aprendizaje Integral"]
-    : ["Live","Accessible","Built on Community","Made in Mexico","Made for You","Limited Class Size","Holistic Engagement"];
-  const seg = phrases.map((p, i) => (
-    <span key={i}>
-      <span className="ticker-text">{p}</span>
-      <span className="ticker-dot">&middot;</span>
-    </span>
-  ));
-  return (
-    <div className="ticker-wrap">
-      <div className="ticker-track" ref={trackRef}>
-        <span className="ticker-segment" ref={segRef}>{seg}</span>
-        <span className="ticker-segment">{seg}</span>
-      </div>
-    </div>
-  );
-}
 
 function CTASection({ t, currency, lang, tz }) {
   const safeTz = tz || "America/Mexico_City";
@@ -1599,7 +1556,6 @@ function CTASection({ t, currency, lang, tz }) {
   ];
   return (
     <section className="section" id="cta">
-      <TickerBand lang={lang} />
       <div style={{ padding:"56px 0 0" }}>
         <div className="class-cards">
           {cards.map(c => (
