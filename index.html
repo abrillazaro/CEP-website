@@ -532,7 +532,7 @@ function Icon({ name, size = 22, stroke = 2 }) {
 /* ---- Copy (EN / ES) ---- */
 const STR = {
   en: {
-    conjugate: "Conjugate", login: "Log in", about: "About",
+    blog: "Blog", login: "Log in", about: "About",
     eyebrow: "The Corporate English Project",
     h1pre: "Once and for all, ", h1b: "embody", h1c: " English.", h1a: "",
     sub: "Instant Spanish ⇄ English, built for learners.",
@@ -583,7 +583,7 @@ const STR = {
     howTitle: "How It Works",
   },
   es: {
-    conjugate: "Conjugar", login: "Entrar", about: "Nosotros",
+    blog: "Blog", login: "Entrar", about: "Nosotros",
     eyebrow: "The Corporate English Project",
     h1pre: "Por fin, ", h1b: "vive", h1c: " en inglés.", h1a: "",
     sub: "Español ⇄ inglés al instante, para quienes aprenden.",
@@ -1386,7 +1386,7 @@ function Nav({ t, lang, setLang, onLogin, onHome, region, onRegionClick }) {
           <button className="seg" onClick={() => setLang("es")} style={segStyle(lang === "es")}>ES</button>
         </div>
         <a className="nav-link hide-sm" href="about.html">{t.about}</a>
-        <button className="nav-link hide-sm" onClick={e => e.preventDefault()}>{t.conjugate}</button>
+        <a className="nav-link hide-sm" href="/blog">{t.blog}</a>
         <button className="btn-login" onClick={onLogin}>{t.login}</button>
         <button className="hamburger" onClick={toggleMenu} aria-label="Menu">
           <span /><span /><span />
