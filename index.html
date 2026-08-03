@@ -1519,7 +1519,7 @@ function Result({ t, data, onSave, onPro, onNew }) {
 }
 
 /* ---- CTA section ---- */
-function EnrollTicker() {
+function EnrollTicker({ lang }) {
   const segRef = useRef(null);
   const trackRef = useRef(null);
   useEffect(() => {
@@ -1536,8 +1536,10 @@ function EnrollTicker() {
       track.style.animation = 'enrollScroll 32s linear infinite';
     }
     document.fonts.ready.then(start);
-  }, []);
-  const pills = ["BEGINNER","INTERMEDIATE","CONVERSATIONAL","SOUND NATURAL","SPEAK AND THINK IN ENGLISH","LEARN TO LISTEN FOR COMPREHENSION","$3 PER CLASS"];
+  }, [lang]);
+  const pillsEn = ["BEGINNER","INTERMEDIATE","CONVERSATIONAL","SOUND NATURAL","SPEAK AND THINK IN ENGLISH","LEARN TO LISTEN FOR COMPREHENSION","$3 PER CLASS"];
+  const pillsEs = ["PRINCIPIANTE","INTERMEDIO","CONVERSACIONAL","SUENA NATURAL","HABLA Y PIENSA EN INGLÉS","APRENDE A ESCUCHAR CON COMPRENSIÓN","$3 POR CLASE"];
+  const pills = lang === "es" ? pillsEs : pillsEn;
   const seg = pills.map((p, i) => <span key={i} className="etpill">{p}</span>);
   return (
     <div className="pill-ticker-wrap">
@@ -1842,7 +1844,7 @@ function App() {
             </div>
           ) : null}
         </div>
-        {!hasResult ? <EnrollTicker /> : null}
+        {!hasResult ? <EnrollTicker lang={lang} /> : null}
       </main>
 
       <CTASection t={t} currency={currency} lang={lang} tz={region.tz} />
