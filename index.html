@@ -363,34 +363,37 @@
   /* Ticker */
 
   /* Class cards */
-  .class-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
-    max-width:1080px;margin:0 auto 0;padding:0 40px;}
-  .class-card{background:var(--surface);border:1.5px solid var(--line);border-radius:20px;
-    padding:28px 26px 24px;display:flex;flex-direction:column;gap:0;
-    box-shadow:var(--shadow-sm);transition:transform .18s,box-shadow .18s,border-color .18s;}
-  .class-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--sage-tint);}
-  .class-card-label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--sage-deep);font-weight:700;margin:0 0 10px;}
-  .class-card-title{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--navy);
-    margin:0 0 8px;line-height:1.1;}
-  .class-card-sub{font-size:13.5px;color:var(--navy-soft);margin:0 0 20px;line-height:1.45;}
-  .class-card-qr{width:90px;height:90px;background:#fff;border-radius:10px;padding:6px;
-    border:1px solid var(--line);margin:0 0 16px;display:block;}
-  .class-card-qr img{width:100%;height:100%;display:block;}
-  .class-card-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    border:1.5px solid var(--navy);background:transparent;color:var(--navy);border-radius:11px;
-    padding:11px 20px;font-weight:700;font-size:14px;text-decoration:none;
-    transition:background .15s,color .15s;}
-  .class-card-btn:hover{background:var(--navy);color:#fff;}
+  .class-cards{display:flex;gap:24px;justify-content:center;width:100%;max-width:980px;
+    margin:0 auto;padding:0 40px;}
+  .class-card{flex:1;max-width:300px;background:var(--surface);border-radius:20px;
+    border:1.5px solid var(--line);box-shadow:var(--shadow-md);padding:36px 32px 32px;
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    transition:box-shadow .2s,transform .18s,border-color .2s;}
+  .class-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:var(--sage);}
+  .class-card-level{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    font-weight:700;color:var(--sage-deep);margin-bottom:10px;}
+  .class-card-title{font-family:var(--serif);font-size:28px;font-weight:600;
+    color:var(--navy);margin-bottom:6px;line-height:1.1;}
+  .class-card-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.5;}
+  .class-card-join{display:inline-block;font-size:15px;font-weight:700;
+    color:#fff;background:var(--navy);text-decoration:none;
+    padding:13px 32px;border-radius:12px;margin-bottom:28px;
+    box-shadow:0 4px 14px rgba(32,57,92,.22);
+    transition:background .18s,transform .14s,box-shadow .18s;}
+  .class-card-join:hover{background:var(--navy-deep);transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(32,57,92,.30);}
+  .class-card-divider{width:40px;height:1.5px;background:var(--line);margin-bottom:22px;}
+  .class-card-qr{width:120px;height:120px;border-radius:10px;border:1px solid var(--line);
+    object-fit:contain;display:block;}
+  .class-card-qr-label{font-size:11.5px;color:var(--muted);margin-top:8px;}
 
   /* How It Works */
-  .how-wrap{max-width:1080px;margin:40px auto 0;padding:0 40px;}
-  .how-section{max-width:1080px;margin:40px auto 0;padding:0 40px;}
-  .how-title{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4vw,40px);
+  .how-section{padding:48px 40px 0;text-align:center;width:100%;max-width:980px;margin:0 auto;}
+  .how-title{font-family:var(--serif);font-size:clamp(28px,4vw,42px);font-weight:600;
     color:var(--navy);margin:0 0 14px;letter-spacing:-.01em;}
-  .how-rule{width:56px;height:3px;background:var(--sage);border-radius:2px;margin:0 0 24px;}
-  .how-body{font-size:clamp(15px,1.5vw,18px);line-height:1.75;color:var(--navy-soft);
-    max-width:760px;margin:0;text-wrap:pretty;}
+  .how-rule{width:48px;height:3px;background:var(--sage);border-radius:2px;margin:0 auto 32px;}
+  .how-body{max-width:720px;margin:0 auto;font-size:clamp(15px,1.5vw,17px);
+    line-height:1.75;color:var(--navy-soft);text-wrap:pretty;}
 
   /* Hamburger menu */
   .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;
@@ -449,7 +452,8 @@
     .btn-go{padding:0 16px;}
     .hamburger{display:flex;}
     .btn-login{display:none;}
-    .class-cards{grid-template-columns:1fr;padding:0 20px;}
+    .class-cards{flex-direction:column;align-items:center;padding:0 20px;}
+    .class-card{max-width:100%;width:100%;}
     .how-section{padding:0 20px;}
   }
   @media (max-width:540px){
@@ -558,11 +562,13 @@ const STR = {
     contactToast: "Thanks — I’ll reach out soon",
     footer: "© The Corporate English Project · CEP · México, México",
     ctaBtn: "Take your English Placement Test and inquire about joining the CEP now!",
+    cardEyebrow: "Live online group class",
     cardBeginner: "Beginner", cardInter: "Intermediate",
     cardFlexTitle: "Flexible",
-    cardFlexSub: "Self-paced · On your schedule",
-    cardFlexBtn: "Learn more",
-    cardJoin: "Join this class",
+    cardFlexSub: "If no available schedule works for you, reach out!",
+    cardFlexBtn: "Contact us",
+    cardJoin: "Join the class",
+    cardScan: "Scan to join from desktop",
     howTitle: "How It Works",
   },
   es: {
@@ -607,11 +613,13 @@ const STR = {
     contactToast: "¡Gracias — te escribo pronto!",
     footer: "© The Corporate English Project · CEP · México, México",
     ctaBtn: "¡Toma tu Examen de Nivel de Inglés e infórmate sobre el CEP ahora!",
+    cardEyebrow: "Clase grupal en vivo",
     cardBeginner: "Principiante", cardInter: "Intermedio",
     cardFlexTitle: "Flexible",
-    cardFlexSub: "A tu ritmo · En tu horario",
-    cardFlexBtn: "Más información",
-    cardJoin: "Unirse a la clase",
+    cardFlexSub: "Si ningún horario disponible te funciona, ¡escríbenos!",
+    cardFlexBtn: "Contáctanos",
+    cardJoin: "Únete a la clase",
+    cardScan: "Escanea para unirte desde tu computadora",
     howTitle: "Cómo Funciona",
   }
 };
@@ -1542,6 +1550,16 @@ function EnrollTicker() {
 }
 
 
+/* ---- CTA section ---- */
+const CLASS_LINKS = {
+  beginner:     "https://wa.me/525572132329?text=Hola%2C%20me%20gustar%C3%ADa%20inscribirme%20en%20las%20clases%20de%20ingl%C3%A9s%20del%20mi%C3%A9rcoles%20a%20las%205%20de%20la%20tarde",
+  intermediate: "https://wa.me/525572132329?text=Hola%2C%20me%20gustar%C3%ADa%20inscribirme%20en%20las%20clases%20de%20ingl%C3%A9s%20del%20lunes%20a%20las%205%20de%20la%20tarde",
+  flex:         "https://wa.me/525572132329?text=Hola%2C%20me%20interesa%20tomar%20clases%20con%20CEP%20pero%20ninguno%20de%20los%20horarios%20disponibles%20me%20funciona.%20%C2%BFPodr%C3%ADamos%20coordinar%20un%20horario%20diferente%3F",
+};
+function qrUrl(link) {
+  return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=" + encodeURIComponent(link);
+}
+
 function CTASection({ t, currency, lang, tz }) {
   const safeTz = tz || "America/Mexico_City";
   const cur = currency || "MXN";
@@ -1550,9 +1568,9 @@ function CTASection({ t, currency, lang, tz }) {
   const intSub = classSubText('monday', safeTz, lang);
   const isEs = lang === "es";
   const cards = [
-    { key:"beginner",     label: t.cardBeginner,  sub: begSub + " · " + priceLabel,  btnText: t.cardJoin,    href:"https://wa.me/15127517276" },
-    { key:"intermediate", label: t.cardInter,      sub: intSub + " · " + priceLabel,  btnText: t.cardJoin,    href:"https://wa.me/15127517276" },
-    { key:"flex",         label: t.cardFlexTitle,  sub: t.cardFlexSub,                      btnText: t.cardFlexBtn, href:"placement.html" },
+    { key:"beginner",     label: t.cardBeginner,  sub: begSub + " · " + priceLabel, showQr: true },
+    { key:"intermediate", label: t.cardInter,      sub: intSub + " · " + priceLabel, showQr: true },
+    { key:"flex",         label: t.cardFlexTitle,  sub: t.cardFlexSub,               showQr: false },
   ];
   return (
     <section className="section" id="cta">
@@ -1560,12 +1578,17 @@ function CTASection({ t, currency, lang, tz }) {
         <div className="class-cards">
           {cards.map(c => (
             <div key={c.key} className="class-card">
-              <p className="class-card-label">{c.label}</p>
-              <p className="class-card-sub">{c.sub}</p>
-              <a className="class-card-btn" href={c.href} target="_blank" rel="noopener noreferrer">
-                <Icon name="arrow-r" size={16} stroke={2.2} />
-                {c.btnText}
+              <div className="class-card-level">{t.cardEyebrow}</div>
+              <div className="class-card-title">{c.label}</div>
+              <div className="class-card-sub">{c.sub}</div>
+              <a className="class-card-join" href={CLASS_LINKS[c.key]} target="_blank" rel="noopener noreferrer">
+                {c.key === "flex" ? t.cardFlexBtn : t.cardJoin}
               </a>
+              {c.showQr && <>
+                <div className="class-card-divider" />
+                <img className="class-card-qr" src={qrUrl(CLASS_LINKS[c.key])} alt={`QR – ${c.label}`} />
+                <span className="class-card-qr-label">{t.cardScan}</span>
+              </>}
             </div>
           ))}
         </div>
