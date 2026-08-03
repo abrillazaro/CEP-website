@@ -110,15 +110,25 @@
     }
   };
 
+  // Language priority: 1) ?lang= in URL  2) localStorage  3) default ES
   var lang = "es";
   try {
-    var stored = localStorage.getItem("cepLang");
-    if (stored === "en" || stored === "es") lang = stored;
+    var urlLang = new URLSearchParams(window.location.search).get("lang");
+    if (urlLang === "en" || urlLang === "es") {
+      lang = urlLang;
+    } else {
+      var stored = localStorage.getItem("cepLang");
+      if (stored === "en" || stored === "es") lang = stored;
+    }
   } catch(e) {}
 
   function setLang(l) {
     lang = l;
     try { localStorage.setItem("cepLang", l); } catch(e) {}
+    // Update URL so the shareable link always carries the chosen language
+    var url = new URL(window.location.href);
+    url.searchParams.set("lang", l);
+    history.replaceState(null, "", url.toString());
     apply();
   }
 
@@ -132,6 +142,12 @@
     document.getElementById("heading").textContent = s.heading;
     document.getElementById("subtext").textContent = s.sub;
     document.documentElement.lang = lang;
+    // Keep URL in sync on initial load too
+    var url = new URL(window.location.href);
+    if (!url.searchParams.get("lang")) {
+      url.searchParams.set("lang", lang);
+      history.replaceState(null, "", url.toString());
+    }
   }
 
   apply();
