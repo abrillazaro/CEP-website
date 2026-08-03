@@ -1570,7 +1570,7 @@ function CTASection({ t, currency, lang, tz }) {
   const cards = [
     { key:"beginner",     label: t.cardBeginner,  sub: begSub + " · " + priceLabel, showQr: true },
     { key:"intermediate", label: t.cardInter,      sub: intSub + " · " + priceLabel, showQr: true },
-    { key:"flex",         label: t.cardFlexTitle,  sub: t.cardFlexSub,               showQr: false },
+    { key:"flex",         label: t.cardFlexTitle,  sub: t.cardFlexSub,               showQr: true },
   ];
   return (
     <section className="section" id="cta">
