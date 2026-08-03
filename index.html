@@ -377,13 +377,11 @@
   /* How It Works */
   .how-wrap{max-width:1080px;margin:40px auto 0;padding:0 40px;}
   .how-title{font-family:var(--serif);font-weight:600;font-size:28px;color:var(--navy);
-    margin:0 0 20px;}
-  .how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
-  .how-step{background:var(--surface-soft);border:1px solid var(--line);border-radius:14px;
-    padding:18px 16px;}
-  .how-step-num{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sage-deep);
-    font-weight:700;margin:0 0 8px;}
-  .how-step-text{font-size:14.5px;color:var(--navy-soft);line-height:1.5;margin:0;}
+    margin:0 0 16px;}
+  .how-prose{max-width:720px;}
+  .how-prose p{font-size:clamp(15px,1.5vw,17px);line-height:1.7;color:var(--navy-soft);
+    margin:0 0 14px;}
+  .how-prose p:last-child{margin-bottom:0;}
 
   /* Hamburger menu */
   .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;
@@ -443,11 +441,9 @@
     .hamburger{display:flex;}
     .btn-login{display:none;}
     .class-cards{grid-template-columns:1fr;padding:0 20px;}
-    .how-steps{grid-template-columns:1fr 1fr;}
     .how-wrap{padding:0 20px;}
   }
   @media (max-width:540px){
-    .how-steps{grid-template-columns:1fr;}
     .region-scrim{align-items:flex-end;}
     .region-panel{width:100%;border-radius:18px 18px 0 0;max-height:80vh;}
   }
@@ -559,10 +555,9 @@ const STR = {
     cardFlexBtn: "Learn more",
     cardJoin: "Join this class",
     howTitle: "How It Works",
-    howStep1: "Join a small live class — up to 10 students per session.",
-    howStep2: "Practice real conversation from day one.",
-    howStep3: "Learn vocabulary, grammar, and culture in context.",
-    howStep4: "Move up levels as your confidence grows.",
+    howBody1: "Our groups are intentionally small — up to 10 students per session — so every student gets real attention and real practice time.",
+    howBody2: "We meet live twice a week: Mondays for Intermediate students and Wednesdays for Beginners. Classes are conversational by design. You'll build vocabulary, grammar, and confidence through real English interaction, not textbooks.",
+    howBody3: "Ready to find your level? Take the free English Placement Test to get started.",
   },
   es: {
     conjugate: "Conjugar", login: "Entrar", about: "Nosotros",
@@ -612,10 +607,9 @@ const STR = {
     cardFlexBtn: "Más información",
     cardJoin: "Unirse a la clase",
     howTitle: "Cómo Funciona",
-    howStep1: "Únete a una clase en vivo pequeña — hasta 10 estudiantes por sesión.",
-    howStep2: "Practica conversación real desde el primer día.",
-    howStep3: "Aprende vocabulario, gramática y cultura en contexto.",
-    howStep4: "Sube de nivel a medida que crece tu confianza.",
+    howBody1: "Nuestros grupos son intencionalmente pequeños — hasta 10 estudiantes por sesión — para que cada estudiante reciba atención real y tiempo de práctica real.",
+    howBody2: "Nos reunimos en vivo dos veces por semana: los lunes para estudiantes de nivel intermedio y los miércoles para principiantes. Las clases son conversacionales por diseño. Desarrollarás vocabulario, gramática y confianza a través de la interacción real en inglés, no con libros de texto.",
+    howBody3: "¿Listo para encontrar tu nivel? Toma el Examen de Nivel de Inglés gratis para comenzar.",
   }
 };
 
@@ -1563,7 +1557,6 @@ function CTASection({ t, currency, lang, tz }) {
     { key:"intermediate", label: t.cardInter,      sub: intSub + " · " + priceLabel,  btnText: t.cardJoin,    href:"https://wa.me/15127517276" },
     { key:"flex",         label: t.cardFlexTitle,  sub: t.cardFlexSub,                      btnText: t.cardFlexBtn, href:"placement.html" },
   ];
-  const steps = [t.howStep1, t.howStep2, t.howStep3, t.howStep4];
   return (
     <section className="section" id="cta">
       <TickerBand lang={lang} />
@@ -1582,22 +1575,13 @@ function CTASection({ t, currency, lang, tz }) {
         </div>
         <div className="how-wrap">
           <p className="how-title">{t.howTitle}</p>
-          <div className="how-steps">
-            {steps.map((s, i) => (
-              <div key={i} className="how-step">
-                <p className="how-step-num">{isEs ? "Paso" : "Step"} {i+1}</p>
-                <p className="how-step-text">{s}</p>
-              </div>
-            ))}
+          <div className="how-prose">
+            <p>{t.howBody1}</p>
+            <p>{t.howBody2}</p>
+            <p>{t.howBody3}</p>
           </div>
         </div>
-        <div className="cta-section" style={{ paddingTop:48 }}>
-          <a className="cta-btn" href="placement.html">
-            <Icon name="arrow-r" size={26} stroke={2.2} />
-            {t.ctaBtn}
-          </a>
-          <p className="foot-cep" style={{ marginTop:48 }}>{t.footer}</p>
-        </div>
+        <p className="foot-cep">{t.footer}</p>
       </div>
     </section>
   );
