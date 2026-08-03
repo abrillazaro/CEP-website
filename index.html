@@ -471,22 +471,33 @@
 <script>
 (function(){
   function _cepCur(cc){return cc==='MX'?'MXN':cc==='CR'?'CRC':'USD';}
-  var stored=null;try{stored=JSON.parse(localStorage.getItem('cepRegion'));}catch(e){}
+  function _cepFromTz(tz){
+    if(!tz) return {countryCode:'US',currency:'USD'};
+    var mxTz=/^America\/(Mexico_City|Monterrey|Merida|Mazatlan|Hermosillo|Chihuahua|Ojinaga|Bahia_Banderas|Cancun|Ensenada|Santa_Isabel|Tijuana)$/;
+    if(mxTz.test(tz)) return {countryCode:'MX',currency:'MXN'};
+    if(tz==='America/Costa_Rica') return {countryCode:'CR',currency:'CRC'};
+    return {countryCode:'US',currency:'USD'};
+  }
+  var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+  var tzGuess=_cepFromTz(tz);
+  // Use cepRegionV2 to bust any stale cepRegion cache that may have stored MX incorrectly
+  var stored=null;try{stored=JSON.parse(localStorage.getItem('cepRegionV2'));}catch(e){}
   if(stored&&stored.tz&&stored.currency){
     window._cepRegionPromise=Promise.resolve(stored);
   }else{
+    var tzResult={countryCode:tzGuess.countryCode,currency:tzGuess.currency,tz:tz||'America/Mexico_City'};
     window._cepRegionPromise=fetch('https://ipapi.co/json/')
       .then(function(r){return r.json();})
       .then(function(d){
-        var cc=d.country_code||'MX';
-        var tz=d.timezone||Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Mexico_City';
-        var result={countryCode:cc,currency:_cepCur(cc),tz:tz};
-        try{localStorage.setItem('cepRegion',JSON.stringify(result));}catch(e){}
+        var cc=d.country_code||tzGuess.countryCode;
+        var apiTz=d.timezone||tz||'America/Mexico_City';
+        var result={countryCode:cc,currency:_cepCur(cc),tz:apiTz};
+        try{localStorage.setItem('cepRegionV2',JSON.stringify(result));}catch(e){}
         return result;
       })
       .catch(function(){
-        var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Mexico_City';
-        return {countryCode:'MX',currency:'MXN',tz:tz};
+        try{localStorage.setItem('cepRegionV2',JSON.stringify(tzResult));}catch(e){}
+        return tzResult;
       });
   }
   window._cepCurrencyPromise=window._cepRegionPromise.then(function(r){return r.currency;});
