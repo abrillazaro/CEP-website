@@ -60,6 +60,10 @@
   .btn-login:hover{background:var(--navy-deep);transform:translateY(-1px);}
   .seg{border:none;background:transparent;border-radius:999px;padding:4px 11px;
     font-weight:700;font-size:13px;transition:all .15s;cursor:pointer;}
+  .region-btn{display:flex;align-items:center;gap:5px;background:transparent;border:none;
+    cursor:default;color:var(--navy);font-family:var(--sans);font-weight:600;padding:0 4px;}
+  .region-gmt{font-size:12px;opacity:.85;}
+  .region-divider{width:1px;height:20px;background:rgba(30,45,77,.14);margin:0 2px;flex-shrink:0;}
 
   /* Story sections */
   .section{position:relative;z-index:2;}
@@ -209,6 +213,8 @@ function renderText(str) {
 const STR = {
   en: {
     about: "About",
+    blog: "Blog",
+    login: "Log in",
     home: "Home",
     ethosTitle: "Ethos",
     ethos1: "Welcome to the Corporate English Project—or the CEP for short. Our project gets its name from the literal, etymological root, *corpus*. Based in lifestyle incorporation and community, the project's philosophy is centered on a body of people, a global community, a diaspora. Our mission is to enable English learners to join the diaspora by incorporating English into their everyday routines and habits so they can fully enjoy being a part of this global English-speaking community.",
@@ -221,6 +227,8 @@ const STR = {
   },
   es: {
     about: "Nosotros",
+    blog: "Bitácora",
+    login: "Entrar",
     home: "Inicio",
     ethosTitle: "Ethos",
     ethos1: "The Corporate English Project es una iniciativa integral de aprendizaje del inglés con raíz en el concepto latino de corpus, o cuerpo: la idea de que el idioma es un cuerpo completo de comunicación, no una colección de habilidades aisladas. La meta es formar comunicadores completos — no solo estudiantes de gramática o practicantes de conversación, sino personas capaces de leer, escribir, hablar, escuchar y pensar en inglés con confianza.",
@@ -248,20 +256,51 @@ function segStyle(active) {
     padding: "4px 11px", fontWeight: 700, fontSize: 13, transition: "all .15s" };
 }
 
+function gmtOffset(tz) {
+  try {
+    const s = Intl.DateTimeFormat('en',{timeZone:tz,timeZoneName:'shortOffset'})
+      .formatToParts(new Date()).find(p=>p.type==='timeZoneName')?.value||'GMT';
+    return s === 'GMT' ? 'GMT+0' : s;
+  } catch(e) { return 'GMT'; }
+}
+
+function RegionBadge() {
+  const [info, setInfo] = React.useState(null);
+  React.useEffect(() => {
+    try {
+      const r = JSON.parse(localStorage.getItem('cepRegionV2'));
+      const tz = (r && r.tz) || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const cc = (r && r.countryCode) || 'US';
+      const flag = cc==='MX'?'🇲🇽':cc==='CR'?'🇨🇷':cc==='CA'?'🇨🇦':'🇺🇸';
+      setInfo({ flag, gmt: gmtOffset(tz) });
+    } catch(e) {}
+  }, []);
+  if (!info) return null;
+  return (
+    <span className="region-btn">
+      <span>{info.flag}</span>
+      <span className="region-gmt">{info.gmt}</span>
+    </span>
+  );
+}
+
 function Nav({ t, lang, setLang }) {
   return (
     <nav className="nav">
-      <a className="nav-logo" href="index.html" aria-label="Home">
-        <img src="logo-navy.png" alt="The Corporate English Project" />
+      <a className="nav-logo" href="/" aria-label="Home">
+        <img src="/logo-navy.png" alt="The Corporate English Project" />
       </a>
       <div className="nav-right">
+        <RegionBadge />
+        <div className="region-divider" />
         <div className="lang-toggle" role="group" aria-label="Language">
           <Icon name="globe" size={17} stroke={2} />
           <button className="seg" onClick={() => setLang("en")} style={segStyle(lang === "en")}>EN</button>
           <button className="seg" onClick={() => setLang("es")} style={segStyle(lang === "es")}>ES</button>
         </div>
-        <a className="nav-link hide-sm" href="index.html">{t.home}</a>
-        <a className="nav-link active" href="about.html">{t.about}</a>
+        <a className="nav-link hide-sm" href="/blog">{t.blog}</a>
+        <a className="nav-link active hide-sm" href="/about.html">{t.about}</a>
+        <a className="btn-login" href="/login.html">{t.login}</a>
       </div>
     </nav>
   );
@@ -269,12 +308,12 @@ function Nav({ t, lang, setLang }) {
 
 function AboutPage() {
   const [lang, setLang] = useState(() => {
-    try { return localStorage.getItem("cep-lang") || "en"; } catch { return "en"; }
+    try { return localStorage.getItem("cepLang") || "en"; } catch { return "en"; }
   });
   const t = STR[lang] || STR.en;
 
   useEffect(() => {
-    try { localStorage.setItem("cep-lang", lang); } catch {}
+    try { localStorage.setItem("cepLang", lang); } catch {}
     document.documentElement.lang = lang;
   }, [lang]);
 
