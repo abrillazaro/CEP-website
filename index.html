@@ -575,11 +575,10 @@ const STR = {
     footer: "© The Corporate English Project · CEP · México, México",
     ctaBtn: "Take your English Placement Test and inquire about joining the CEP now!",
     cardEyebrow: "Live online group class",
-    cardBeginner: "Beginner", cardInter: "Intermediate",
-    cardFlexTitle: "Flexible",
-    cardFlexSub: "If no available schedule works for you, reach out!",
-    cardFlexBtn: "Contact us",
-    cardJoin: "Join the class",
+    cardInter: "Intermediate",
+    courseMonWedTitle: "Monday & Wednesday",
+    courseFridayTitle: "Friday",
+    cardViewCourse: "View course",
     cardScan: "Scan to join from desktop",
     howTitle: "How It Works",
   },
@@ -626,11 +625,10 @@ const STR = {
     footer: "© The Corporate English Project · CEP · México, México",
     ctaBtn: "¡Toma tu Examen de Nivel de Inglés e infórmate sobre el CEP ahora!",
     cardEyebrow: "Clase grupal en vivo",
-    cardBeginner: "Principiante", cardInter: "Intermedio",
-    cardFlexTitle: "Flexible",
-    cardFlexSub: "Si ningún horario disponible te funciona, ¡escríbenos!",
-    cardFlexBtn: "Contáctanos",
-    cardJoin: "Únete a la clase",
+    cardInter: "Intermedio",
+    courseMonWedTitle: "Lunes y Miércoles",
+    courseFridayTitle: "Viernes",
+    cardViewCourse: "Ver curso",
     cardScan: "Escanea para unirte desde tu computadora",
     howTitle: "Cómo Funciona",
   }
@@ -1262,37 +1260,44 @@ function gmtOffset(tz) {
   } catch(e) { return 'GMT'; }
 }
 
-function classSubText(dayKey, tz, lang) {
+function convertClassOccurrence(dayIdx, hour, srcTz, targetTz, lang) {
+  const now = new Date();
+  const DM = {Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+  const srcDow = DM[new Intl.DateTimeFormat('en-US',{timeZone:srcTz,weekday:'short'}).format(now)] ?? 1;
+  let ahead = (dayIdx - srcDow + 7) % 7;
+  if (ahead === 0) {
+    const h = parseInt(new Intl.DateTimeFormat('en-US',{timeZone:srcTz,hour:'numeric',hour12:false}).format(now));
+    if (h >= hour) ahead = 7;
+  }
+  const next = new Date(now.getTime() + ahead * 86400000);
+  const dp = new Intl.DateTimeFormat('en-US',{timeZone:srcTz,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(next);
+  const yr = parseInt(dp.find(p=>p.type==='year').value);
+  const mo = parseInt(dp.find(p=>p.type==='month').value);
+  const dy = parseInt(dp.find(p=>p.type==='day').value);
+  const naive = new Date(Date.UTC(yr, mo-1, dy, hour, 0, 0));
+  const tzStr = new Intl.DateTimeFormat('en',{timeZone:srcTz,timeZoneName:'shortOffset'})
+    .formatToParts(naive).find(p=>p.type==='timeZoneName')?.value || 'GMT-6';
+  const mtz = tzStr.match(/GMT([+-])(\d+)(?::(\d+))?/);
+  const offH = mtz ? (mtz[1]==='+'?1:-1)*(parseInt(mtz[2])+(parseInt(mtz[3]||'0')/60)) : -6;
+  const classUtc = new Date(naive.getTime() - offH * 3600000);
+  const loc = lang === 'es' ? 'es-MX' : 'en-US';
+  const wd  = new Intl.DateTimeFormat(loc,{timeZone:targetTz,weekday:'long'}).format(classUtc);
+  const t1  = new Intl.DateTimeFormat(loc,{timeZone:targetTz,hour:'numeric',minute:'2-digit',hour12:true}).format(classUtc);
+  const t2  = new Intl.DateTimeFormat(loc,{timeZone:targetTz,hour:'numeric',minute:'2-digit',hour12:true}).format(new Date(classUtc.getTime()+3600000));
+  return { weekday: wd.charAt(0).toUpperCase()+wd.slice(1), t1, t2 };
+}
+
+function courseSchedule(dayIdxs, tz, lang) {
   try {
-    const srcTz = "America/Mexico_City";
-    const now = new Date();
-    const DM = {Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
-    const srcDow = DM[new Intl.DateTimeFormat('en-US',{timeZone:srcTz,weekday:'short'}).format(now)] ?? 1;
-    const tgt = dayKey === 'monday' ? 1 : 3;
-    let ahead = (tgt - srcDow + 7) % 7;
-    if (ahead === 0) {
-      const h = parseInt(new Intl.DateTimeFormat('en-US',{timeZone:srcTz,hour:'numeric',hour12:false}).format(now));
-      if (h >= 17) ahead = 7;
+    const results = dayIdxs.map(d => convertClassOccurrence(d, 20, "America/Chicago", tz, lang));
+    const sameTime = results.every(r => r.t1 === results[0].t1 && r.t2 === results[0].t2);
+    if (sameTime) {
+      const days = results.map(r => r.weekday).join(lang === 'es' ? ' y ' : ' & ');
+      return days + ' · ' + results[0].t1 + '–' + results[0].t2;
     }
-    const next = new Date(now.getTime() + ahead * 86400000);
-    const dp = new Intl.DateTimeFormat('en-US',{timeZone:srcTz,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(next);
-    const yr = parseInt(dp.find(p=>p.type==='year').value);
-    const mo = parseInt(dp.find(p=>p.type==='month').value);
-    const dy = parseInt(dp.find(p=>p.type==='day').value);
-    const naive = new Date(Date.UTC(yr, mo-1, dy, 17, 0, 0));
-    const tzStr = new Intl.DateTimeFormat('en',{timeZone:srcTz,timeZoneName:'shortOffset'})
-      .formatToParts(naive).find(p=>p.type==='timeZoneName')?.value || 'GMT-6';
-    const mtz = tzStr.match(/GMT([+-])(\d+)(?::(\d+))?/);
-    const offH = mtz ? (mtz[1]==='+'?1:-1)*(parseInt(mtz[2])+(parseInt(mtz[3]||'0')/60)) : -6;
-    const classUtc = new Date(naive.getTime() - offH * 3600000);
-    const loc = lang === 'es' ? 'es-MX' : 'en-US';
-    const wd  = new Intl.DateTimeFormat(loc,{timeZone:tz,weekday:'long'}).format(classUtc);
-    const t1  = new Intl.DateTimeFormat(loc,{timeZone:tz,hour:'numeric',minute:'2-digit',hour12:true}).format(classUtc);
-    const t2  = new Intl.DateTimeFormat(loc,{timeZone:tz,hour:'numeric',minute:'2-digit',hour12:true}).format(new Date(classUtc.getTime()+3600000));
-    return (wd.charAt(0).toUpperCase()+wd.slice(1)) + ' · ' + t1 + '–' + t2;
+    return results.map(r => r.weekday + ' ' + r.t1 + '–' + r.t2).join(', ');
   } catch(e) {
-    const fb = {monday:{es:'Lunes · 5–6 PM CT',en:'Monday · 5–6 PM CT'},wednesday:{es:'Miércoles · 5–6 PM CT',en:'Wednesday · 5–6 PM CT'}};
-    return (fb[dayKey]||fb.wednesday)[lang==='es'?'es':'en'];
+    return lang === 'es' ? 'Horario por confirmar' : 'Schedule TBD';
   }
 }
 
@@ -1563,9 +1568,12 @@ function EnrollTicker({ lang }) {
 
 /* ---- CTA section ---- */
 const CLASS_LINKS = {
-  beginner:     "https://wa.me/525572132329?text=Hola%2C%20me%20gustar%C3%ADa%20inscribirme%20en%20las%20clases%20de%20ingl%C3%A9s%20del%20mi%C3%A9rcoles%20a%20las%205%20de%20la%20tarde",
-  intermediate: "https://wa.me/525572132329?text=Hola%2C%20me%20gustar%C3%ADa%20inscribirme%20en%20las%20clases%20de%20ingl%C3%A9s%20del%20lunes%20a%20las%205%20de%20la%20tarde",
-  flex:         "https://wa.me/525572132329?text=Hola%2C%20me%20interesa%20tomar%20clases%20con%20CEP%20pero%20ninguno%20de%20los%20horarios%20disponibles%20me%20funciona.%20%C2%BFPodr%C3%ADamos%20coordinar%20un%20horario%20diferente%3F",
+  monwed: "https://wa.me/525572132329?text=Hola%2C%20me%20gustar%C3%ADa%20inscribirme%20en%20el%20curso%20de%20ingl%C3%A9s%20intermedio%20de%20lunes%20y%20mi%C3%A9rcoles%20a%20las%208%20pm%20(hora%20central)",
+  friday: "https://wa.me/525572132329?text=Hola%2C%20me%20gustar%C3%ADa%20inscribirme%20en%20el%20curso%20de%20ingl%C3%A9s%20intermedio%20de%20los%20viernes%20a%20las%208%20pm%20(hora%20central)",
+};
+const COURSE_PAGES = {
+  monwed: "/courses/mon-wed.html",
+  friday: "/courses/friday.html",
 };
 function qrUrl(link) {
   return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=" + encodeURIComponent(link);
@@ -1575,40 +1583,38 @@ function CTASection({ t, currency, lang, tz }) {
   const safeTz = tz || "America/Mexico_City";
   const cur = currency || "MXN";
   const priceLabel = cur === "MXN" ? "$50 MXN" : cur === "CRC" ? "1,350 CRC" : "$3 USD";
-  const begSub = classSubText('wednesday', safeTz, lang);
-  const intSub = classSubText('monday', safeTz, lang);
+  const monWedSub = courseSchedule([1,3], safeTz, lang);
+  const fridaySub = courseSchedule([5], safeTz, lang);
   const isEs = lang === "es";
   const cards = [
-    { key:"beginner",     label: t.cardBeginner,  sub: begSub + " · " + priceLabel, showQr: true },
-    { key:"intermediate", label: t.cardInter,      sub: intSub + " · " + priceLabel, showQr: true },
-    { key:"flex",         label: t.cardFlexTitle,  sub: t.cardFlexSub,               showQr: true },
+    { key:"monwed", label: t.courseMonWedTitle, sub: t.cardInter + " · " + monWedSub + " · " + priceLabel },
+    { key:"friday", label: t.courseFridayTitle, sub: t.cardInter + " · " + fridaySub + " · " + priceLabel },
   ];
   return (
     <section className="section" id="cta">
       <div style={{ padding:"56px 0 0" }}>
         <div className="class-cards">
-          {cards.map(c => (
-            <div key={c.key} className="class-card">
-              <div className="class-card-level">{t.cardEyebrow}</div>
-              <div className="class-card-title">{c.label}</div>
-              <div className="class-card-sub">{c.sub}</div>
-              <a className="class-card-join" href={CLASS_LINKS[c.key]} target="_blank" rel="noopener noreferrer">
-                {c.key === "flex" ? t.cardFlexBtn : t.cardJoin}
-              </a>
-              {c.showQr && <>
+          {cards.map(c => {
+            const href = COURSE_PAGES[c.key] + "?lang=" + lang;
+            return (
+              <div key={c.key} className="class-card">
+                <div className="class-card-level">{t.cardEyebrow}</div>
+                <div className="class-card-title">{c.label}</div>
+                <div className="class-card-sub">{c.sub}</div>
+                <a className="class-card-join" href={href}>{t.cardViewCourse}</a>
                 <div className="class-card-divider" />
-                <img className="class-card-qr" src={qrUrl(CLASS_LINKS[c.key])} alt={`QR – ${c.label}`} />
+                <img className="class-card-qr" src={qrUrl(new URL(href, window.location.origin).href)} alt={`QR – ${c.label}`} />
                 <span className="class-card-qr-label">{t.cardScan}</span>
-              </>}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
         <div className="how-section">
           <h2 className="how-title">{t.howTitle}</h2>
           <div className="how-rule" />
           <p className="how-body">{isEs
-            ? `The Corporate English Project es una comunidad global de hispanohablantes de todo el mundo aprendiendo inglés como segundo idioma, y eso es lo que nos hace especiales. Al ser 100% en línea, aprendemos juntos sin importar dónde estés. Nos reunimos en vivo por Microsoft Teams, lo que nos permite mantener las clases desde ${priceLabel} por sesión y seguir ofreciendo una experiencia de aprendizaje de alta calidad. Nuestros grupos son intencionalmente pequeños, hasta 10 alumnos por sesión, para que cada alumno reciba la atención que merece. Abrimos nuevos horarios según el interés, así que si no encuentras un horario que te funcione, ¡escríbenos! Quizás podamos abrir uno para ti. Y como CEP está construido sobre comunidad, ¡trae a un amigo! Entre más seamos, más rica es la experiencia. 🌎`
-            : `The Corporate English Project is a global community of Spanish speakers from all over the world learning English as a second language, and that's what makes us special. Because we're 100% online, we get to learn together no matter where you are. We meet live via Microsoft Teams, which is what allows us to keep classes as accessible as ${priceLabel} per session and still deliver a high-quality learning experience. Our groups are intentionally small, with up to 10 students per session, so that every student gets the attention they deserve. New schedules open based on interest, so if you don't see a time that works for you, reach out! We just might be able to make it happen. And since CEP is built on community, bring a friend. The more the merrier, and the better the learning experience for everyone. 🌎`
+            ? `The Corporate English Project es una comunidad global de hispanohablantes de todo el mundo aprendiendo inglés como segundo idioma, y eso es lo que nos hace especiales. Al ser 100% en línea, aprendemos juntos sin importar dónde estés. Nos reunimos en vivo por Microsoft Teams, lo que nos permite mantener las clases desde ${priceLabel} por sesión y seguir ofreciendo una experiencia de aprendizaje de alta calidad. Nuestros grupos son intencionalmente pequeños, hasta 12 alumnos por sesión, para que cada alumno reciba la atención que merece. Abrimos nuevos horarios según el interés, así que si no encuentras un horario que te funcione, ¡escríbenos! Quizás podamos abrir uno para ti. Y como CEP está construido sobre comunidad, ¡trae a un amigo! Entre más seamos, más rica es la experiencia. 🌎`
+            : `The Corporate English Project is a global community of Spanish speakers from all over the world learning English as a second language, and that's what makes us special. Because we're 100% online, we get to learn together no matter where you are. We meet live via Microsoft Teams, which is what allows us to keep classes as accessible as ${priceLabel} per session and still deliver a high-quality learning experience. Our groups are intentionally small, with up to 12 students per session, so that every student gets the attention they deserve. New schedules open based on interest, so if you don't see a time that works for you, reach out! We just might be able to make it happen. And since CEP is built on community, bring a friend. The more the merrier, and the better the learning experience for everyone. 🌎`
           }</p>
         </div>
         <p className="foot-cep">{t.footer}</p>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Intermediate English — Monday & Wednesday | The Corporate English Project</title>
+<link rel="icon" type="image/png" href="/logo-navy.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#20395c;
+    --navy-deep:#152840;
+    --navy-soft:#54688a;
+    --sage:#5d7c69;
+    --sage-deep:#465c4f;
+    --sage-tint:#dce7dd;
+    --bg:#f1f3ef;
+    --surface:#ffffff;
+    --line:#e0e4dd;
+    --line-strong:#cdd4c9;
+    --ink:#1e2a3a;
+    --muted:#6c7787;
+    --serif:"Playfair Display", Georgia, serif;
+    --sans:"Hanken Grotesk", system-ui, sans-serif;
+    --shadow-sm:0 1px 2px rgba(21,40,64,.05), 0 1px 3px rgba(21,40,64,.06);
+    --shadow-md:0 6px 16px rgba(21,40,64,.08), 0 2px 6px rgba(21,40,64,.05);
+    --shadow-lg:0 22px 50px -12px rgba(21,40,64,.22), 0 8px 20px rgba(21,40,64,.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh;}
+  ::selection{background:var(--sage-tint);color:var(--navy-deep);}
+  button{font-family:inherit;cursor:pointer;}
+  a{color:inherit;}
+
+  .page{min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+
+  /* Nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;
+    padding:0 40px 11px;max-width:1320px;margin:0 auto;width:100%;}
+  .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--navy);}
+  .nav-logo img{height:150px;width:auto;display:block;}
+  .nav-right{display:flex;align-items:center;gap:10px;}
+  .region-btn{display:flex;align-items:center;gap:5px;background:transparent;border:none;
+    color:var(--navy);font-family:var(--sans);font-weight:600;padding:0 4px;}
+  .region-gmt{font-size:12px;opacity:.85;}
+  .region-divider{width:1px;height:20px;background:rgba(30,45,77,.14);margin:0 2px;flex-shrink:0;}
+  .lang-toggle{display:flex;align-items:center;gap:2px;border:1px solid var(--line-strong);
+    background:var(--surface);border-radius:999px;padding:5px 7px;box-shadow:var(--shadow-sm);}
+  .seg{border:none;background:transparent;border-radius:999px;padding:4px 11px;
+    font-weight:700;font-size:13px;color:var(--navy-soft);transition:all .15s;cursor:pointer;font-family:var(--sans);}
+  .seg.active{background:var(--navy);color:#fff;}
+  .nav-link{padding:9px 14px;border-radius:10px;color:var(--navy);text-decoration:none;
+    font-weight:600;font-size:15px;background:transparent;border:none;transition:background .15s;}
+  .nav-link:hover{background:rgba(32,57,92,.07);}
+
+  /* Course content */
+  .course-main{flex:1;display:flex;flex-direction:column;align-items:center;
+    padding:40px 40px 90px;}
+  .course-card{background:var(--surface);border-radius:24px;border:1.5px solid var(--line);
+    box-shadow:var(--shadow-md);padding:48px 44px;max-width:620px;width:100%;text-align:center;}
+  .course-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--sage-deep);font-weight:700;margin-bottom:14px;}
+  .course-title{font-family:var(--serif);font-weight:600;color:var(--navy);
+    font-size:clamp(30px,4vw,42px);line-height:1.1;margin:0 0 24px;letter-spacing:-.01em;}
+  .course-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 0 28px;}
+  .meta-pill{border:1.5px solid var(--line-strong);border-radius:999px;padding:8px 18px;
+    font-size:13px;font-weight:700;color:var(--navy);background:var(--surface-soft, #f8faf6);}
+  .course-desc{font-size:16px;line-height:1.7;color:var(--navy-soft);margin:0 0 32px;
+    text-align:left;}
+  .course-enroll{display:inline-block;color:#fff;background:var(--navy);padding:14px 36px;
+    border-radius:12px;font-weight:700;font-size:16px;text-decoration:none;
+    box-shadow:var(--shadow-sm);transition:transform .12s,background .2s;margin-bottom:28px;}
+  .course-enroll:hover{background:var(--navy-deep);transform:translateY(-2px);}
+  .course-divider{width:40px;height:1.5px;background:var(--line);margin:0 auto 22px;}
+  .course-qr{width:130px;height:130px;border-radius:10px;border:1px solid var(--line);object-fit:contain;}
+  .course-qr-label{display:block;font-size:12px;color:var(--muted);margin-top:10px;}
+  .course-back{margin-top:32px;font-size:14px;font-weight:600;color:var(--navy-soft);text-decoration:none;}
+  .course-back:hover{color:var(--navy);}
+
+  @media(max-width:600px){
+    .nav{padding:0 20px 11px;}
+    .course-main{padding:24px 20px 60px;}
+    .course-card{padding:36px 26px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="nav">
+    <a class="nav-logo" href="/">
+      <img src="/logo-navy.png" alt="The Corporate English Project" />
+    </a>
+    <div class="nav-right">
+      <span class="region-btn" id="region-badge"></span>
+      <div class="region-divider"></div>
+      <div class="lang-toggle">
+        <button class="seg" id="btn-en" onclick="setLang('en')">EN</button>
+        <button class="seg active" id="btn-es" onclick="setLang('es')">ES</button>
+      </div>
+      <a class="nav-link" id="nav-about" href="/about.html">Nosotros</a>
+      <a class="nav-link" id="nav-blog" href="/blog">Bitácora</a>
+    </div>
+  </nav>
+
+  <main class="course-main">
+    <div class="course-card">
+      <div class="course-eyebrow" id="eyebrow">Clase grupal en vivo</div>
+      <h1 class="course-title" id="title">Inglés Intermedio — Lunes y Miércoles</h1>
+      <div class="course-meta">
+        <span class="meta-pill" id="meta-schedule">…</span>
+        <span class="meta-pill" id="meta-duration">6 semanas</span>
+        <span class="meta-pill" id="meta-capacity">Máx. 12 alumnos</span>
+        <span class="meta-pill" id="meta-price">…</span>
+      </div>
+      <p class="course-desc" id="desc"></p>
+      <a class="course-enroll" id="enroll-btn" href="#" target="_blank" rel="noopener noreferrer">Inscríbete por WhatsApp</a>
+      <div class="course-divider"></div>
+      <img class="course-qr" id="qr-img" src="" alt="QR" />
+      <span class="course-qr-label" id="scan-label">Escanea para unirte desde tu computadora</span>
+    </div>
+    <a class="course-back" id="back-link" href="/">← Volver al inicio</a>
+  </main>
+</div>
+
+<script>
+(function(){
+  function _cepCur(cc){return cc==='MX'?'MXN':cc==='CR'?'CRC':'USD';}
+  function _cepFromTz(tz){
+    if(!tz) return {countryCode:'US',currency:'USD'};
+    var mxTz=/^America\/(Mexico_City|Monterrey|Merida|Mazatlan|Hermosillo|Chihuahua|Ojinaga|Bahia_Banderas|Cancun|Ensenada|Santa_Isabel|Tijuana)$/;
+    if(mxTz.test(tz)) return {countryCode:'MX',currency:'MXN'};
+    if(tz==='America/Costa_Rica') return {countryCode:'CR',currency:'CRC'};
+    return {countryCode:'US',currency:'USD'};
+  }
+  var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+  var tzGuess=_cepFromTz(tz);
+  var stored=null;try{stored=JSON.parse(localStorage.getItem('cepRegionV2'));}catch(e){}
+  if(stored&&stored.tz&&stored.currency){
+    window._cepRegionPromise=Promise.resolve(stored);
+  }else{
+    var tzResult={countryCode:tzGuess.countryCode,currency:tzGuess.currency,tz:tz||'America/Mexico_City'};
+    window._cepRegionPromise=fetch('https://ipapi.co/json/')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var cc=d.country_code||tzGuess.countryCode;
+        var apiTz=d.timezone||tz||'America/Mexico_City';
+        var result={countryCode:cc,currency:_cepCur(cc),tz:apiTz};
+        try{localStorage.setItem('cepRegionV2',JSON.stringify(result));}catch(e){}
+        return result;
+      })
+      .catch(function(){
+        try{localStorage.setItem('cepRegionV2',JSON.stringify(tzResult));}catch(e){}
+        return tzResult;
+      });
+  }
+})();
+</script>
+<script>
+  var COURSE_DAYS = [1, 3]; // Mon & Wed
+  var CLASS_LINK = "https://wa.me/525572132329?text=Hola%2C%20me%20gustar%C3%ADa%20inscribirme%20en%20el%20curso%20de%20ingl%C3%A9s%20intermedio%20de%20lunes%20y%20mi%C3%A9rcoles%20a%20las%208%20pm%20(hora%20central)";
+
+  var STR = {
+    en: {
+      about: "About", blog: "Blog",
+      eyebrow: "Live online group class",
+      title: "Intermediate English — Monday & Wednesday",
+      duration: "6 weeks", capacity: "Max 12 students",
+      desc: "A live, online group class held twice a week over a 6-week session. Small groups of up to 12 students meet via Microsoft Teams to build real conversational confidence — reading, writing, speaking, and listening together.",
+      enrollBtn: "Enroll via WhatsApp",
+      scanLabel: "Scan to enroll from desktop",
+      back: "← Back to home",
+    },
+    es: {
+      about: "Nosotros", blog: "Bitácora",
+      eyebrow: "Clase grupal en vivo",
+      title: "Inglés Intermedio — Lunes y Miércoles",
+      duration: "6 semanas", capacity: "Máx. 12 alumnos",
+      desc: "Una clase grupal en vivo, en línea, dos veces por semana durante una sesión de 6 semanas. Grupos pequeños de hasta 12 alumnos se reúnen por Microsoft Teams para desarrollar confianza real al conversar — leyendo, escribiendo, hablando y escuchando juntos.",
+      enrollBtn: "Inscríbete por WhatsApp",
+      scanLabel: "Escanea para inscribirte desde tu computadora",
+      back: "← Volver al inicio",
+    }
+  };
+
+  var lang = "es";
+  try {
+    var urlLang = new URLSearchParams(window.location.search).get("lang");
+    if (urlLang === "en" || urlLang === "es") {
+      lang = urlLang;
+    } else {
+      var stored = localStorage.getItem("cepLang");
+      if (stored === "en" || stored === "es") lang = stored;
+    }
+  } catch(e) {}
+
+  function gmtOffset(tz) {
+    try {
+      var s = Intl.DateTimeFormat('en',{timeZone:tz,timeZoneName:'shortOffset'})
+        .formatToParts(new Date()).find(function(p){return p.type==='timeZoneName';});
+      var val = s ? s.value : 'GMT';
+      return val === 'GMT' ? 'GMT+0' : val;
+    } catch(e) { return 'GMT'; }
+  }
+
+  function convertClassOccurrence(dayIdx, hour, srcTz, targetTz, lng) {
+    var now = new Date();
+    var DM = {Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+    var srcDow = DM[new Intl.DateTimeFormat('en-US',{timeZone:srcTz,weekday:'short'}).format(now)];
+    if (srcDow === undefined) srcDow = 1;
+    var ahead = (dayIdx - srcDow + 7) % 7;
+    if (ahead === 0) {
+      var h = parseInt(new Intl.DateTimeFormat('en-US',{timeZone:srcTz,hour:'numeric',hour12:false}).format(now));
+      if (h >= hour) ahead = 7;
+    }
+    var next = new Date(now.getTime() + ahead * 86400000);
+    var dp = new Intl.DateTimeFormat('en-US',{timeZone:srcTz,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(next);
+    var yr = parseInt(dp.find(function(p){return p.type==='year';}).value);
+    var mo = parseInt(dp.find(function(p){return p.type==='month';}).value);
+    var dy = parseInt(dp.find(function(p){return p.type==='day';}).value);
+    var naive = new Date(Date.UTC(yr, mo-1, dy, hour, 0, 0));
+    var tzPart = new Intl.DateTimeFormat('en',{timeZone:srcTz,timeZoneName:'shortOffset'})
+      .formatToParts(naive).find(function(p){return p.type==='timeZoneName';});
+    var tzStr = tzPart ? tzPart.value : 'GMT-6';
+    var mtz = tzStr.match(/GMT([+-])(\d+)(?::(\d+))?/);
+    var offH = mtz ? (mtz[1]==='+'?1:-1)*(parseInt(mtz[2])+(parseInt(mtz[3]||'0')/60)) : -6;
+    var classUtc = new Date(naive.getTime() - offH * 3600000);
+    var loc = lng === 'es' ? 'es-MX' : 'en-US';
+    var wd = new Intl.DateTimeFormat(loc,{timeZone:targetTz,weekday:'long'}).format(classUtc);
+    var t1 = new Intl.DateTimeFormat(loc,{timeZone:targetTz,hour:'numeric',minute:'2-digit',hour12:true}).format(classUtc);
+    var t2 = new Intl.DateTimeFormat(loc,{timeZone:targetTz,hour:'numeric',minute:'2-digit',hour12:true}).format(new Date(classUtc.getTime()+3600000));
+    return { weekday: wd.charAt(0).toUpperCase()+wd.slice(1), t1: t1, t2: t2 };
+  }
+
+  function courseSchedule(dayIdxs, tz, lng) {
+    try {
+      var results = dayIdxs.map(function(d){ return convertClassOccurrence(d, 20, "America/Chicago", tz, lng); });
+      var sameTime = results.every(function(r){ return r.t1 === results[0].t1 && r.t2 === results[0].t2; });
+      if (sameTime) {
+        var days = results.map(function(r){ return r.weekday; }).join(lng === 'es' ? ' y ' : ' & ');
+        return days + ' · ' + results[0].t1 + '–' + results[0].t2;
+      }
+      return results.map(function(r){ return r.weekday + ' ' + r.t1 + '–' + r.t2; }).join(', ');
+    } catch(e) {
+      return lng === 'es' ? 'Horario por confirmar' : 'Schedule TBD';
+    }
+  }
+
+  function priceLabel(currency) {
+    return currency === 'MXN' ? '$50 MXN' : currency === 'CRC' ? '1,350 CRC' : '$3 USD';
+  }
+
+  function qrUrl(link) {
+    return "https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=8&data=" + encodeURIComponent(link);
+  }
+
+  function setLang(l) {
+    lang = l;
+    try { localStorage.setItem("cepLang", l); } catch(e) {}
+    var url = new URL(window.location.href);
+    url.searchParams.set("lang", l);
+    history.replaceState(null, "", url.toString());
+    render();
+  }
+
+  function render() {
+    var s = STR[lang];
+    document.getElementById("btn-en").className = "seg" + (lang === "en" ? " active" : "");
+    document.getElementById("btn-es").className = "seg" + (lang === "es" ? " active" : "");
+    document.getElementById("nav-about").textContent = s.about;
+    document.getElementById("nav-blog").textContent = s.blog;
+    document.getElementById("eyebrow").textContent = s.eyebrow;
+    document.getElementById("title").textContent = s.title;
+    document.getElementById("meta-duration").textContent = s.duration;
+    document.getElementById("meta-capacity").textContent = s.capacity;
+    document.getElementById("desc").textContent = s.desc;
+    document.getElementById("enroll-btn").textContent = s.enrollBtn;
+    document.getElementById("enroll-btn").href = CLASS_LINK;
+    document.getElementById("scan-label").textContent = s.scanLabel;
+    document.getElementById("back-link").textContent = s.back;
+    document.getElementById("qr-img").src = qrUrl(CLASS_LINK);
+    document.title = s.title + " | The Corporate English Project";
+    document.documentElement.lang = lang;
+
+    var url = new URL(window.location.href);
+    if (!url.searchParams.get("lang")) {
+      url.searchParams.set("lang", lang);
+      history.replaceState(null, "", url.toString());
+    }
+
+    window._cepRegionPromise.then(function(region) {
+      var tz = region.tz || "America/Mexico_City";
+      document.getElementById("meta-schedule").textContent = courseSchedule(COURSE_DAYS, tz, lang);
+      document.getElementById("meta-price").textContent = priceLabel(region.currency);
+      var flag = region.countryCode === 'MX' ? '🇲🇽' : region.countryCode === 'CR' ? '🇨🇷' : region.countryCode === 'CA' ? '🇨🇦' : '🇺🇸';
+      document.getElementById("region-badge").innerHTML = '<span>' + flag + '</span> <span class="region-gmt">' + gmtOffset(tz) + '</span>';
+    });
+  }
+
+  render();
+</script>
+</body>
+</html>
