@@ -1369,10 +1369,9 @@ function segStyle(active) {
     padding: "4px 11px", fontWeight: 700, fontSize: 13, transition: "all .15s" };
 }
 
-function Nav({ t, lang, setLang, onLogin, onHome, region, onRegionClick }) {
+function Nav({ t, lang, setLang, onHome, region, onRegionClick }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const toggleMenu = () => setMenuOpen(o => !o);
-  const handleLogin = () => { setMenuOpen(false); onLogin(); };
   return (
     <nav className="nav" style={{ position:"relative" }}>
       <a className="nav-logo" href="#" onClick={onHome} aria-label="Back to start">
@@ -1388,13 +1387,11 @@ function Nav({ t, lang, setLang, onLogin, onHome, region, onRegionClick }) {
         </div>
         <a className="nav-link hide-sm" href="about.html">{t.about}</a>
         <a className="nav-link hide-sm" href="/blog">{t.blog}</a>
-        <button className="btn-login" onClick={onLogin}>{t.login}</button>
         <button className="hamburger" onClick={toggleMenu} aria-label="Menu">
           <span /><span /><span />
         </button>
         <div className={"mobile-menu" + (menuOpen ? " open" : "")}>
           <a href="about.html">{t.about}</a>
-          <button className="menu-login" onClick={handleLogin}>{t.login}</button>
         </div>
       </div>
     </nav>
