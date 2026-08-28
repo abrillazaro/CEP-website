@@ -456,6 +456,20 @@
   .featured-post-meta{font-size:14px;color:var(--navy-soft);margin-top:-8px;}
   .featured-post:hover .featured-post-title,.featured-post:hover .featured-post-meta{color:var(--sage);}
 
+  .founder-faq{margin-top:32px;}
+  .founder-faq-title{font-family:var(--serif);font-weight:600;font-size:19px;
+    color:var(--navy);margin:0 0 6px;}
+  .founder-faq-item{border-top:1px solid var(--line);}
+  .founder-faq-item:last-child{border-bottom:1px solid var(--line);}
+  .founder-faq-item summary{padding:14px 4px 14px 0;font-size:15px;font-weight:600;
+    color:var(--navy);cursor:pointer;list-style:none;display:flex;justify-content:space-between;
+    align-items:center;gap:12px;}
+  .founder-faq-item summary::-webkit-details-marker{display:none;}
+  .founder-faq-item summary::after{content:"+";font-size:19px;color:var(--sage-deep);
+    flex-shrink:0;line-height:1;}
+  .founder-faq-item[open] summary::after{content:"–";}
+  .founder-faq-answer{margin:0;padding:0 0 16px;font-size:14px;line-height:1.6;color:var(--navy-soft);}
+
   /* Hamburger menu */
   .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;
     border:none;background:transparent;padding:8px;cursor:pointer;z-index:20;}
@@ -1757,6 +1771,29 @@ function CTASection({ t, currency, lang, tz }) {
                 : "Welcome to The Corporate English Project"}</h3>
               <div className="featured-post-meta">{isEs ? "Bienvenid@s · 9 min de lectura" : "Welcome · 9 min read"}</div>
             </a>
+            <div className="founder-faq">
+              <h3 className="founder-faq-title">{isEs ? "Preguntas frecuentes" : "Frequently Asked Questions"}</h3>
+              {(isEs ? [
+                { q: "¿Qué es The Corporate English Project?",
+                  a: "Es una comunidad de aprendizaje de inglés 100% en línea para hispanohablantes, con clases grupales en vivo, práctica real de conversación y un enfoque holístico — no solo gramática." },
+                { q: "¿Ofrecen clases para niños?",
+                  a: "Por ahora nuestros cursos son para personas de 18 años en adelante. Más adelante abriremos un grupo para estudiantes más jóvenes — avísanos si te interesa." },
+                { q: "¿Ofrecen clases individuales?",
+                  a: "Por ahora nuestras clases son grupales, para practicar en comunidad. Si buscas algo distinto, escríbenos por WhatsApp y vemos qué podemos hacer." },
+              ] : [
+                { q: "What is The Corporate English Project?",
+                  a: "It's a 100% online English-learning community for Spanish speakers, with live group classes, real conversation practice, and a holistic approach — not just grammar." },
+                { q: "Do you offer classes for kids?",
+                  a: "Right now our courses are for learners 18 and older. We'll open a group for younger students in the future — let us know if you're interested." },
+                { q: "Do you offer individual classes?",
+                  a: "Right now our classes are group-based, to practice together as a community. If you're looking for something different, reach out on WhatsApp and we'll see what we can do." },
+              ]).map((item, i) => (
+                <details className="founder-faq-item" key={i}>
+                  <summary>{item.q}</summary>
+                  <p className="founder-faq-answer">{item.a}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
         <p className="foot-cep">{t.footer}</p>
