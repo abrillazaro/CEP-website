@@ -39,7 +39,7 @@
   .sticky-logo-bubble img{height:61px;width:auto;display:block;}
 
   /* Nav */
-  .nav{display:flex;align-items:center;justify-content:space-between;
+  .nav{display:flex;flex-wrap:wrap;row-gap:8px;align-items:center;justify-content:space-between;
     padding:0 56px 11px;max-width:1220px;margin:0 auto;width:100%;}
   .nav-logo{display:flex;align-items:center;gap:12px;}
   .nav-logo img{height:150px;width:auto;display:block;}
@@ -123,6 +123,14 @@
     .hero-row{padding-top:28px;padding-bottom:48px;gap:24px;}
     .sticky-logo-bubble{top:12px;left:16px;padding:9px 18px;}
     .sticky-logo-bubble img{height:47px;}
+    .nav-logo img{height:64px;}
+    .nav-right{gap:6px;}
+    .lang-toggle{padding:5px 9px;gap:4px;}
+    .region-btn{padding:0 4px;font-size:12px;}
+    .region-divider{margin:0;}
+  }
+  @media (max-width:400px){
+    .hide-xs{display:none;}
   }
 </style>
 </head>
@@ -245,7 +253,7 @@ function RegionBadge() {
   return (
     <span className="region-btn">
       <span>{info.flag}</span>
-      <span className="region-gmt">{info.gmt}</span>
+      <span className="region-gmt hide-xs">{info.gmt}</span>
     </span>
   );
 }
