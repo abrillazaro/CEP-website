@@ -83,6 +83,7 @@
   .crs-meta-label{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
     color:var(--cur-muted2);font-weight:700;margin-bottom:6px;}
   .crs-meta-value{display:block;font-size:16px;font-weight:700;color:var(--cur-navy);}
+  .crs-age-note{font-size:14px;font-style:italic;color:var(--cur-muted2);margin:0 0 40px;}
 
   .crs-section{margin:0 0 38px;}
   .crs-section h2{font-family:var(--serif);font-weight:600;font-size:24px;
@@ -176,6 +177,8 @@
             </div>
           </div>
 
+          <p class="crs-age-note" id="age-note"></p>
+
           <section class="crs-section">
             <h2 id="h-about">De qué se trata</h2>
             <p id="p-about"></p>
@@ -267,6 +270,7 @@
       labelSchedule: "Schedule",
       labelDuration: "Duration", duration: "6 weeks",
       labelPrice: "Investment",
+      ageNote: "This course is for learners 18 and older. A group for younger students will open in the future.",
       hAbout: "What it's about",
       pAbout: "This intermediate-level course is designed for Spanish speakers who already understand English basics and are looking for a lighter weekly pace. We meet live via Microsoft Teams every Friday, in groups of up to 15 students, to practice conversation, expand vocabulary, and build confidence speaking.",
       hGoals: "What you'll achieve",
@@ -293,6 +297,7 @@
       labelSchedule: "Horario",
       labelDuration: "Duración", duration: "6 semanas",
       labelPrice: "Inversión",
+      ageNote: "Este curso es para personas de 18 años en adelante. Más adelante abriremos un grupo para estudiantes más jóvenes.",
       hAbout: "De qué se trata",
       pAbout: "Este curso de nivel intermedio está diseñado para hispanohablantes que ya entienden lo básico del inglés y buscan un ritmo semanal más ligero. Nos reunimos en vivo por Microsoft Teams cada viernes, en grupos de hasta 15 estudiantes, para practicar conversación, ampliar vocabulario y ganar confianza al hablar.",
       hGoals: "Lo que vas a lograr",
@@ -410,6 +415,7 @@
     document.getElementById("label-duration").textContent = s.labelDuration;
     document.getElementById("meta-duration").textContent = s.duration;
     document.getElementById("label-price").textContent = s.labelPrice;
+    document.getElementById("age-note").textContent = s.ageNote;
 
     document.getElementById("h-about").textContent = s.hAbout;
     document.getElementById("p-about").textContent = s.pAbout;
