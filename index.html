@@ -69,6 +69,16 @@
     transition:transform .12s,background .2s;}
   .btn-login:hover{background:var(--navy-deep);transform:translateY(-1px);}
 
+  /* Sticky condensed header */
+  .sticky-bar{position:fixed;top:0;left:0;right:0;z-index:40;
+    background:#7d9b83;box-shadow:0 1px 6px rgba(28,53,87,.15);
+    opacity:0;transform:translateY(-100%);pointer-events:none;
+    transition:opacity .18s ease,transform .18s ease;}
+  .sticky-bar.visible{opacity:1;transform:translateY(0);pointer-events:auto;}
+  .sticky-bar-inner{max-width:1220px;margin:0 auto;padding:9px 56px;
+    display:flex;align-items:center;box-sizing:border-box;min-height:46px;}
+  .sticky-bar-inner img{height:28px;width:auto;display:block;}
+
   /* Hero */
   .hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
     padding-top:0;padding-bottom:0;text-align:center;}
@@ -366,7 +376,7 @@
   /* Cursos section */
   .cursos-section{--cur-navy:#1c3557;--cur-green:#4f7359;--cur-muted:#5b7288;
     --cur-muted2:#7d8b93;--cur-bg:#eef1ec;--cur-sans:'Lato',sans-serif;
-    background:var(--cur-bg);width:100%;padding:64px 0;}
+    background:var(--cur-bg);width:100%;padding:64px 0;scroll-margin-top:60px;}
   .cursos-inner{max-width:1220px;margin:0 auto;padding:0 56px;
     display:flex;flex-wrap:wrap;gap:40px 52px;font-family:var(--cur-sans);}
   .cursos-left{flex:0 0 230px;min-width:200px;display:flex;flex-direction:column;gap:16px;}
@@ -1858,8 +1868,28 @@ function App() {
   const [currency, setCurrency] = useState("MXN");
   const [region, setRegion] = useState({ countryCode:"MX", currency:"MXN", tz:"America/Mexico_City" });
   const [regionModal, setRegionModal] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const recRef = useRef(null);
   const t = STR[lang] || STR.en;
+
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(y => {
+          const cur = window.scrollY;
+          if (cur > 100) return true;
+          if (cur < 60) return false;
+          return y;
+        });
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const showToast = msg => { setToast(msg); setTimeout(() => setToast(""), 2600); };
   const cycleDir  = () => setDir(d => d === "auto" ? "es2en" : d === "es2en" ? "en2es" : "auto");
@@ -1922,6 +1952,13 @@ function App() {
 
   return (
     <div className="page">
+      <div className={"sticky-bar" + (scrolled ? " visible" : "")} aria-hidden={!scrolled}>
+        <div className="sticky-bar-inner">
+          <a href="#" onClick={onHome} aria-label="Back to start">
+            <img src="logo-navy.png" alt="The Corporate English Project" />
+          </a>
+        </div>
+      </div>
       <div className="glow animate"
         style={{ background: glowBg, top: hasResult ? "30%" : "42%" }} />
 
