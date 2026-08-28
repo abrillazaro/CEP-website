@@ -1067,6 +1067,13 @@ async function getBreakdown(inputText, sourceLang, targetLang) {
   return rows.filter(Boolean);
 }
 
+async function fetchTranslateData(input, sourceLang, targetLang) {
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
 async function translatePhrase(input, forced) {
   let sourceLang, targetLang;
   if (forced === "en2es") {
@@ -1078,10 +1085,18 @@ async function translatePhrase(input, forced) {
     targetLang = sourceLang === "es" ? "en" : "es";
   }
 
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const data = await r.json();
+  let data = await fetchTranslateData(input, sourceLang, targetLang);
+  // Google's response includes its own detected source language (index 2). If our
+  // heuristic guessed the wrong direction — e.g. Spanish text with no accents or
+  // whitelisted marker words — trust the API's detection and re-fetch correctly.
+  if (!forced) {
+    const detected = typeof data[2] === "string" ? data[2] : null;
+    if (detected && detected !== sourceLang && (detected === "en" || detected === "es")) {
+      sourceLang = detected;
+      targetLang = sourceLang === "es" ? "en" : "es";
+      data = await fetchTranslateData(input, sourceLang, targetLang);
+    }
+  }
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
   if (!translation) throw new Error("Empty response");
 
