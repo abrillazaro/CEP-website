@@ -415,24 +415,48 @@
   @media(max-width:640px){
     .cursos-inner{padding:0 20px;}
     .cursos-left{flex-basis:100%;}
+    .founder-row{padding:0 20px;}
+    .founder-right{flex-basis:100%;}
   }
 
-  /* How It Works */
-  .how-section{padding:48px 40px 0;text-align:center;width:100%;max-width:980px;margin:0 auto;}
+  /* Founder / How It Works typography */
   .how-title{font-family:var(--serif);font-size:clamp(28px,4vw,42px);font-weight:600;
     color:var(--navy);margin:0 0 14px;letter-spacing:-.01em;}
   .how-rule{width:48px;height:3px;background:var(--sage);border-radius:2px;margin:0 auto 32px;}
   .how-body{max-width:720px;margin:0 auto;font-size:clamp(15px,1.5vw,17px);
     line-height:1.75;color:var(--navy-soft);text-wrap:pretty;}
   .how-body + .how-body{margin-top:18px;}
-  .info-cards{display:flex;gap:32px;flex-wrap:wrap;justify-content:center;
-    width:100%;max-width:980px;margin:0 auto;padding:0 40px;align-items:stretch;}
-  .info-card{flex:1;min-width:280px;background:var(--surface);border-radius:20px;
-    border:1.5px solid var(--line);box-shadow:var(--shadow-md);padding:40px 32px;
-    text-align:center;}
-  .info-card .how-title{font-size:clamp(24px,3vw,32px);}
   .how-kicker{font-size:13px;letter-spacing:.16em;text-transform:uppercase;
     color:var(--sage-deep);font-weight:700;margin:0 0 14px;}
+
+  /* Founder row: text + video on the left, featured post on the right */
+  .founder-row{display:flex;flex-wrap:wrap;gap:44px;max-width:1220px;margin:0 auto;
+    padding:0 56px;align-items:flex-start;}
+  .founder-left{flex:1 1 460px;min-width:280px;text-align:left;}
+  .founder-left .how-rule{margin:0 0 20px;}
+  .founder-left .how-body{margin:0 0 28px;max-width:none;}
+  .founder-video-ph{aspect-ratio:16/9;border-radius:16px;border:1px solid var(--line);
+    background-color:#e3e8e1;
+    background-image:repeating-linear-gradient(135deg, rgba(93,124,105,.16) 0 12px, rgba(93,124,105,.06) 12px 24px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
+  .founder-video-play{width:60px;height:60px;border-radius:50%;background:#fff;
+    display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);color:var(--navy);}
+  .founder-video-cap{font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--navy-soft);font-weight:600;}
+
+  .founder-right{flex:0 0 340px;min-width:260px;}
+  .featured-post{display:block;background:var(--surface);border:1.5px solid var(--line);
+    border-radius:20px;overflow:hidden;box-shadow:var(--shadow-md);text-decoration:none;
+    transition:box-shadow .2s,transform .18s;}
+  .featured-post:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);}
+  .featured-post-img{aspect-ratio:1/1;width:100%;display:block;
+    background-color:#e3e8e1;
+    background-image:repeating-linear-gradient(135deg, rgba(93,124,105,.16) 0 12px, rgba(93,124,105,.06) 12px 24px);}
+  .featured-post-body{padding:22px 24px 26px;}
+  .featured-post-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--sage-deep);font-weight:700;margin-bottom:10px;}
+  .featured-post-title{font-family:var(--serif);font-weight:600;font-size:23px;
+    color:var(--navy);margin:0;line-height:1.28;}
 
   /* Hamburger menu */
   .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;
@@ -495,8 +519,6 @@
     .btn-go{padding:0 16px;}
     .hamburger{display:flex;}
     .btn-login{display:none;}
-    .how-section{padding:0 20px;}
-    .info-cards{padding:0 20px;}
   }
   @media (max-width:540px){
     .region-scrim{align-items:flex-end;}
@@ -603,9 +625,6 @@ const STR = {
     instructorLogin: "Instructor Login",
     instrErr: "Incorrect credentials. Please try again.",
     reassure: "No credit card needed", acctToast: "Account created (demo)",
-    ethosTitle: "Ethos",
-    ethos1: "The Corporate English Project is a holistic English-language learning initiative rooted in the Latin concept of corpus, or body — the idea that language is a whole body of communication, not a collection of isolated skills. The goal is to develop complete communicators — not just grammar students or conversation practitioners, but individuals who can read, write, speak, listen, and think in English with confidence.",
-    ethos2: "Language is inherently communal. True fluency requires not just technical knowledge but the ability to communicate with others in real time, across topics, levels, and contexts. The CEP is built on the belief that the best learning happens when students are immersed in the full experience of the language — together.",
     founderTitle: "Our Founder", founderKicker: "Meet Abril",
     founderBio: "Abril is a Texas native and native English speaker with a Bachelor of Arts in Philosophy from the University of Texas at Austin. She has over 15 years of experience helping Spanish-speaking family members develop their English communication skills, has volunteered as a Spanish interpreter for pro bono legal services, and studied paralegal studies and American law at her local community college. She is currently based in EdoMéx, Mexico, where she is pursuing law school while building The Corporate English Project from the ground up.",
     contactTitle: "Contact", scanMe: "scan me",
@@ -630,7 +649,6 @@ const STR = {
     monWedCapacity: "12-student cap",
     fridayDuration: "6 weeks · starts Sep 25",
     fridayCapacity: "15-student cap",
-    howTitle: "How It Works",
   },
   es: {
     blog: "Bitácora", login: "Entrar",
@@ -662,9 +680,6 @@ const STR = {
     instructorLogin: "Acceso Instructor",
     instrErr: "Credenciales incorrectas. Inténtalo de nuevo.",
     reassure: "Sin tarjeta de crédito", acctToast: "Cuenta creada (demo)",
-    ethosTitle: "Ethos",
-    ethos1: "The Corporate English Project es una iniciativa integral de aprendizaje del inglés con raíz en el concepto latino de corpus, o cuerpo: la idea de que el idioma es un cuerpo completo de comunicación, no una colección de habilidades aisladas. La meta es formar comunicadores completos — no solo estudiantes de gramática o practicantes de conversación, sino personas capaces de leer, escribir, hablar, escuchar y pensar en inglés con confianza.",
-    ethos2: "El lenguaje es comunal por naturaleza. La verdadera fluidez no requiere solo conocimiento técnico, sino la capacidad de comunicarse con otros en tiempo real, a través de temas, niveles y contextos. El CEP se basa en la creencia de que el mejor aprendizaje ocurre cuando los estudiantes se sumergen en la experiencia completa del idioma — juntos.",
     founderTitle: "Nuestra Fundadora", founderKicker: "Conoce a Abril",
     founderBio: "Abril es originaria de Texas y hablante nativa de inglés, con una Licenciatura en Filosofía por la Universidad de Texas en Austin. Tiene más de 15 años de experiencia ayudando a familiares hispanohablantes a desarrollar sus habilidades de comunicación en inglés, ha sido voluntaria como intérprete de español para servicios legales pro bono y estudió asistencia legal y derecho estadounidense en su colegio comunitario. Actualmente vive en EdoMéx, México, donde cursa la carrera de derecho mientras construye The Corporate English Project desde cero.",
     contactTitle: "Contacto", scanMe: "escáneame",
@@ -689,7 +704,6 @@ const STR = {
     monWedCapacity: "Cupo de 12 estudiantes",
     fridayDuration: "6 semanas · inicia 25 de sep",
     fridayCapacity: "Cupo de 15 estudiantes",
-    howTitle: "Cómo Funciona",
   }
 };
 
@@ -1656,7 +1670,6 @@ function CTASection({ t, currency, lang, tz }) {
   const safeTz = tz || "America/Mexico_City";
   const cur = currency || "MXN";
   const isEs = lang === "es";
-  const priceLabel = cur === "MXN" ? "$50 MXN" : cur === "CRC" ? "1,350 CRC" : "$3 USD";
   const monWedSchedule = courseSchedule([1,3], safeTz, lang);
   const fridaySchedule = courseSchedule([5], safeTz, lang);
   const cards = [
@@ -1716,35 +1729,30 @@ function CTASection({ t, currency, lang, tz }) {
           </svg>
         </span>
       </div>
-      <div style={{ padding:"12px 0 0" }}>
-        <div className="how-section">
-          <h2 className="how-title">{t.founderTitle}</h2>
-          <div className="how-rule" />
-          <div className="how-kicker">{t.founderKicker}</div>
-          <p className="how-body">{t.founderBio}</p>
-        </div>
-        <div className="enroll-cue">
-          <span className="enroll-cue-text">{lang === "es" ? "Desliza para más" : "Scroll for More"}</span>
-          <span className="enroll-cue-arrow">
-            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="8" y1="2" x2="8" y2="16"/><path d="M3 11l5 5 5-5"/>
-            </svg>
-          </span>
-        </div>
-        <div className="info-cards" style={{ marginTop:12 }}>
-          <div className="info-card">
-            <h2 className="how-title">{t.howTitle}</h2>
+      <div style={{ padding:"12px 0 64px" }}>
+        <div className="founder-row">
+          <div className="founder-left">
+            <h2 className="how-title">{t.founderTitle}</h2>
             <div className="how-rule" />
-            <p className="how-body">{isEs
-              ? `The Corporate English Project es una comunidad global de hispanohablantes de todo el mundo aprendiendo inglés como segundo idioma, y eso es lo que nos hace especiales. Al ser 100% en línea, aprendemos juntos sin importar dónde estés. Nos reunimos en vivo por Microsoft Teams, lo que nos permite mantener las clases desde ${priceLabel} por sesión y seguir ofreciendo una experiencia de aprendizaje de alta calidad. Nuestros grupos son intencionalmente pequeños, hasta 15 alumnos por sesión, para que cada alumno reciba la atención que merece. Y como CEP está construido sobre comunidad, ¡trae a un amigo! Entre más seamos, más rica es la experiencia. 🌎`
-              : `The Corporate English Project is a global community of Spanish speakers from all over the world learning English as a second language, and that's what makes us special. Because we're 100% online, we get to learn together no matter where you are. We meet live via Microsoft Teams, which is what allows us to keep classes as accessible as ${priceLabel} per session and still deliver a high-quality learning experience. Our groups are intentionally small, with up to 15 students per session, so that every student gets the attention they deserve. And since CEP is built on community, bring a friend. The more the merrier, and the better the learning experience for everyone. 🌎`
-            }</p>
+            <div className="how-kicker">{t.founderKicker}</div>
+            <p className="how-body">{t.founderBio}</p>
+            <div className="founder-video-ph">
+              <div className="founder-video-play">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
+              </div>
+              <span className="founder-video-cap">{isEs ? "Video próximamente" : "Video coming soon"}</span>
+            </div>
           </div>
-          <div className="info-card">
-            <h2 className="how-title">{t.ethosTitle}</h2>
-            <div className="how-rule" />
-            <p className="how-body">{t.ethos1}</p>
-            <p className="how-body">{t.ethos2}</p>
+          <div className="founder-right">
+            <a className="featured-post" href="/blog">
+              <span className="featured-post-img" />
+              <div className="featured-post-body">
+                <div className="featured-post-eyebrow">{isEs ? "Última publicación" : "Latest post"}</div>
+                <h3 className="featured-post-title">{isEs
+                  ? "Bienvenid@s a The Corporate English Project"
+                  : "Welcome to The Corporate English Project"}</h3>
+              </div>
+            </a>
           </div>
         </div>
         <p className="foot-cep">{t.footer}</p>
