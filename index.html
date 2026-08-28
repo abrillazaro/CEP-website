@@ -53,7 +53,8 @@
   .shell{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto;padding:0 40px;}
 
   /* Nav */
-  .nav{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  .nav{position:relative;z-index:5;display:flex;flex-wrap:wrap;row-gap:8px;
+    align-items:center;justify-content:space-between;
     padding:0 40px 11px;max-width:1320px;margin:0 auto;width:100%;}
   .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--navy);}
   .nav-logo img{height:150px;width:auto;display:block;}
@@ -501,6 +502,14 @@
   @media (max-width:600px){
     .sticky-logo-bubble{top:12px;left:16px;padding:9px 18px;}
     .sticky-logo-bubble img{height:47px;}
+    .nav-logo img{height:64px;}
+    .nav-right{gap:6px;}
+    .lang-toggle{padding:5px 9px;gap:4px;}
+    .region-btn{padding:5px 4px;font-size:12px;}
+    .region-divider{margin:0;}
+  }
+  @media (max-width:400px){
+    .hide-xs{display:none;}
   }
   @media (max-width:820px){
     .shell,.nav{padding-left:20px;padding-right:20px;}
@@ -1387,7 +1396,7 @@ function RegionControl({ region, onOpen }) {
   return (
     <button className="region-btn" onClick={onOpen} title="Change region">
       <span>{flag}</span>
-      <span className="region-gmt">{gmt}</span>
+      <span className="region-gmt hide-xs">{gmt}</span>
     </button>
   );
 }
