@@ -181,6 +181,8 @@ const POSTS = [
   },
 ];
 
+// Full category list, used to label post meta lines regardless of which
+// chips are shown below.
 const CATEGORIES = [
   { id: "todo",        es: "Todo",         en: "All" },
   { id: "bienvenidos", es: "Bienvenid@s",  en: "Welcome" },
@@ -191,6 +193,10 @@ const CATEGORIES = [
   { id: "practica",    es: "Práctica",     en: "Practice" },
   { id: "vidadiaria",  es: "Vida diaria",  en: "Everyday Life" },
 ];
+
+// Chips actually shown in the filter row — trim to "Todo" for now; add ids
+// from CATEGORIES above as those topics get enough posts to be worth filtering.
+const CHIP_CATEGORIES = CATEGORIES.filter(c => c.id === "todo");
 
 const STR = {
   es: {
@@ -365,7 +371,7 @@ function BlogPage() {
 
         <div className="container">
           <div className="chip-row">
-            {CATEGORIES.map(cat => (
+            {CHIP_CATEGORIES.map(cat => (
               <button key={cat.id} className={"chip" + (cat.id === active ? " active" : "")}
                 onClick={() => setActive(cat.id)}>{cat[lang]}</button>
             ))}
