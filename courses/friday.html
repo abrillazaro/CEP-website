@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="/logo-navy.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
 <style>
   :root{
     --navy:#20395c;
@@ -26,7 +26,13 @@
     --sans:"Hanken Grotesk", system-ui, sans-serif;
     --shadow-sm:0 1px 2px rgba(21,40,64,.05), 0 1px 3px rgba(21,40,64,.06);
     --shadow-md:0 6px 16px rgba(21,40,64,.08), 0 2px 6px rgba(21,40,64,.05);
-    --shadow-lg:0 22px 50px -12px rgba(21,40,64,.22), 0 8px 20px rgba(21,40,64,.10);
+    /* Cursos palette */
+    --cur-navy:#1c3557;
+    --cur-green:#4f7359;
+    --cur-muted:#5b7288;
+    --cur-muted2:#7d8b93;
+    --cur-bg:#eef1ec;
+    --cur-sans:'Lato', sans-serif;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -57,34 +63,64 @@
     font-weight:600;font-size:15px;background:transparent;border:none;transition:background .15s;}
   .nav-link:hover{background:rgba(32,57,92,.07);}
 
-  /* Course content */
-  .course-main{flex:1;display:flex;flex-direction:column;align-items:center;
-    padding:40px 40px 90px;}
-  .course-card{background:var(--surface);border-radius:24px;border:1.5px solid var(--line);
-    box-shadow:var(--shadow-md);padding:48px 44px;max-width:620px;width:100%;text-align:center;}
-  .course-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--sage-deep);font-weight:700;margin-bottom:14px;}
-  .course-title{font-family:var(--serif);font-weight:600;color:var(--navy);
-    font-size:clamp(30px,4vw,42px);line-height:1.1;margin:0 0 24px;letter-spacing:-.01em;}
-  .course-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 0 28px;}
-  .meta-pill{border:1.5px solid var(--line-strong);border-radius:999px;padding:8px 18px;
-    font-size:13px;font-weight:700;color:var(--navy);background:var(--surface-soft, #f8faf6);}
-  .course-desc{font-size:16px;line-height:1.7;color:var(--navy-soft);margin:0 0 32px;
-    text-align:left;}
-  .course-enroll{display:inline-block;color:#fff;background:var(--navy);padding:14px 36px;
-    border-radius:12px;font-weight:700;font-size:16px;text-decoration:none;
-    box-shadow:var(--shadow-sm);transition:transform .12s,background .2s;margin-bottom:28px;}
-  .course-enroll:hover{background:var(--navy-deep);transform:translateY(-2px);}
-  .course-divider{width:40px;height:1.5px;background:var(--line);margin:0 auto 22px;}
-  .course-qr{width:130px;height:130px;border-radius:10px;border:1px solid var(--line);object-fit:contain;}
-  .course-qr-label{display:block;font-size:12px;color:var(--muted);margin-top:10px;}
-  .course-back{margin-top:32px;font-size:14px;font-weight:600;color:var(--navy-soft);text-decoration:none;}
-  .course-back:hover{color:var(--navy);}
+  /* Course page */
+  .crs-main{flex:1;background:var(--cur-bg);font-family:var(--cur-sans);padding:32px 0 80px;}
+  .crs-container{max-width:1220px;margin:0 auto;padding:0 56px;}
+  .crs-breadcrumb{font-size:13px;color:var(--cur-muted2);margin:0 0 22px;}
+  .crs-breadcrumb a{text-decoration:none;color:var(--cur-muted2);}
+  .crs-breadcrumb a:hover{color:var(--cur-navy);}
+  .crs-layout{display:flex;flex-wrap:wrap;gap:48px;align-items:flex-start;}
+  .crs-content{flex:1 1 520px;min-width:0;}
+  .crs-title{font-family:var(--serif);font-weight:600;color:var(--cur-navy);
+    font-size:clamp(30px,4vw,42px);line-height:1.12;margin:0 0 16px;letter-spacing:-.01em;}
+  .crs-lede{font-size:17px;line-height:1.6;color:var(--cur-muted);margin:0 0 30px;max-width:60ch;}
 
+  .crs-meta-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+    border-top:1px solid rgba(28,53,87,.14);border-bottom:1px solid rgba(28,53,87,.14);
+    margin:0 0 40px;}
+  .crs-meta-cell{padding:18px 16px;border-left:1px solid rgba(28,53,87,.14);}
+  .crs-meta-cell:first-child{border-left:none;padding-left:0;}
+  .crs-meta-label{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--cur-muted2);font-weight:700;margin-bottom:6px;}
+  .crs-meta-value{display:block;font-size:16px;font-weight:700;color:var(--cur-navy);}
+
+  .crs-section{margin:0 0 38px;}
+  .crs-section h2{font-family:var(--serif);font-weight:600;font-size:24px;
+    color:var(--cur-navy);margin:0 0 14px;}
+  .crs-section p{font-size:16px;line-height:1.7;color:var(--cur-muted);margin:0;max-width:64ch;}
+  .crs-goals{margin:0;padding:0;list-style:none;counter-reset:goal;display:flex;
+    flex-direction:column;gap:14px;max-width:64ch;}
+  .crs-goals li{counter-increment:goal;display:flex;gap:14px;font-size:16px;
+    line-height:1.6;color:var(--cur-muted);}
+  .crs-goals li::before{content:counter(goal);flex-shrink:0;width:26px;height:26px;
+    border-radius:50%;background:var(--cur-navy);color:#fff;font-family:var(--serif);
+    font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;}
+
+  .crs-aside{flex:0 0 300px;min-width:260px;position:sticky;top:24px;}
+  .crs-enroll{background:#fff;border:1px solid rgba(79,115,89,.45);border-radius:18px;
+    padding:26px 24px;box-shadow:0 2px 10px rgba(28,53,87,.05);}
+  .crs-enroll-title{font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--cur-muted);font-weight:700;margin:0 0 16px;}
+  .crs-enroll-row{display:flex;justify-content:space-between;align-items:center;
+    padding:11px 0;border-bottom:1px solid rgba(28,53,87,.10);font-size:15px;}
+  .crs-enroll-row span:first-child{color:var(--cur-muted2);}
+  .crs-enroll-row span:last-child{color:var(--cur-navy);font-weight:700;text-align:right;}
+  .crs-enroll-price{border-bottom:none;padding-top:16px;}
+  .crs-enroll-price span:last-child{font-family:var(--serif);font-size:22px;font-weight:600;}
+  .crs-enroll-btn{display:block;text-align:center;margin-top:18px;background:var(--cur-navy);
+    color:#fff;border-radius:10px;padding:14px 24px;font-size:15px;font-weight:700;
+    text-decoration:none;transition:background .18s;}
+  .crs-enroll-btn:hover{background:var(--cur-green);}
+
+  @media(max-width:900px){
+    .crs-aside{position:static;flex-basis:100%;}
+    .crs-meta-strip{grid-template-columns:repeat(2,1fr);}
+    .crs-meta-cell:nth-child(2n+1){border-left:none;padding-left:0;}
+    .crs-meta-cell:nth-child(n+3){border-top:1px solid rgba(28,53,87,.14);}
+  }
   @media(max-width:600px){
     .nav{padding:0 20px 11px;}
-    .course-main{padding:24px 20px 60px;}
-    .course-card{padding:36px 26px;}
+    .crs-container{padding:0 20px;}
   }
 </style>
 </head>
@@ -106,23 +142,78 @@
     </div>
   </nav>
 
-  <main class="course-main">
-    <div class="course-card">
-      <div class="course-eyebrow" id="eyebrow">Clase grupal en vivo</div>
-      <h1 class="course-title" id="title">Inglés Intermedio — Viernes</h1>
-      <div class="course-meta">
-        <span class="meta-pill" id="meta-schedule">…</span>
-        <span class="meta-pill" id="meta-duration">6 semanas</span>
-        <span class="meta-pill" id="meta-capacity">Máx. 12 alumnos</span>
-        <span class="meta-pill" id="meta-price">…</span>
+  <main class="crs-main">
+    <div class="crs-container">
+      <div class="crs-breadcrumb">
+        <a href="/">Inicio</a> <span id="bc-1"> / </span>
+        <a href="/#cta" id="bc-cursos">Cursos</a> <span id="bc-2"> / </span>
+        <span id="bc-current">Viernes</span>
       </div>
-      <p class="course-desc" id="desc"></p>
-      <a class="course-enroll" id="enroll-btn" href="#" target="_blank" rel="noopener noreferrer">Inscríbete por WhatsApp</a>
-      <div class="course-divider"></div>
-      <img class="course-qr" id="qr-img" src="" alt="QR" />
-      <span class="course-qr-label" id="scan-label">Escanea para unirte desde tu computadora</span>
+
+      <div class="crs-layout">
+        <div class="crs-content">
+          <h1 class="crs-title" id="title">Inglés Intermedio — Viernes</h1>
+          <p class="crs-lede" id="lede"></p>
+
+          <div class="crs-meta-strip">
+            <div class="crs-meta-cell">
+              <span class="crs-meta-label" id="label-start">Inicia</span>
+              <span class="crs-meta-value" id="meta-start">25 de sep</span>
+            </div>
+            <div class="crs-meta-cell">
+              <span class="crs-meta-label" id="label-schedule">Horario</span>
+              <span class="crs-meta-value" id="meta-schedule">…</span>
+            </div>
+            <div class="crs-meta-cell">
+              <span class="crs-meta-label" id="label-duration">Duración</span>
+              <span class="crs-meta-value" id="meta-duration">6 semanas</span>
+            </div>
+            <div class="crs-meta-cell">
+              <span class="crs-meta-label" id="label-price">Inversión</span>
+              <span class="crs-meta-value" id="meta-price">…</span>
+            </div>
+          </div>
+
+          <section class="crs-section">
+            <h2 id="h-about">De qué se trata</h2>
+            <p id="p-about"></p>
+          </section>
+
+          <section class="crs-section">
+            <h2 id="h-goals">Lo que vas a lograr</h2>
+            <ol class="crs-goals" id="goals-list"></ol>
+          </section>
+
+          <section class="crs-section">
+            <h2 id="h-class">Cómo es una clase</h2>
+            <p id="p-class"></p>
+          </section>
+        </div>
+
+        <aside class="crs-aside">
+          <div class="crs-enroll">
+            <div class="crs-enroll-title" id="enroll-title">Inscripción</div>
+            <div class="crs-enroll-row">
+              <span id="er-schedule-label">Horario</span>
+              <span id="er-schedule">…</span>
+            </div>
+            <div class="crs-enroll-row">
+              <span id="er-start-label">Inicia</span>
+              <span id="er-start">25 de sep</span>
+            </div>
+            <div class="crs-enroll-row">
+              <span id="er-cap-label">Cupo</span>
+              <span id="er-cap">15 estudiantes</span>
+            </div>
+            <div class="crs-enroll-row crs-enroll-price">
+              <span id="er-price-label">Inversión</span>
+              <span id="er-price">…</span>
+            </div>
+            <a class="crs-enroll-btn" id="enroll-btn" href="#" target="_blank" rel="noopener noreferrer">Inscribirme</a>
+          </div>
+        </aside>
+      </div>
     </div>
-    <a class="course-back" id="back-link" href="/">← Volver al inicio</a>
   </main>
 </div>
 
@@ -161,28 +252,61 @@
 </script>
 <script>
   var COURSE_DAYS = [5]; // Fri
+  var COURSE_SESSIONS = 6;
   var CLASS_LINK = "https://wa.me/525572132329?text=Hola%2C%20me%20gustar%C3%ADa%20inscribirme%20en%20el%20curso%20de%20ingl%C3%A9s%20intermedio%20de%20los%20viernes%20a%20las%208%20pm%20(hora%20central)";
 
   var STR = {
     en: {
       about: "About", blog: "Blog",
-      eyebrow: "Live online group class",
+      bcCursos: "Courses", bcCurrent: "Monday & Wednesday",
       title: "Intermediate English — Friday",
-      duration: "6 weeks", capacity: "Max 12 students",
-      desc: "A live, online group class held once a week over a 6-week session. Small groups of up to 12 students meet via Microsoft Teams to build real conversational confidence — reading, writing, speaking, and listening together.",
-      enrollBtn: "Enroll via WhatsApp",
-      scanLabel: "Scan to enroll from desktop",
-      back: "← Back to home",
+      lede: "Practice conversational English once a week in small, live groups — built for learners who already have a foundation and want real fluency without a heavy weekly commitment.",
+      labelStart: "Starts", start: "Sep 25",
+      labelSchedule: "Schedule",
+      labelDuration: "Duration", duration: "6 weeks",
+      labelPrice: "Investment",
+      hAbout: "What it's about",
+      pAbout: "This intermediate-level course is designed for Spanish speakers who already understand English basics and are looking for a lighter weekly pace. We meet live via Microsoft Teams every Friday, in groups of up to 15 students, to practice conversation, expand vocabulary, and build confidence speaking.",
+      hGoals: "What you'll achieve",
+      goals: [
+        "Hold everyday conversations in English with more fluency and fewer pauses.",
+        "Expand your functional vocabulary for work, errands, and daily life.",
+        "Improve your listening comprehension by responding in real time.",
+        "Build the confidence to speak English without fear of making mistakes.",
+        "Join a learning community that practices with you every week."
+      ],
+      hClass: "What a class looks like",
+      pClass: "Each session runs an hour and blends guided practice with free conversation. We start by reviewing key vocabulary and structures, move into pair or small-group conversation exercises, and close with an open round where everyone shares what they practiced. It's all live, with an instructor correcting and guiding in real time — no recorded videos, no solo homework.",
+      enrollTitle: "Enrollment",
+      erScheduleLabel: "Schedule", erStartLabel: "Starts", erCapLabel: "Cap", erPriceLabel: "Investment",
+      cap: "15 students",
+      enrollBtn: "Enroll now",
     },
     es: {
       about: "Nosotros", blog: "Bitácora",
-      eyebrow: "Clase grupal en vivo",
+      bcCursos: "Cursos", bcCurrent: "Viernes",
       title: "Inglés Intermedio — Viernes",
-      duration: "6 semanas", capacity: "Máx. 12 alumnos",
-      desc: "Una clase grupal en vivo, en línea, una vez por semana durante una sesión de 6 semanas. Grupos pequeños de hasta 12 alumnos se reúnen por Microsoft Teams para desarrollar confianza real al conversar — leyendo, escribiendo, hablando y escuchando juntos.",
-      enrollBtn: "Inscríbete por WhatsApp",
-      scanLabel: "Escanea para inscribirte desde tu computadora",
-      back: "← Volver al inicio",
+      lede: "Practica inglés conversacional una vez por semana, en grupos en vivo — pensado para quienes ya tienen una base y quieren ganar fluidez real sin saturar su agenda.",
+      labelStart: "Inicia", start: "25 de sep",
+      labelSchedule: "Horario",
+      labelDuration: "Duración", duration: "6 semanas",
+      labelPrice: "Inversión",
+      hAbout: "De qué se trata",
+      pAbout: "Este curso de nivel intermedio está diseñado para hispanohablantes que ya entienden lo básico del inglés y buscan un ritmo semanal más ligero. Nos reunimos en vivo por Microsoft Teams cada viernes, en grupos de hasta 15 estudiantes, para practicar conversación, ampliar vocabulario y ganar confianza al hablar.",
+      hGoals: "Lo que vas a lograr",
+      goals: [
+        "Sostener conversaciones cotidianas en inglés con mayor fluidez y menos pausas.",
+        "Ampliar tu vocabulario funcional para el trabajo, los trámites y la vida diaria.",
+        "Mejorar tu comprensión auditiva al escuchar y responder en tiempo real.",
+        "Ganar confianza para hablar en inglés sin miedo a equivocarte.",
+        "Formar parte de una comunidad de aprendizaje que practica contigo cada semana."
+      ],
+      hClass: "Cómo es una clase",
+      pClass: "Cada sesión dura una hora y combina práctica guiada con conversación libre. Empezamos repasando vocabulario y estructuras clave, seguimos con ejercicios de conversación en parejas o grupos pequeños, y cerramos con una ronda abierta donde todos comparten lo que practicaron. Todo en vivo, con una instructora que corrige y guía en el momento — no hay videos grabados ni tareas solitarias.",
+      enrollTitle: "Inscripción",
+      erScheduleLabel: "Horario", erStartLabel: "Inicia", erCapLabel: "Cupo", erPriceLabel: "Inversión",
+      cap: "15 estudiantes",
+      enrollBtn: "Inscribirme",
     }
   };
 
@@ -249,12 +373,13 @@
     }
   }
 
-  function priceLabel(currency) {
-    return currency === 'MXN' ? '$50 MXN' : currency === 'CRC' ? '1,350 CRC' : '$3 USD';
+  function classRate(cur) {
+    return cur === 'MXN' ? 50 : cur === 'CRC' ? 1350 : 3;
   }
-
-  function qrUrl(link) {
-    return "https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=8&data=" + encodeURIComponent(link);
+  function formatCoursePrice(cur, sessions) {
+    var total = classRate(cur) * sessions;
+    var formatted = total.toLocaleString('en-US');
+    return cur === 'MXN' ? ('$' + formatted + ' MXN') : cur === 'CRC' ? (formatted + ' CRC') : ('$' + formatted + ' USD');
   }
 
   function setLang(l) {
@@ -272,16 +397,41 @@
     document.getElementById("btn-es").className = "seg" + (lang === "es" ? " active" : "");
     document.getElementById("nav-about").textContent = s.about;
     document.getElementById("nav-blog").textContent = s.blog;
-    document.getElementById("eyebrow").textContent = s.eyebrow;
+    document.getElementById("bc-cursos").textContent = s.bcCursos;
+    document.getElementById("bc-current").textContent = s.bcCurrent;
     document.getElementById("title").textContent = s.title;
+    document.getElementById("lede").textContent = s.lede;
+
+    document.getElementById("label-start").textContent = s.labelStart;
+    document.getElementById("meta-start").textContent = s.start;
+    document.getElementById("label-schedule").textContent = s.labelSchedule;
+    document.getElementById("label-duration").textContent = s.labelDuration;
     document.getElementById("meta-duration").textContent = s.duration;
-    document.getElementById("meta-capacity").textContent = s.capacity;
-    document.getElementById("desc").textContent = s.desc;
+    document.getElementById("label-price").textContent = s.labelPrice;
+
+    document.getElementById("h-about").textContent = s.hAbout;
+    document.getElementById("p-about").textContent = s.pAbout;
+    document.getElementById("h-goals").textContent = s.hGoals;
+    var goalsList = document.getElementById("goals-list");
+    goalsList.innerHTML = "";
+    s.goals.forEach(function(g) {
+      var li = document.createElement("li");
+      li.textContent = g;
+      goalsList.appendChild(li);
+    });
+    document.getElementById("h-class").textContent = s.hClass;
+    document.getElementById("p-class").textContent = s.pClass;
+
+    document.getElementById("enroll-title").textContent = s.enrollTitle;
+    document.getElementById("er-schedule-label").textContent = s.erScheduleLabel;
+    document.getElementById("er-start-label").textContent = s.erStartLabel;
+    document.getElementById("er-start").textContent = s.start;
+    document.getElementById("er-cap-label").textContent = s.erCapLabel;
+    document.getElementById("er-cap").textContent = s.cap;
+    document.getElementById("er-price-label").textContent = s.erPriceLabel;
     document.getElementById("enroll-btn").textContent = s.enrollBtn;
     document.getElementById("enroll-btn").href = CLASS_LINK;
-    document.getElementById("scan-label").textContent = s.scanLabel;
-    document.getElementById("back-link").textContent = s.back;
-    document.getElementById("qr-img").src = qrUrl(CLASS_LINK);
+
     document.title = s.title + " | The Corporate English Project";
     document.documentElement.lang = lang;
 
@@ -293,8 +443,12 @@
 
     window._cepRegionPromise.then(function(region) {
       var tz = region.tz || "America/Mexico_City";
-      document.getElementById("meta-schedule").textContent = courseSchedule(COURSE_DAYS, tz, lang);
-      document.getElementById("meta-price").textContent = priceLabel(region.currency);
+      var schedule = courseSchedule(COURSE_DAYS, tz, lang);
+      document.getElementById("meta-schedule").textContent = schedule;
+      document.getElementById("er-schedule").textContent = schedule;
+      var price = formatCoursePrice(region.currency, COURSE_SESSIONS);
+      document.getElementById("meta-price").textContent = price;
+      document.getElementById("er-price").textContent = price;
       var flag = region.countryCode === 'MX' ? '🇲🇽' : region.countryCode === 'CR' ? '🇨🇷' : region.countryCode === 'CA' ? '🇨🇦' : '🇺🇸';
       document.getElementById("region-badge").innerHTML = '<span>' + flag + '</span> <span class="region-gmt">' + gmtOffset(tz) + '</span>';
     });

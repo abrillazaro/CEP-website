@@ -7,7 +7,7 @@
 <title>The Corporate English Project — Translate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
 <style>
   :root{
     --navy:#20395c;
@@ -363,30 +363,51 @@
 
   /* Ticker */
 
-  /* Class cards */
-  .class-cards{display:flex;gap:24px;justify-content:center;width:100%;max-width:980px;
-    margin:0 auto;padding:0 40px;}
-  .class-card{flex:1;max-width:300px;background:var(--surface);border-radius:20px;
-    border:1.5px solid var(--line);box-shadow:var(--shadow-md);padding:36px 32px 32px;
-    display:flex;flex-direction:column;align-items:center;text-align:center;
-    transition:box-shadow .2s,transform .18s,border-color .2s;}
-  .class-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:var(--sage);}
-  .class-card-level{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
-    font-weight:700;color:var(--sage-deep);margin-bottom:10px;}
-  .class-card-title{font-family:var(--serif);font-size:28px;font-weight:600;
-    color:var(--navy);margin-bottom:6px;line-height:1.1;}
-  .class-card-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.5;}
-  .class-card-join{display:inline-block;font-size:15px;font-weight:700;
-    color:#fff;background:var(--navy);text-decoration:none;
-    padding:13px 32px;border-radius:12px;margin-bottom:28px;
-    box-shadow:0 4px 14px rgba(32,57,92,.22);
-    transition:background .18s,transform .14s,box-shadow .18s;}
-  .class-card-join:hover{background:var(--navy-deep);transform:translateY(-2px);
-    box-shadow:0 6px 20px rgba(32,57,92,.30);}
-  .class-card-divider{width:40px;height:1.5px;background:var(--line);margin-bottom:22px;}
-  .class-card-qr{width:120px;height:120px;border-radius:10px;border:1px solid var(--line);
-    object-fit:contain;display:block;}
-  .class-card-qr-label{font-size:11.5px;color:var(--muted);margin-top:8px;}
+  /* Cursos section */
+  .cursos-section{--cur-navy:#1c3557;--cur-green:#4f7359;--cur-muted:#5b7288;
+    --cur-muted2:#7d8b93;--cur-bg:#eef1ec;--cur-sans:'Lato',sans-serif;
+    background:var(--cur-bg);width:100%;padding:64px 0;}
+  .cursos-inner{max-width:1220px;margin:0 auto;padding:0 56px;
+    display:flex;flex-wrap:wrap;gap:40px 52px;font-family:var(--cur-sans);}
+  .cursos-left{flex:0 0 230px;min-width:200px;display:flex;flex-direction:column;gap:16px;}
+  .cursos-eyebrow{font-size:10px;letter-spacing:.20em;text-transform:uppercase;
+    color:var(--cur-muted2);font-weight:700;}
+  .cursos-h1{font-family:var(--serif);font-weight:600;font-size:44px;line-height:.98;
+    color:var(--cur-navy);margin:0;}
+  .cursos-body{font-size:16px;line-height:1.5;color:var(--cur-muted);margin:0;}
+  .cursos-divider{height:1px;background:rgba(28,53,87,.14);border:none;margin:0;}
+  .cursos-notify{font-size:16px;font-weight:700;color:var(--cur-navy);text-decoration:underline;
+    display:inline-flex;align-items:center;gap:6px;}
+  .cursos-notify:hover{color:var(--cur-green);}
+  .cursos-right{flex:1 1 400px;min-width:0;}
+  .cursos-right-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    padding-bottom:14px;margin-bottom:26px;border-bottom:1px solid rgba(28,53,87,.14);flex-wrap:wrap;}
+  .cursos-right-head-left{font-size:16px;color:var(--cur-muted);}
+  .cursos-right-head-right{font-size:12px;letter-spacing:.10em;text-transform:uppercase;
+    color:var(--cur-muted2);white-space:nowrap;}
+  .cursos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));
+    gap:22px;align-items:stretch;}
+  .cursos-card{background:#fff;border:1px solid rgba(79,115,89,.45);border-radius:18px;
+    padding:28px 24px 24px;box-shadow:0 2px 10px rgba(28,53,87,.05);
+    display:flex;flex-direction:column;text-align:center;
+    transition:box-shadow .2s,transform .18s;}
+  .cursos-card:hover{box-shadow:0 12px 28px rgba(28,53,87,.11);transform:translateY(-2px);}
+  .cursos-card-eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--cur-muted);font-weight:700;margin-bottom:10px;}
+  .cursos-card-title{font-family:var(--serif);font-weight:600;font-size:28px;
+    color:var(--cur-navy);margin:0 0 14px;line-height:1.15;}
+  .cursos-card-meta{font-size:15px;line-height:1.45;color:var(--cur-muted);margin:0 0 4px;}
+  .cursos-card-hr{width:46px;height:1px;background:rgba(79,115,89,.45);margin:18px auto;}
+  .cursos-card-price{font-family:var(--serif);font-size:25px;color:var(--cur-navy);margin:0;}
+  .cursos-card-pay{font-size:14px;color:var(--cur-muted2);margin:2px 0 20px;}
+  .cursos-card-btn{margin-top:auto;display:inline-flex;align-items:center;justify-content:center;
+    gap:8px;background:var(--cur-navy);color:#fff;border-radius:10px;padding:13px 24px;
+    font-size:15px;font-weight:700;text-decoration:none;transition:background .18s;}
+  .cursos-card-btn:hover{background:var(--cur-green);}
+  @media(max-width:640px){
+    .cursos-inner{padding:0 20px;}
+    .cursos-left{flex-basis:100%;}
+  }
 
   /* How It Works */
   .how-section{padding:48px 40px 0;text-align:center;width:100%;max-width:980px;margin:0 auto;}
@@ -453,8 +474,6 @@
     .btn-go{padding:0 16px;}
     .hamburger{display:flex;}
     .btn-login{display:none;}
-    .class-cards{flex-direction:column;align-items:center;padding:0 20px;}
-    .class-card{max-width:100%;width:100%;}
     .how-section{padding:0 20px;}
   }
   @media (max-width:540px){
@@ -578,8 +597,18 @@ const STR = {
     cardInter: "Intermediate",
     courseMonWedTitle: "Monday & Wednesday",
     courseFridayTitle: "Friday",
-    cardViewCourse: "View course",
-    cardScan: "Scan to join from desktop",
+    cursosEyebrow: "Live classes",
+    cursosTitle: "Courses",
+    cursosBody: "Build real speaking confidence: connect more with your community, handle everyday tasks and errands, and get an edge in your career.",
+    cursosNotify: "Notify me when a beginner group opens",
+    cursosGroupsOpen: "Groups with open enrollment",
+    cursosMetaTop: "6 weeks · starts September",
+    cursosPayOnce: "one-time payment at enrollment",
+    cursosLearnMore: "Learn more",
+    monWedDuration: "6 weeks · starts Sep 21",
+    monWedCapacity: "12-student cap",
+    fridayDuration: "6 weeks · starts Sep 25",
+    fridayCapacity: "15-student cap",
     howTitle: "How It Works",
   },
   es: {
@@ -628,8 +657,18 @@ const STR = {
     cardInter: "Intermedio",
     courseMonWedTitle: "Lunes y Miércoles",
     courseFridayTitle: "Viernes",
-    cardViewCourse: "Ver curso",
-    cardScan: "Escanea para unirte desde tu computadora",
+    cursosEyebrow: "Clases en vivo",
+    cursosTitle: "Cursos",
+    cursosBody: "Gana confianza al hablar: conecta más con tu comunidad, resuelve los trámites y pendientes del día a día, y date una ventaja en tu carrera.",
+    cursosNotify: "Avísame cuando abra un grupo de principiantes",
+    cursosGroupsOpen: "Grupos con inscripción abierta",
+    cursosMetaTop: "6 semanas · inicia septiembre",
+    cursosPayOnce: "pago único al inscribirte",
+    cursosLearnMore: "Conoce más",
+    monWedDuration: "6 semanas · inicia 21 de sep",
+    monWedCapacity: "Cupo de 12 estudiantes",
+    fridayDuration: "6 semanas · inicia 25 de sep",
+    fridayCapacity: "Cupo de 15 estudiantes",
     howTitle: "Cómo Funciona",
   }
 };
@@ -1577,46 +1616,80 @@ const COURSE_PAGES = {
   monwed: "/courses/mon-wed.html",
   friday: "/courses/friday.html",
 };
-function qrUrl(link) {
-  return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=" + encodeURIComponent(link);
+const COURSE_SESSIONS = { monwed: 12, friday: 6 };
+
+function classRate(cur) {
+  return cur === "MXN" ? 50 : cur === "CRC" ? 1350 : 3;
+}
+function formatCoursePrice(cur, sessions) {
+  const total = classRate(cur) * sessions;
+  const formatted = total.toLocaleString("en-US");
+  return cur === "MXN" ? `$${formatted} MXN` : cur === "CRC" ? `${formatted} CRC` : `$${formatted} USD`;
 }
 
 function CTASection({ t, currency, lang, tz }) {
   const safeTz = tz || "America/Mexico_City";
   const cur = currency || "MXN";
-  const priceLabel = cur === "MXN" ? "$50 MXN" : cur === "CRC" ? "1,350 CRC" : "$3 USD";
-  const monWedSub = courseSchedule([1,3], safeTz, lang);
-  const fridaySub = courseSchedule([5], safeTz, lang);
   const isEs = lang === "es";
+  const priceLabel = cur === "MXN" ? "$50 MXN" : cur === "CRC" ? "1,350 CRC" : "$3 USD";
+  const monWedSchedule = courseSchedule([1,3], safeTz, lang);
+  const fridaySchedule = courseSchedule([5], safeTz, lang);
   const cards = [
-    { key:"monwed", label: t.courseMonWedTitle, sub: t.cardInter + " · " + monWedSub + " · " + priceLabel },
-    { key:"friday", label: t.courseFridayTitle, sub: t.cardInter + " · " + fridaySub + " · " + priceLabel },
+    { key:"monwed", label: t.courseMonWedTitle,
+      meta2: t.monWedDuration, meta3: t.monWedCapacity,
+      schedule: monWedSchedule, price: formatCoursePrice(cur, COURSE_SESSIONS.monwed) },
+    { key:"friday", label: t.courseFridayTitle,
+      meta2: t.fridayDuration, meta3: t.fridayCapacity,
+      schedule: fridaySchedule, price: formatCoursePrice(cur, COURSE_SESSIONS.friday) },
   ];
+  const notifyLink = "https://wa.me/525572132329?text=" + encodeURIComponent(
+    isEs ? "Hola, me gustaría que me avisen cuando abran un grupo de nivel principiante."
+         : "Hi, I'd like to be notified when a beginner-level group opens."
+  );
   return (
-    <section className="section" id="cta">
-      <div style={{ padding:"56px 0 0" }}>
-        <div className="class-cards">
-          {cards.map(c => {
-            const href = COURSE_PAGES[c.key] + "?lang=" + lang;
-            return (
-              <div key={c.key} className="class-card">
-                <div className="class-card-level">{t.cardEyebrow}</div>
-                <div className="class-card-title">{c.label}</div>
-                <div className="class-card-sub">{c.sub}</div>
-                <a className="class-card-join" href={href}>{t.cardViewCourse}</a>
-                <div className="class-card-divider" />
-                <img className="class-card-qr" src={qrUrl(new URL(href, window.location.origin).href)} alt={`QR – ${c.label}`} />
-                <span className="class-card-qr-label">{t.cardScan}</span>
-              </div>
-            );
-          })}
+    <section className="cursos-section" id="cta">
+      <div className="cursos-inner">
+        <div className="cursos-left">
+          <div className="cursos-eyebrow">{t.cursosEyebrow}</div>
+          <h2 className="cursos-h1">{t.cursosTitle}</h2>
+          <p className="cursos-body">{t.cursosBody}</p>
+          <hr className="cursos-divider" />
+          <a className="cursos-notify" href={notifyLink} target="_blank" rel="noopener noreferrer">
+            {t.cursosNotify} →
+          </a>
         </div>
+        <div className="cursos-right">
+          <div className="cursos-right-head">
+            <span className="cursos-right-head-left">{t.cursosGroupsOpen}</span>
+            <span className="cursos-right-head-right">{t.cursosMetaTop}</span>
+          </div>
+          <div className="cursos-grid">
+            {cards.map(c => {
+              const href = COURSE_PAGES[c.key] + "?lang=" + lang;
+              return (
+                <div key={c.key} className="cursos-card">
+                  <div className="cursos-card-eyebrow">{t.cardEyebrow}</div>
+                  <div className="cursos-card-title">{c.label}</div>
+                  <div className="cursos-card-meta">{t.cardInter} · {c.schedule}</div>
+                  <div className="cursos-card-meta">{c.meta2}</div>
+                  <div className="cursos-card-meta">{c.meta3}</div>
+                  <div className="cursos-card-hr" />
+                  <div className="cursos-card-price">{c.price}</div>
+                  <div className="cursos-card-pay">{t.cursosPayOnce}</div>
+                  <a className="cursos-card-btn" href={href}>{t.cursosLearnMore} →</a>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      <div style={{ padding:"56px 0 0" }}>
         <div className="how-section">
           <h2 className="how-title">{t.howTitle}</h2>
           <div className="how-rule" />
           <p className="how-body">{isEs
-            ? `The Corporate English Project es una comunidad global de hispanohablantes de todo el mundo aprendiendo inglés como segundo idioma, y eso es lo que nos hace especiales. Al ser 100% en línea, aprendemos juntos sin importar dónde estés. Nos reunimos en vivo por Microsoft Teams, lo que nos permite mantener las clases desde ${priceLabel} por sesión y seguir ofreciendo una experiencia de aprendizaje de alta calidad. Nuestros grupos son intencionalmente pequeños, hasta 12 alumnos por sesión, para que cada alumno reciba la atención que merece. Abrimos nuevos horarios según el interés, así que si no encuentras un horario que te funcione, ¡escríbenos! Quizás podamos abrir uno para ti. Y como CEP está construido sobre comunidad, ¡trae a un amigo! Entre más seamos, más rica es la experiencia. 🌎`
-            : `The Corporate English Project is a global community of Spanish speakers from all over the world learning English as a second language, and that's what makes us special. Because we're 100% online, we get to learn together no matter where you are. We meet live via Microsoft Teams, which is what allows us to keep classes as accessible as ${priceLabel} per session and still deliver a high-quality learning experience. Our groups are intentionally small, with up to 12 students per session, so that every student gets the attention they deserve. New schedules open based on interest, so if you don't see a time that works for you, reach out! We just might be able to make it happen. And since CEP is built on community, bring a friend. The more the merrier, and the better the learning experience for everyone. 🌎`
+            ? `The Corporate English Project es una comunidad global de hispanohablantes de todo el mundo aprendiendo inglés como segundo idioma, y eso es lo que nos hace especiales. Al ser 100% en línea, aprendemos juntos sin importar dónde estés. Nos reunimos en vivo por Microsoft Teams, lo que nos permite mantener las clases desde ${priceLabel} por sesión y seguir ofreciendo una experiencia de aprendizaje de alta calidad. Nuestros grupos son intencionalmente pequeños, hasta 15 alumnos por sesión, para que cada alumno reciba la atención que merece. Abrimos nuevos horarios según el interés, así que si no encuentras un horario que te funcione, ¡escríbenos! Quizás podamos abrir uno para ti. Y como CEP está construido sobre comunidad, ¡trae a un amigo! Entre más seamos, más rica es la experiencia. 🌎`
+            : `The Corporate English Project is a global community of Spanish speakers from all over the world learning English as a second language, and that's what makes us special. Because we're 100% online, we get to learn together no matter where you are. We meet live via Microsoft Teams, which is what allows us to keep classes as accessible as ${priceLabel} per session and still deliver a high-quality learning experience. Our groups are intentionally small, with up to 15 students per session, so that every student gets the attention they deserve. New schedules open based on interest, so if you don't see a time that works for you, reach out! We just might be able to make it happen. And since CEP is built on community, bring a friend. The more the merrier, and the better the learning experience for everyone. 🌎`
           }</p>
         </div>
         <p className="foot-cep">{t.footer}</p>
