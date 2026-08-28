@@ -444,19 +444,16 @@
   .founder-video-cap{font-size:12px;letter-spacing:.06em;text-transform:uppercase;
     color:var(--navy-soft);font-weight:600;}
 
-  .founder-right{flex:0 0 340px;min-width:260px;}
-  .featured-post{display:block;background:var(--surface);border:1.5px solid var(--line);
-    border-radius:20px;overflow:hidden;box-shadow:var(--shadow-md);text-decoration:none;
-    transition:box-shadow .2s,transform .18s;}
-  .featured-post:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);}
-  .featured-post-img{aspect-ratio:1/1;width:100%;display:block;
+  .founder-right{flex:1 1 380px;min-width:280px;display:flex;flex-direction:column;}
+  .featured-post{display:flex;flex-direction:column;gap:16px;text-decoration:none;}
+  .featured-post-img{height:280px;border-radius:14px;width:100%;display:block;
     background-color:#e3e8e1;
     background-image:repeating-linear-gradient(135deg, rgba(93,124,105,.16) 0 12px, rgba(93,124,105,.06) 12px 24px);}
-  .featured-post-body{padding:22px 24px 26px;}
-  .featured-post-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--sage-deep);font-weight:700;margin-bottom:10px;}
-  .featured-post-title{font-family:var(--serif);font-weight:600;font-size:23px;
-    color:var(--navy);margin:0;line-height:1.28;}
+  .featured-post-title{font-family:var(--serif);font-weight:600;font-size:27px;
+    color:var(--navy);margin:0;line-height:1.2;border-bottom:1px solid rgba(28,53,87,.35);
+    padding-bottom:8px;}
+  .featured-post-meta{font-size:14px;color:var(--navy-soft);margin-top:-8px;}
+  .featured-post:hover .featured-post-title,.featured-post:hover .featured-post-meta{color:var(--sage);}
 
   /* Hamburger menu */
   .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;
@@ -1744,14 +1741,12 @@ function CTASection({ t, currency, lang, tz }) {
             </div>
           </div>
           <div className="founder-right">
-            <a className="featured-post" href="/blog">
+            <a className="featured-post" href="/blog/bienvenidos-a-cep.html">
               <span className="featured-post-img" />
-              <div className="featured-post-body">
-                <div className="featured-post-eyebrow">{isEs ? "Última publicación" : "Latest post"}</div>
-                <h3 className="featured-post-title">{isEs
-                  ? "Bienvenid@s a The Corporate English Project"
-                  : "Welcome to The Corporate English Project"}</h3>
-              </div>
+              <h3 className="featured-post-title">{isEs
+                ? "Bienvenid@s a The Corporate English Project"
+                : "Welcome to The Corporate English Project"}</h3>
+              <div className="featured-post-meta">{isEs ? "Bienvenid@s · 9 min de lectura" : "Welcome · 9 min read"}</div>
             </a>
           </div>
         </div>
