@@ -17,19 +17,18 @@
     --cur-bg:#eef1ec;
     --cur-serif:"Playfair Display", Georgia, serif;
     --cur-sans:"Lato", system-ui, sans-serif;
-    --line:rgba(28,53,87,.14);
     --shadow-sm:0 2px 10px rgba(28,53,87,.05);
-    --shadow-lg:0 12px 28px rgba(28,53,87,.11);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{font-family:var(--cur-sans);background:var(--cur-bg);color:var(--cur-navy);
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh;}
-  a{color:inherit;}
+  a{color:inherit;text-decoration:none;}
   button{font-family:inherit;cursor:pointer;}
   #root{min-height:100vh;}
 
   .page{min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+  .container{max-width:1220px;margin:0 auto;padding:0 56px;}
 
   /* Sticky logo bubble */
   .sticky-logo-bubble{position:fixed;top:18px;left:34px;z-index:50;
@@ -42,116 +41,73 @@
   /* Nav */
   .nav{display:flex;align-items:center;justify-content:space-between;
     padding:0 56px 11px;max-width:1220px;margin:0 auto;width:100%;}
-  .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+  .nav-logo{display:flex;align-items:center;gap:12px;}
   .nav-logo img{height:150px;width:auto;display:block;}
   .nav-right{display:flex;align-items:center;gap:10px;}
   .region-btn{display:flex;align-items:center;gap:5px;background:transparent;border:none;
     color:var(--cur-navy);font-weight:600;padding:0 4px;font-size:14px;}
   .region-gmt{font-size:12px;opacity:.85;}
-  .region-divider{width:1px;height:20px;background:var(--line);margin:0 2px;flex-shrink:0;}
+  .region-divider{width:1px;height:20px;background:rgba(28,53,87,.14);margin:0 2px;flex-shrink:0;}
   .lang-toggle{display:flex;align-items:center;gap:2px;border:1px solid rgba(79,115,89,.45);
     background:#fff;border-radius:999px;padding:5px 7px;box-shadow:var(--shadow-sm);}
   .seg{border:none;background:transparent;border-radius:999px;padding:4px 11px;
     font-weight:700;font-size:13px;color:var(--cur-muted);transition:all .15s;}
   .seg.active{background:var(--cur-navy);color:#fff;}
-  .nav-link{padding:9px 14px;border-radius:10px;color:var(--cur-navy);text-decoration:none;
+  .nav-link{padding:9px 14px;border-radius:10px;color:var(--cur-navy);
     font-weight:600;font-size:15px;background:transparent;transition:background .15s;}
   .nav-link.active{font-weight:700;background:rgba(28,53,87,.08);}
 
   /* Page title */
-  .blog-h1{font-family:var(--cur-serif);font-weight:600;font-size:clamp(38px,6vw,62px);
-    text-align:center;color:var(--cur-navy);margin:18px 0 0;letter-spacing:-.01em;}
+  .blog-h1-wrap{padding:60px 56px 24px;}
+  .blog-h1{font-family:var(--cur-serif);font-weight:600;font-size:62px;
+    line-height:.98;letter-spacing:-.02em;text-align:center;color:var(--cur-navy);margin:0;}
 
   /* Filter chips */
-  .chip-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
-    padding:18px 56px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-    max-width:1220px;margin:36px auto 0;}
-  .chip{border:1px solid var(--cur-green);border-radius:999px;padding:8px 18px;
-    font-size:13px;font-weight:700;color:var(--cur-navy);background:transparent;
-    transition:background .15s,color .15s;white-space:nowrap;}
+  .chip-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+    padding:18px 0;border-top:1px solid rgba(28,53,87,.12);border-bottom:1px solid rgba(28,53,87,.12);}
+  .chip{border:1px solid rgba(79,115,89,.45);border-radius:999px;padding:9px 18px;
+    font-size:13px;letter-spacing:.06em;font-weight:700;color:var(--cur-navy);
+    background:#fff;transition:background .15s,color .15s;white-space:nowrap;}
   .chip:hover{background:rgba(79,115,89,.08);}
   .chip.active{background:var(--cur-navy);color:#fff;border-color:var(--cur-navy);}
 
   /* Placeholder image */
   .ph{background-color:#e3e8e1;
-    background-image:repeating-linear-gradient(135deg, rgba(79,115,89,.16) 0 12px, rgba(79,115,89,.06) 12px 24px);
+    background-image:repeating-linear-gradient(135deg, rgba(79,115,89,.16) 0 10px, rgba(79,115,89,0) 10px 20px);
     position:relative;display:block;}
   .ph-cap{position:absolute;bottom:8px;left:8px;font-family:ui-monospace,"SF Mono",Menlo,monospace;
     font-size:10px;color:var(--cur-muted);background:rgba(255,255,255,.88);
     padding:3px 7px;border-radius:5px;letter-spacing:.02em;}
 
   /* Hero row */
-  .hero-row{display:flex;flex-wrap:nowrap;gap:32px;max-width:1220px;margin:0 auto;
-    padding:48px 56px 0;}
-  .hero-left{flex:1.5 1 300px;min-width:0;}
-  .hero-left-img{border-radius:14px;height:420px;width:100%;object-fit:cover;}
+  .hero-row{display:flex;flex-wrap:nowrap;gap:32px;padding-top:38px;padding-bottom:64px;}
+  .hero-left{flex:1.5 1 300px;min-width:240px;display:flex;flex-direction:column;gap:20px;}
+  .hero-left-img{height:420px;border-radius:14px;width:100%;object-fit:cover;}
   .hero-left-title{font-family:var(--cur-serif);font-weight:600;font-size:44px;
-    color:var(--cur-navy);margin:20px 0 10px;line-height:1.12;}
-  .hero-left-meta{font-size:14px;color:var(--cur-muted);}
+    line-height:1.06;letter-spacing:-.015em;color:var(--cur-navy);margin:0;}
+  .hero-left-meta{font-size:14px;letter-spacing:.04em;color:var(--cur-muted);}
+  .hero-left:hover .hero-left-title,.hero-left:hover .hero-left-meta{color:var(--cur-green);}
 
-  .hero-right{flex:1 1 240px;min-width:0;display:flex;flex-direction:column;}
-  .hero-right-main-img{border-radius:14px;height:230px;width:100%;object-fit:cover;}
+  .hero-right{flex:1 1 240px;min-width:220px;display:flex;flex-direction:column;}
+  .hero-right-main{display:flex;flex-direction:column;gap:16px;}
+  .hero-right-main-img{height:230px;border-radius:14px;width:100%;object-fit:cover;}
   .hero-right-main-title{font-family:var(--cur-serif);font-weight:600;font-size:27px;
-    color:var(--cur-navy);margin:16px 0 10px;padding-bottom:14px;
-    border-bottom:1px solid var(--line);line-height:1.2;}
-  .hero-right-main-meta{font-size:14px;color:var(--cur-muted);margin:-4px 0 4px;}
+    color:var(--cur-navy);margin:0;border-bottom:1px solid rgba(28,53,87,.35);padding-bottom:8px;
+    line-height:1.2;}
+  .hero-right-main-meta{font-size:14px;color:var(--cur-muted);margin-top:-8px;}
+  .hero-right-main:hover .hero-right-main-title,.hero-right-main:hover .hero-right-main-meta{color:var(--cur-green);}
 
-  .hero-right-sub-row{display:flex;gap:14px;align-items:center;padding:16px 0;
-    border-top:1px solid var(--line);}
+  .hero-right-sub-row{display:flex;align-items:flex-start;gap:20px;
+    border-top:1px solid rgba(28,53,87,.14);padding-top:20px;margin-top:20px;}
   .hero-right-sub-text{flex:1;min-width:0;}
-  .hero-right-sub-title{font-family:var(--cur-serif);font-weight:600;font-size:17px;
-    color:var(--cur-navy);margin:0 0 4px;line-height:1.28;}
-  .hero-right-sub-meta{font-size:13px;color:var(--cur-muted);}
-  .hero-right-sub-thumb{width:110px;height:76px;border-radius:10px;flex-shrink:0;object-fit:cover;}
+  .hero-right-sub-title{font-family:var(--cur-serif);font-weight:600;font-size:22px;
+    line-height:1.18;color:var(--cur-navy);margin:0 0 6px;}
+  .hero-right-sub-meta{font-size:13px;color:var(--cur-muted2);}
+  .hero-right-sub-thumb{flex:0 0 110px;height:76px;border-radius:8px;object-fit:cover;}
+  .hero-right-sub-row:hover .hero-right-sub-title,.hero-right-sub-row:hover .hero-right-sub-meta{color:var(--cur-green);}
 
-  /* Section heading */
-  .section-heading{font-family:var(--cur-serif);font-weight:600;font-size:34px;
-    color:var(--cur-navy);max-width:1220px;margin:0 auto;padding:56px 56px 24px;}
-
-  /* Card grid */
-  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-    gap:24px;align-items:stretch;justify-content:start;
-    max-width:1220px;margin:0 auto;padding:0 56px;}
-  .post-card{background:#fff;border:1px solid rgba(79,115,89,.45);border-radius:18px;
-    overflow:hidden;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;
-    transition:box-shadow .2s,transform .18s;}
-  .post-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
-  .post-card-img{height:150px;width:100%;object-fit:cover;}
-  .post-card-body{padding:20px;display:flex;flex-direction:column;flex:1;}
-  .post-card-title{font-family:var(--cur-serif);font-weight:600;font-size:22px;
-    color:var(--cur-navy);margin:0 0 8px;line-height:1.22;}
-  .post-card-excerpt{font-size:15px;color:var(--cur-muted);line-height:1.55;
-    margin:0 0 14px;flex:1;}
-  .post-card-meta{font-size:13px;color:var(--cur-muted2);margin-top:auto;}
-
-  /* Notes list */
-  .notes-list{max-width:1220px;margin:0 auto;padding:0 56px 8px;}
-  .note-row{display:flex;align-items:center;gap:18px;padding:18px 0;
-    border-bottom:1px solid var(--line);}
-  .note-thumb{width:96px;height:66px;border-radius:10px;flex-shrink:0;object-fit:cover;}
-  .note-text{flex:1;min-width:0;}
-  .note-title{font-family:var(--cur-serif);font-weight:600;font-size:21px;
-    color:var(--cur-navy);margin:0 0 4px;line-height:1.25;}
-  .note-meta{font-size:13px;color:var(--cur-muted2);}
-  .note-arrow{font-size:20px;color:var(--cur-muted);flex-shrink:0;}
-
-  /* Empty state */
   .empty-state{text-align:center;color:var(--cur-muted);font-size:16px;
-    padding:64px 56px;max-width:1220px;margin:0 auto;}
-
-  /* Closing CTA */
-  .cta-wrap{max-width:1220px;margin:0 auto;padding:56px 56px 72px;}
-  .cta-card{background:#fff;border:1px solid rgba(79,115,89,.45);border-radius:18px;
-    box-shadow:var(--shadow-sm);padding:52px 40px;text-align:center;}
-  .cta-eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--cur-muted);font-weight:700;margin-bottom:14px;}
-  .cta-title{font-family:var(--cur-serif);font-weight:600;font-size:30px;color:var(--cur-navy);
-    margin:0 auto 14px;line-height:1.25;max-width:620px;}
-  .cta-body{font-size:16px;color:var(--cur-muted);margin:0 auto 26px;max-width:520px;}
-  .cta-btn{display:inline-flex;align-items:center;gap:8px;background:var(--cur-navy);
-    color:#fff;border-radius:999px;padding:14px 30px;font-size:15px;font-weight:700;
-    text-decoration:none;transition:background .18s;}
-  .cta-btn:hover{background:var(--cur-green);}
+    padding:64px 0;}
 
   @media(max-width:900px){
     .hero-row{flex-wrap:wrap;}
@@ -159,12 +115,11 @@
   }
   @media(max-width:600px){
     .nav{padding:0 20px 11px;}
-    .chip-row{padding:18px 20px;}
-    .hero-row{padding:36px 20px 0;gap:24px;}
-    .section-heading{padding:44px 20px 20px;}
-    .card-grid{padding:0 20px;}
-    .notes-list{padding:0 20px 8px;}
-    .cta-wrap{padding:44px 20px 56px;}
+    .container{padding:0 20px;}
+    .blog-h1-wrap{padding:44px 20px 20px;}
+    .blog-h1{font-size:clamp(34px,10vw,62px);}
+    .chip-row{padding:18px 0;}
+    .hero-row{padding-top:28px;padding-bottom:48px;gap:24px;}
     .sticky-logo-bubble{top:12px;left:16px;padding:9px 18px;}
     .sticky-logo-bubble img{height:26px;}
   }
@@ -180,27 +135,40 @@ const { useState, useEffect } = React;
 
 /* ---- Content source ----
    Plain data array — swap for MDX/CMS/JSON later without touching layout.
-   Fields: title, excerpt, category, readTime, date, image, slug */
+   Fields: title, category, readTime, image, slug
+   Index 0 = hero large, 1 = hero medium, 2–3 = hero small rows. */
 const POSTS = [
   {
     title: "Bienvenid@s a The Corporate English Project",
-    excerpt: "Por qué existe este proyecto, qué vas a encontrar en la bitácora, y cómo puede ayudarte a hablar inglés con más confianza cada semana.",
     category: "Bienvenid@s",
     readTime: 9,
-    date: "2026-08-28",
     image: null,
     slug: "bienvenidos-a-cep",
+  },
+  {
+    title: "Cómo volverse fluido en inglés (de verdad)",
+    category: "Práctica",
+    readTime: 10,
+    image: null,
+    slug: "como-volverse-fluido-en-ingles",
+  },
+  {
+    title: "Artículos y preposiciones",
+    category: "Gramática",
+    readTime: 7,
+    image: null,
+    slug: "articulos-y-preposiciones",
+  },
+  {
+    title: "¿Cuál es mi nivel de inglés?",
+    category: "Práctica",
+    readTime: 6,
+    image: null,
+    slug: "cual-es-mi-nivel-de-ingles",
   },
 ];
 
 const CATEGORIES = ["Todo", "Bienvenid@s", "Pronunciación", "Vocabulario", "Gramática", "Escucha", "Práctica", "Vida diaria"];
-
-function formatDate(iso) {
-  try {
-    const d = new Date(iso + "T12:00:00");
-    return new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "short", year: "numeric" }).format(d);
-  } catch (e) { return iso; }
-}
 
 function metaLine(post) {
   return `${post.category} · ${post.readTime} min de lectura`;
@@ -240,33 +208,7 @@ function PostImage({ post, className, sizeLabel }) {
   }
   return (
     <div className={className + " ph"}>
-      <span className="ph-cap">{sizeLabel}</span>
-    </div>
-  );
-}
-
-function PostCard({ post }) {
-  return (
-    <div className="post-card">
-      <PostImage post={post} className="post-card-img" sizeLabel="520×150" />
-      <div className="post-card-body">
-        <h3 className="post-card-title">{post.title}</h3>
-        <p className="post-card-excerpt">{post.excerpt}</p>
-        <div className="post-card-meta">{metaLine(post)}</div>
-      </div>
-    </div>
-  );
-}
-
-function NoteRow({ post }) {
-  return (
-    <div className="note-row">
-      <PostImage post={post} className="note-thumb" sizeLabel="96×66" />
-      <div className="note-text">
-        <h4 className="note-title">{post.title}</h4>
-        <div className="note-meta">{post.category} · {post.readTime} min de lectura · {formatDate(post.date)}</div>
-      </div>
-      <span className="note-arrow">→</span>
+      {sizeLabel ? <span className="ph-cap">{sizeLabel}</span> : null}
     </div>
   );
 }
@@ -279,24 +221,26 @@ function HeroRow({ posts }) {
   const rightSubs = right.slice(1);
   return (
     <div className="hero-row">
-      <div className="hero-left">
-        <PostImage post={left} className="hero-left-img" sizeLabel="1200×420" />
+      <a className="hero-left" href={`/blog/${left.slug}.html`}>
+        <PostImage post={left} className="hero-left-img" sizeLabel="imagen principal · 1200×900" />
         <h2 className="hero-left-title">{left.title}</h2>
         <div className="hero-left-meta">{metaLine(left)}</div>
-      </div>
+      </a>
       {rightMain ? (
         <div className="hero-right">
-          <PostImage post={rightMain} className="hero-right-main-img" sizeLabel="700×230" />
-          <h3 className="hero-right-main-title">{rightMain.title}</h3>
-          <div className="hero-right-main-meta">{metaLine(rightMain)}</div>
+          <a className="hero-right-main" href={`/blog/${rightMain.slug}.html`}>
+            <PostImage post={rightMain} className="hero-right-main-img" />
+            <h3 className="hero-right-main-title">{rightMain.title}</h3>
+            <div className="hero-right-main-meta">{metaLine(rightMain)}</div>
+          </a>
           {rightSubs.map((p, i) => (
-            <div className="hero-right-sub-row" key={i}>
+            <a className="hero-right-sub-row" href={`/blog/${p.slug}.html`} key={i}>
               <div className="hero-right-sub-text">
                 <h4 className="hero-right-sub-title">{p.title}</h4>
                 <div className="hero-right-sub-meta">{metaLine(p)}</div>
               </div>
-              <PostImage post={p} className="hero-right-sub-thumb" sizeLabel="110×76" />
-            </div>
+              <PostImage post={p} className="hero-right-sub-thumb" />
+            </a>
           ))}
         </div>
       ) : null}
@@ -323,10 +267,6 @@ function BlogPage() {
   }, []);
 
   const isAll = active === "Todo";
-  const filtered = isAll ? [] : POSTS.filter(p => p.category === active);
-
-  const heroPosts = POSTS.slice(0, 4);
-  const recentPosts = POSTS.slice(4);
 
   return (
     <div className="page">
@@ -352,54 +292,23 @@ function BlogPage() {
       </nav>
 
       <main>
-        <h1 className="blog-h1">Bitácora</h1>
-
-        <div className="chip-row">
-          {CATEGORIES.map(cat => (
-            <button key={cat} className={"chip" + (cat === active ? " active" : "")}
-              onClick={() => setActive(cat)}>{cat}</button>
-          ))}
+        <div className="blog-h1-wrap">
+          <h1 className="blog-h1">Bitácora</h1>
         </div>
 
-        {isAll ? (
-          <>
-            <HeroRow posts={heroPosts} />
-
-            {recentPosts.length > 0 && (
-              <>
-                <h2 className="section-heading">Más recientes</h2>
-                <div className="card-grid">
-                  {recentPosts.map((p, i) => <PostCard post={p} key={i} />)}
-                </div>
-              </>
-            )}
-
-            {POSTS.length > 0 && (
-              <>
-                <h2 className="section-heading">Todas las notas</h2>
-                <div className="notes-list">
-                  {POSTS.map((p, i) => <NoteRow post={p} key={i} />)}
-                </div>
-              </>
-            )}
-          </>
-        ) : (
-          filtered.length > 0 ? (
-            <div className="card-grid" style={{ marginTop: 40 }}>
-              {filtered.map((p, i) => <PostCard post={p} key={i} />)}
-            </div>
-          ) : (
-            <p className="empty-state">Todavía no hay publicaciones en esta categoría.</p>
-          )
-        )}
-
-        <div className="cta-wrap">
-          <div className="cta-card">
-            <div className="cta-eyebrow">PRÓXIMO GRUPO</div>
-            <h2 className="cta-title">Leer sobre inglés ayuda. Hablarlo cada semana, más.</h2>
-            <p className="cta-body">Practica lo que lees en una clase en vivo, con retroalimentación real cada semana.</p>
-            <a className="cta-btn" href="/#cta">Ver los cursos →</a>
+        <div className="container">
+          <div className="chip-row">
+            {CATEGORIES.map(cat => (
+              <button key={cat} className={"chip" + (cat === active ? " active" : "")}
+                onClick={() => setActive(cat)}>{cat}</button>
+            ))}
           </div>
+
+          {isAll ? (
+            <HeroRow posts={POSTS} />
+          ) : (
+            <p className="empty-state">Muy pronto vas a poder filtrar por esta categoría.</p>
+          )}
         </div>
       </main>
     </div>
