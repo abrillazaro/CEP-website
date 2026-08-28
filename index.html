@@ -417,6 +417,12 @@
   .how-body{max-width:720px;margin:0 auto;font-size:clamp(15px,1.5vw,17px);
     line-height:1.75;color:var(--navy-soft);text-wrap:pretty;}
   .how-body + .how-body{margin-top:18px;}
+  .info-cards{display:flex;gap:32px;flex-wrap:wrap;justify-content:center;
+    width:100%;max-width:980px;margin:0 auto;padding:0 40px;align-items:stretch;}
+  .info-card{flex:1;min-width:280px;background:var(--surface);border-radius:20px;
+    border:1.5px solid var(--line);box-shadow:var(--shadow-md);padding:40px 32px;
+    text-align:center;}
+  .info-card .how-title{font-size:clamp(24px,3vw,32px);}
   .how-kicker{font-size:13px;letter-spacing:.16em;text-transform:uppercase;
     color:var(--sage-deep);font-weight:700;margin:0 0 14px;}
 
@@ -478,6 +484,7 @@
     .hamburger{display:flex;}
     .btn-login{display:none;}
     .how-section{padding:0 20px;}
+    .info-cards{padding:0 20px;}
   }
   @media (max-width:540px){
     .region-scrim{align-items:flex-end;}
@@ -1698,19 +1705,21 @@ function CTASection({ t, currency, lang, tz }) {
         </span>
       </div>
       <div style={{ padding:"12px 0 0" }}>
-        <div className="how-section">
-          <h2 className="how-title">{t.howTitle}</h2>
-          <div className="how-rule" />
-          <p className="how-body">{isEs
-            ? `The Corporate English Project es una comunidad global de hispanohablantes de todo el mundo aprendiendo inglés como segundo idioma, y eso es lo que nos hace especiales. Al ser 100% en línea, aprendemos juntos sin importar dónde estés. Nos reunimos en vivo por Microsoft Teams, lo que nos permite mantener las clases desde ${priceLabel} por sesión y seguir ofreciendo una experiencia de aprendizaje de alta calidad. Nuestros grupos son intencionalmente pequeños, hasta 15 alumnos por sesión, para que cada alumno reciba la atención que merece. Y como CEP está construido sobre comunidad, ¡trae a un amigo! Entre más seamos, más rica es la experiencia. 🌎`
-            : `The Corporate English Project is a global community of Spanish speakers from all over the world learning English as a second language, and that's what makes us special. Because we're 100% online, we get to learn together no matter where you are. We meet live via Microsoft Teams, which is what allows us to keep classes as accessible as ${priceLabel} per session and still deliver a high-quality learning experience. Our groups are intentionally small, with up to 15 students per session, so that every student gets the attention they deserve. And since CEP is built on community, bring a friend. The more the merrier, and the better the learning experience for everyone. 🌎`
-          }</p>
-        </div>
-        <div className="how-section" style={{ marginTop:56 }}>
-          <h2 className="how-title">{t.ethosTitle}</h2>
-          <div className="how-rule" />
-          <p className="how-body">{t.ethos1}</p>
-          <p className="how-body">{t.ethos2}</p>
+        <div className="info-cards">
+          <div className="info-card">
+            <h2 className="how-title">{t.howTitle}</h2>
+            <div className="how-rule" />
+            <p className="how-body">{isEs
+              ? `The Corporate English Project es una comunidad global de hispanohablantes de todo el mundo aprendiendo inglés como segundo idioma, y eso es lo que nos hace especiales. Al ser 100% en línea, aprendemos juntos sin importar dónde estés. Nos reunimos en vivo por Microsoft Teams, lo que nos permite mantener las clases desde ${priceLabel} por sesión y seguir ofreciendo una experiencia de aprendizaje de alta calidad. Nuestros grupos son intencionalmente pequeños, hasta 15 alumnos por sesión, para que cada alumno reciba la atención que merece. Y como CEP está construido sobre comunidad, ¡trae a un amigo! Entre más seamos, más rica es la experiencia. 🌎`
+              : `The Corporate English Project is a global community of Spanish speakers from all over the world learning English as a second language, and that's what makes us special. Because we're 100% online, we get to learn together no matter where you are. We meet live via Microsoft Teams, which is what allows us to keep classes as accessible as ${priceLabel} per session and still deliver a high-quality learning experience. Our groups are intentionally small, with up to 15 students per session, so that every student gets the attention they deserve. And since CEP is built on community, bring a friend. The more the merrier, and the better the learning experience for everyone. 🌎`
+            }</p>
+          </div>
+          <div className="info-card">
+            <h2 className="how-title">{t.ethosTitle}</h2>
+            <div className="how-rule" />
+            <p className="how-body">{t.ethos1}</p>
+            <p className="how-body">{t.ethos2}</p>
+          </div>
         </div>
         <div className="how-section" style={{ marginTop:56 }}>
           <h2 className="how-title">{t.founderTitle}</h2>
