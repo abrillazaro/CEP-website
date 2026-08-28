@@ -469,6 +469,11 @@
     flex-shrink:0;line-height:1;}
   .founder-faq-item[open] summary::after{content:"–";}
   .founder-faq-answer{margin:0;padding:0 0 16px;font-size:14px;line-height:1.6;color:var(--navy-soft);}
+  .founder-faq-answer.has-links{padding-bottom:8px;}
+  .founder-faq-links{list-style:none;margin:0;padding:0 0 16px;display:flex;flex-direction:column;gap:8px;}
+  .founder-faq-links a{font-size:14px;font-weight:600;color:var(--navy);text-decoration:underline;
+    text-decoration-color:rgba(32,57,92,.35);text-underline-offset:2px;}
+  .founder-faq-links a:hover{color:var(--sage-deep);}
 
   /* Hamburger menu */
   .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;
@@ -1774,15 +1779,25 @@ function CTASection({ t, currency, lang, tz }) {
             <div className="founder-faq">
               <h3 className="founder-faq-title">{isEs ? "Preguntas frecuentes" : "Frequently Asked Questions"}</h3>
               {(isEs ? [
-                { q: "¿Qué es The Corporate English Project?",
-                  a: "Es una comunidad de aprendizaje de inglés 100% en línea para hispanohablantes, con clases grupales en vivo, práctica real de conversación y un enfoque holístico — no solo gramática." },
+                { q: "Cuéntame más sobre The Corporate English Project.",
+                  a: "La verdad es que ya está todo aquí — pero aquí tienes justo lo que probablemente buscas:",
+                  links: [
+                    { label: "¿Qué es CEP? Lee el artículo de bienvenida", href: "/blog/bienvenidos-a-cep.html" },
+                    { label: "Precios y horario: Lunes y Miércoles", href: "/courses/mon-wed.html" },
+                    { label: "Precios y horario: Viernes", href: "/courses/friday.html" },
+                  ] },
                 { q: "¿Ofrecen clases para niños?",
                   a: "Por ahora nuestros cursos son para personas de 18 años en adelante. Más adelante abriremos un grupo para estudiantes más jóvenes — avísanos si te interesa." },
                 { q: "¿Ofrecen clases individuales?",
                   a: "No — solo ofrecemos clases grupales. Ese es el espíritu de The Corporate English Project: aprender en comunidad, no lecciones uno a uno. Si tienes una necesidad distinta, escríbenos por WhatsApp y vemos qué podemos hacer." },
               ] : [
-                { q: "What is The Corporate English Project?",
-                  a: "It's a 100% online English-learning community for Spanish speakers, with live group classes, real conversation practice, and a holistic approach — not just grammar." },
+                { q: "Tell me more about The Corporate English Project.",
+                  a: "Honestly, it's all right here already — but here's exactly what you're probably looking for:",
+                  links: [
+                    { label: "What is CEP? Read the welcome post", href: "/blog/bienvenidos-a-cep.html" },
+                    { label: "Pricing & schedule: Monday & Wednesday", href: "/courses/mon-wed.html" },
+                    { label: "Pricing & schedule: Friday", href: "/courses/friday.html" },
+                  ] },
                 { q: "Do you offer classes for kids?",
                   a: "Right now our courses are for learners 18 and older. We'll open a group for younger students in the future — let us know if you're interested." },
                 { q: "Do you offer individual classes?",
@@ -1790,7 +1805,14 @@ function CTASection({ t, currency, lang, tz }) {
               ]).map((item, i) => (
                 <details className="founder-faq-item" key={i}>
                   <summary>{item.q}</summary>
-                  <p className="founder-faq-answer">{item.a}</p>
+                  <p className={"founder-faq-answer" + (item.links ? " has-links" : "")}>{item.a}</p>
+                  {item.links ? (
+                    <ul className="founder-faq-links">
+                      {item.links.map((l, j) => (
+                        <li key={j}><a href={l.href}>{l.label} →</a></li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </details>
               ))}
             </div>
