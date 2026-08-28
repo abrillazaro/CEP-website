@@ -1705,7 +1705,21 @@ function CTASection({ t, currency, lang, tz }) {
         </span>
       </div>
       <div style={{ padding:"12px 0 0" }}>
-        <div className="info-cards">
+        <div className="how-section">
+          <h2 className="how-title">{t.founderTitle}</h2>
+          <div className="how-rule" />
+          <div className="how-kicker">{t.founderKicker}</div>
+          <p className="how-body">{t.founderBio}</p>
+        </div>
+        <div className="enroll-cue">
+          <span className="enroll-cue-text">{lang === "es" ? "Desliza para más" : "Scroll for More"}</span>
+          <span className="enroll-cue-arrow">
+            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="8" y1="2" x2="8" y2="16"/><path d="M3 11l5 5 5-5"/>
+            </svg>
+          </span>
+        </div>
+        <div className="info-cards" style={{ marginTop:12 }}>
           <div className="info-card">
             <h2 className="how-title">{t.howTitle}</h2>
             <div className="how-rule" />
@@ -1720,12 +1734,6 @@ function CTASection({ t, currency, lang, tz }) {
             <p className="how-body">{t.ethos1}</p>
             <p className="how-body">{t.ethos2}</p>
           </div>
-        </div>
-        <div className="how-section" style={{ marginTop:56 }}>
-          <h2 className="how-title">{t.founderTitle}</h2>
-          <div className="how-rule" />
-          <div className="how-kicker">{t.founderKicker}</div>
-          <p className="how-body">{t.founderBio}</p>
         </div>
         <p className="foot-cep">{t.footer}</p>
       </div>
