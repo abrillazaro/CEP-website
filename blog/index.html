@@ -4,151 +4,409 @@
 <link rel="icon" type="image/png" href="/favicon.png" />
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Blog — The Corporate English Project</title>
+<title>Bitácora — The Corporate English Project</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --navy:#20395c;
-    --navy-deep:#152840;
-    --navy-soft:#54688a;
-    --sage:#5d7c69;
-    --sage-deep:#465c4f;
-    --sage-tint:#dce7dd;
-    --bg:#f1f3ef;
-    --surface:#ffffff;
-    --line:#e0e4dd;
-    --line-strong:#cdd4c9;
-    --ink:#1e2a3a;
-    --muted:#6c7787;
-    --serif:"Playfair Display", Georgia, serif;
-    --sans:"Hanken Grotesk", system-ui, sans-serif;
-    --shadow-sm:0 1px 2px rgba(21,40,64,.05), 0 1px 3px rgba(21,40,64,.06);
-    --shadow-md:0 6px 16px rgba(21,40,64,.08), 0 2px 6px rgba(21,40,64,.05);
+    --cur-navy:#1c3557;
+    --cur-green:#4f7359;
+    --cur-muted:#5b7288;
+    --cur-muted2:#7d8b93;
+    --cur-bg:#eef1ec;
+    --cur-serif:"Playfair Display", Georgia, serif;
+    --cur-sans:"Lato", system-ui, sans-serif;
+    --line:rgba(28,53,87,.14);
+    --shadow-sm:0 2px 10px rgba(28,53,87,.05);
+    --shadow-lg:0 12px 28px rgba(28,53,87,.11);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  body{font-family:var(--sans);background:var(--bg);color:var(--ink);
+  body{font-family:var(--cur-sans);background:var(--cur-bg);color:var(--cur-navy);
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh;}
-  ::selection{background:var(--sage-tint);color:var(--navy-deep);}
+  a{color:inherit;}
   button{font-family:inherit;cursor:pointer;}
+  #root{min-height:100vh;}
 
   .page{min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
 
+  /* Sticky logo bubble */
+  .sticky-logo-bubble{position:fixed;top:18px;left:34px;z-index:50;
+    background:#fff;border-radius:999px;padding:12px 26px;box-shadow:0 4px 18px rgba(28,53,87,.16);
+    opacity:0;transform:translateY(-8px);pointer-events:none;
+    transition:opacity .18s ease,transform .18s ease;display:flex;align-items:center;}
+  .sticky-logo-bubble.visible{opacity:1;transform:translateY(0);pointer-events:auto;}
+  .sticky-logo-bubble img{height:34px;width:auto;display:block;}
+
   /* Nav */
   .nav{display:flex;align-items:center;justify-content:space-between;
-    padding:0 40px 11px;max-width:1320px;margin:0 auto;width:100%;}
-  .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--navy);}
+    padding:0 56px 11px;max-width:1220px;margin:0 auto;width:100%;}
+  .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
   .nav-logo img{height:150px;width:auto;display:block;}
   .nav-right{display:flex;align-items:center;gap:10px;}
-  .lang-toggle{display:flex;align-items:center;gap:2px;border:1px solid var(--line-strong);
-    background:var(--surface);border-radius:999px;padding:5px 7px;
-    box-shadow:var(--shadow-sm);}
+  .region-btn{display:flex;align-items:center;gap:5px;background:transparent;border:none;
+    color:var(--cur-navy);font-weight:600;padding:0 4px;font-size:14px;}
+  .region-gmt{font-size:12px;opacity:.85;}
+  .region-divider{width:1px;height:20px;background:var(--line);margin:0 2px;flex-shrink:0;}
+  .lang-toggle{display:flex;align-items:center;gap:2px;border:1px solid rgba(79,115,89,.45);
+    background:#fff;border-radius:999px;padding:5px 7px;box-shadow:var(--shadow-sm);}
   .seg{border:none;background:transparent;border-radius:999px;padding:4px 11px;
-    font-weight:700;font-size:13px;color:var(--navy-soft);transition:all .15s;cursor:pointer;font-family:var(--sans);}
-  .seg.active{background:var(--navy);color:#fff;}
-  .nav-link{padding:9px 14px;border-radius:10px;color:var(--navy);text-decoration:none;
-    font-weight:600;font-size:15px;background:transparent;border:none;transition:background .15s;}
-  .nav-link:hover{background:rgba(32,57,92,.07);}
-  .nav-link.active{background:rgba(32,57,92,.09);}
-  .btn-login{background:var(--navy);color:#fff;border:none;border-radius:11px;padding:11px 22px;
-    font-weight:700;font-size:15px;white-space:nowrap;box-shadow:var(--shadow-sm);
-    text-decoration:none;transition:transform .12s,background .2s;display:inline-block;}
-  .btn-login:hover{background:var(--navy-deep);transform:translateY(-1px);}
+    font-weight:700;font-size:13px;color:var(--cur-muted);transition:all .15s;}
+  .seg.active{background:var(--cur-navy);color:#fff;}
+  .nav-link{padding:9px 14px;border-radius:10px;color:var(--cur-navy);text-decoration:none;
+    font-weight:600;font-size:15px;background:transparent;transition:background .15s;}
+  .nav-link.active{font-weight:700;background:rgba(28,53,87,.08);}
+
+  /* Page title */
+  .blog-h1{font-family:var(--cur-serif);font-weight:600;font-size:clamp(38px,6vw,62px);
+    text-align:center;color:var(--cur-navy);margin:18px 0 0;letter-spacing:-.01em;}
+
+  /* Filter chips */
+  .chip-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+    padding:18px 56px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    max-width:1220px;margin:36px auto 0;}
+  .chip{border:1px solid var(--cur-green);border-radius:999px;padding:8px 18px;
+    font-size:13px;font-weight:700;color:var(--cur-navy);background:transparent;
+    transition:background .15s,color .15s;white-space:nowrap;}
+  .chip:hover{background:rgba(79,115,89,.08);}
+  .chip.active{background:var(--cur-navy);color:#fff;border-color:var(--cur-navy);}
+
+  /* Placeholder image */
+  .ph{background-color:#e3e8e1;
+    background-image:repeating-linear-gradient(135deg, rgba(79,115,89,.16) 0 12px, rgba(79,115,89,.06) 12px 24px);
+    position:relative;display:block;}
+  .ph-cap{position:absolute;bottom:8px;left:8px;font-family:ui-monospace,"SF Mono",Menlo,monospace;
+    font-size:10px;color:var(--cur-muted);background:rgba(255,255,255,.88);
+    padding:3px 7px;border-radius:5px;letter-spacing:.02em;}
+
+  /* Hero row */
+  .hero-row{display:flex;flex-wrap:nowrap;gap:32px;max-width:1220px;margin:0 auto;
+    padding:48px 56px 0;}
+  .hero-left{flex:1.5 1 300px;min-width:0;}
+  .hero-left-img{border-radius:14px;height:420px;width:100%;object-fit:cover;}
+  .hero-left-title{font-family:var(--cur-serif);font-weight:600;font-size:44px;
+    color:var(--cur-navy);margin:20px 0 10px;line-height:1.12;}
+  .hero-left-meta{font-size:14px;color:var(--cur-muted);}
+
+  .hero-right{flex:1 1 240px;min-width:0;display:flex;flex-direction:column;}
+  .hero-right-main-img{border-radius:14px;height:230px;width:100%;object-fit:cover;}
+  .hero-right-main-title{font-family:var(--cur-serif);font-weight:600;font-size:27px;
+    color:var(--cur-navy);margin:16px 0 10px;padding-bottom:14px;
+    border-bottom:1px solid var(--line);line-height:1.2;}
+  .hero-right-main-meta{font-size:14px;color:var(--cur-muted);margin:-4px 0 4px;}
+
+  .hero-right-sub-row{display:flex;gap:14px;align-items:center;padding:16px 0;
+    border-top:1px solid var(--line);}
+  .hero-right-sub-text{flex:1;min-width:0;}
+  .hero-right-sub-title{font-family:var(--cur-serif);font-weight:600;font-size:17px;
+    color:var(--cur-navy);margin:0 0 4px;line-height:1.28;}
+  .hero-right-sub-meta{font-size:13px;color:var(--cur-muted);}
+  .hero-right-sub-thumb{width:110px;height:76px;border-radius:10px;flex-shrink:0;object-fit:cover;}
+
+  /* Section heading */
+  .section-heading{font-family:var(--cur-serif);font-weight:600;font-size:34px;
+    color:var(--cur-navy);max-width:1220px;margin:0 auto;padding:56px 56px 24px;}
+
+  /* Card grid */
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:24px;align-items:stretch;justify-content:start;
+    max-width:1220px;margin:0 auto;padding:0 56px;}
+  .post-card{background:#fff;border:1px solid rgba(79,115,89,.45);border-radius:18px;
+    overflow:hidden;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;
+    transition:box-shadow .2s,transform .18s;}
+  .post-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
+  .post-card-img{height:150px;width:100%;object-fit:cover;}
+  .post-card-body{padding:20px;display:flex;flex-direction:column;flex:1;}
+  .post-card-title{font-family:var(--cur-serif);font-weight:600;font-size:22px;
+    color:var(--cur-navy);margin:0 0 8px;line-height:1.22;}
+  .post-card-excerpt{font-size:15px;color:var(--cur-muted);line-height:1.55;
+    margin:0 0 14px;flex:1;}
+  .post-card-meta{font-size:13px;color:var(--cur-muted2);margin-top:auto;}
+
+  /* Notes list */
+  .notes-list{max-width:1220px;margin:0 auto;padding:0 56px 8px;}
+  .note-row{display:flex;align-items:center;gap:18px;padding:18px 0;
+    border-bottom:1px solid var(--line);}
+  .note-thumb{width:96px;height:66px;border-radius:10px;flex-shrink:0;object-fit:cover;}
+  .note-text{flex:1;min-width:0;}
+  .note-title{font-family:var(--cur-serif);font-weight:600;font-size:21px;
+    color:var(--cur-navy);margin:0 0 4px;line-height:1.25;}
+  .note-meta{font-size:13px;color:var(--cur-muted2);}
+  .note-arrow{font-size:20px;color:var(--cur-muted);flex-shrink:0;}
 
   /* Empty state */
-  .blog-main{flex:1;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;padding:80px 40px;text-align:center;}
-  .blog-rule{width:48px;height:3px;background:var(--sage);border-radius:2px;margin:0 auto 32px;}
-  .blog-title{font-family:var(--serif);font-weight:600;color:var(--navy);
-    font-size:clamp(36px,5vw,64px);line-height:1.08;margin:0 0 20px;letter-spacing:-.01em;}
-  .blog-sub{font-size:clamp(16px,1.6vw,19px);color:var(--navy-soft);
-    max-width:480px;line-height:1.65;margin:0 auto;}
+  .empty-state{text-align:center;color:var(--cur-muted);font-size:16px;
+    padding:64px 56px;max-width:1220px;margin:0 auto;}
 
+  /* Closing CTA */
+  .cta-wrap{max-width:1220px;margin:0 auto;padding:56px 56px 72px;}
+  .cta-card{background:#fff;border:1px solid rgba(79,115,89,.45);border-radius:18px;
+    box-shadow:var(--shadow-sm);padding:52px 40px;text-align:center;}
+  .cta-eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--cur-muted);font-weight:700;margin-bottom:14px;}
+  .cta-title{font-family:var(--cur-serif);font-weight:600;font-size:30px;color:var(--cur-navy);
+    margin:0 auto 14px;line-height:1.25;max-width:620px;}
+  .cta-body{font-size:16px;color:var(--cur-muted);margin:0 auto 26px;max-width:520px;}
+  .cta-btn{display:inline-flex;align-items:center;gap:8px;background:var(--cur-navy);
+    color:#fff;border-radius:999px;padding:14px 30px;font-size:15px;font-weight:700;
+    text-decoration:none;transition:background .18s;}
+  .cta-btn:hover{background:var(--cur-green);}
+
+  @media(max-width:900px){
+    .hero-row{flex-wrap:wrap;}
+    .hero-left,.hero-right{flex-basis:100%;}
+  }
   @media(max-width:600px){
     .nav{padding:0 20px 11px;}
-    .blog-main{padding:60px 24px;}
+    .chip-row{padding:18px 20px;}
+    .hero-row{padding:36px 20px 0;gap:24px;}
+    .section-heading{padding:44px 20px 20px;}
+    .card-grid{padding:0 20px;}
+    .notes-list{padding:0 20px 8px;}
+    .cta-wrap{padding:44px 20px 56px;}
+    .sticky-logo-bubble{top:12px;left:16px;padding:9px 18px;}
+    .sticky-logo-bubble img{height:26px;}
   }
 </style>
 </head>
 <body>
-<div class="page">
-  <nav class="nav">
-    <a class="nav-logo" href="/">
-      <img src="/logo-navy.png" alt="The Corporate English Project" />
-    </a>
-    <div class="nav-right">
-      <div class="lang-toggle">
-        <button class="seg" id="btn-en" onclick="setLang('en')">EN</button>
-        <button class="seg active" id="btn-es" onclick="setLang('es')">ES</button>
-      </div>
-      <a class="nav-link" id="nav-about" href="/about.html">Nosotros</a>
-      <a class="nav-link active" id="nav-blog" href="/blog">Bitácora</a>
-    </div>
-  </nav>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel">
+const { useState, useEffect } = React;
 
-  <main class="blog-main">
-    <div class="blog-rule"></div>
-    <h1 class="blog-title" id="heading">Próximamente</h1>
-    <p class="blog-sub" id="subtext">Artículos, consejos e ideas sobre el aprendizaje del inglés — muy pronto.</p>
-  </main>
-</div>
+/* ---- Content source ----
+   Plain data array — swap for MDX/CMS/JSON later without touching layout.
+   Fields: title, excerpt, category, readTime, date, image, slug */
+const POSTS = [
+  {
+    title: "Bienvenid@s a The Corporate English Project",
+    excerpt: "Por qué existe este proyecto, qué vas a encontrar en la bitácora, y cómo puede ayudarte a hablar inglés con más confianza cada semana.",
+    category: "Bienvenid@s",
+    readTime: 9,
+    date: "2026-08-28",
+    image: null,
+    slug: "bienvenidos-a-cep",
+  },
+];
 
-<script>
-  var STR = {
-    en: {
-      about: "About", blog: "Blog", login: "Log in",
-      heading: "Coming Soon",
-      sub: "Articles, tips, and insights on learning English — launching shortly."
-    },
-    es: {
-      about: "Nosotros", blog: "Bitácora", login: "Entrar",
-      heading: "Próximamente",
-      sub: "Artículos, consejos e ideas sobre el aprendizaje del inglés — muy pronto."
-    }
-  };
+const CATEGORIES = ["Todo", "Bienvenid@s", "Pronunciación", "Vocabulario", "Gramática", "Escucha", "Práctica", "Vida diaria"];
 
-  // Language priority: 1) ?lang= in URL  2) localStorage  3) default ES
-  var lang = "es";
+function formatDate(iso) {
   try {
-    var urlLang = new URLSearchParams(window.location.search).get("lang");
-    if (urlLang === "en" || urlLang === "es") {
-      lang = urlLang;
-    } else {
-      var stored = localStorage.getItem("cepLang");
-      if (stored === "en" || stored === "es") lang = stored;
-    }
-  } catch(e) {}
+    const d = new Date(iso + "T12:00:00");
+    return new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "short", year: "numeric" }).format(d);
+  } catch (e) { return iso; }
+}
 
-  function setLang(l) {
-    lang = l;
-    try { localStorage.setItem("cepLang", l); } catch(e) {}
-    // Update URL so the shareable link always carries the chosen language
-    var url = new URL(window.location.href);
-    url.searchParams.set("lang", l);
-    history.replaceState(null, "", url.toString());
-    apply();
+function metaLine(post) {
+  return `${post.category} · ${post.readTime} min de lectura`;
+}
+
+function gmtOffset(tz) {
+  try {
+    const s = Intl.DateTimeFormat('en', { timeZone: tz, timeZoneName: 'shortOffset' })
+      .formatToParts(new Date()).find(p => p.type === 'timeZoneName')?.value || 'GMT';
+    return s === 'GMT' ? 'GMT+0' : s;
+  } catch (e) { return 'GMT'; }
+}
+
+function RegionBadge() {
+  const [info, setInfo] = useState(null);
+  useEffect(() => {
+    try {
+      const r = JSON.parse(localStorage.getItem('cepRegionV2'));
+      const tz = (r && r.tz) || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const cc = (r && r.countryCode) || 'US';
+      const flag = cc === 'MX' ? '🇲🇽' : cc === 'CR' ? '🇨🇷' : cc === 'CA' ? '🇨🇦' : '🇺🇸';
+      setInfo({ flag, gmt: gmtOffset(tz) });
+    } catch (e) {}
+  }, []);
+  if (!info) return null;
+  return (
+    <span className="region-btn">
+      <span>{info.flag}</span>
+      <span className="region-gmt">{info.gmt}</span>
+    </span>
+  );
+}
+
+function PostImage({ post, className, sizeLabel }) {
+  if (post.image) {
+    return <img className={className} src={post.image} alt={post.title} loading="lazy" />;
   }
+  return (
+    <div className={className + " ph"}>
+      <span className="ph-cap">{sizeLabel}</span>
+    </div>
+  );
+}
 
-  function apply() {
-    var s = STR[lang];
-    document.getElementById("btn-en").className = "seg" + (lang === "en" ? " active" : "");
-    document.getElementById("btn-es").className = "seg" + (lang === "es" ? " active" : "");
-    document.getElementById("nav-about").textContent = s.about;
-    document.getElementById("nav-blog").textContent = s.blog;
-    document.getElementById("heading").textContent = s.heading;
-    document.getElementById("subtext").textContent = s.sub;
-    document.documentElement.lang = lang;
-    // Keep URL in sync on initial load too
-    var url = new URL(window.location.href);
-    if (!url.searchParams.get("lang")) {
-      url.searchParams.set("lang", lang);
-      history.replaceState(null, "", url.toString());
-    }
-  }
+function PostCard({ post }) {
+  return (
+    <div className="post-card">
+      <PostImage post={post} className="post-card-img" sizeLabel="520×150" />
+      <div className="post-card-body">
+        <h3 className="post-card-title">{post.title}</h3>
+        <p className="post-card-excerpt">{post.excerpt}</p>
+        <div className="post-card-meta">{metaLine(post)}</div>
+      </div>
+    </div>
+  );
+}
 
-  apply();
+function NoteRow({ post }) {
+  return (
+    <div className="note-row">
+      <PostImage post={post} className="note-thumb" sizeLabel="96×66" />
+      <div className="note-text">
+        <h4 className="note-title">{post.title}</h4>
+        <div className="note-meta">{post.category} · {post.readTime} min de lectura · {formatDate(post.date)}</div>
+      </div>
+      <span className="note-arrow">→</span>
+    </div>
+  );
+}
+
+function HeroRow({ posts }) {
+  if (!posts.length) return null;
+  const left = posts[0];
+  const right = posts.slice(1, 4);
+  const rightMain = right[0];
+  const rightSubs = right.slice(1);
+  return (
+    <div className="hero-row">
+      <div className="hero-left">
+        <PostImage post={left} className="hero-left-img" sizeLabel="1200×420" />
+        <h2 className="hero-left-title">{left.title}</h2>
+        <div className="hero-left-meta">{metaLine(left)}</div>
+      </div>
+      {rightMain ? (
+        <div className="hero-right">
+          <PostImage post={rightMain} className="hero-right-main-img" sizeLabel="700×230" />
+          <h3 className="hero-right-main-title">{rightMain.title}</h3>
+          <div className="hero-right-main-meta">{metaLine(rightMain)}</div>
+          {rightSubs.map((p, i) => (
+            <div className="hero-right-sub-row" key={i}>
+              <div className="hero-right-sub-text">
+                <h4 className="hero-right-sub-title">{p.title}</h4>
+                <div className="hero-right-sub-meta">{metaLine(p)}</div>
+              </div>
+              <PostImage post={p} className="hero-right-sub-thumb" sizeLabel="110×76" />
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function BlogPage() {
+  const [active, setActive] = useState("Todo");
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 90);
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const isAll = active === "Todo";
+  const filtered = isAll ? [] : POSTS.filter(p => p.category === active);
+
+  const heroPosts = POSTS.slice(0, 4);
+  const recentPosts = POSTS.slice(4);
+
+  return (
+    <div className="page">
+      <div className={"sticky-logo-bubble" + (scrolled ? " visible" : "")} aria-hidden={!scrolled}>
+        <a href="/" aria-label="Inicio">
+          <img src="/logo-navy.png" alt="The Corporate English Project" />
+        </a>
+      </div>
+
+      <nav className="nav">
+        <a className="nav-logo" href="/">
+          <img src="/logo-navy.png" alt="The Corporate English Project" />
+        </a>
+        <div className="nav-right">
+          <RegionBadge />
+          <div className="region-divider" />
+          <div className="lang-toggle">
+            <button className="seg active">ES</button>
+            <button className="seg">EN</button>
+          </div>
+          <a className="nav-link active" href="/blog">Bitácora</a>
+        </div>
+      </nav>
+
+      <main>
+        <h1 className="blog-h1">Bitácora</h1>
+
+        <div className="chip-row">
+          {CATEGORIES.map(cat => (
+            <button key={cat} className={"chip" + (cat === active ? " active" : "")}
+              onClick={() => setActive(cat)}>{cat}</button>
+          ))}
+        </div>
+
+        {isAll ? (
+          <>
+            <HeroRow posts={heroPosts} />
+
+            {recentPosts.length > 0 && (
+              <>
+                <h2 className="section-heading">Más recientes</h2>
+                <div className="card-grid">
+                  {recentPosts.map((p, i) => <PostCard post={p} key={i} />)}
+                </div>
+              </>
+            )}
+
+            {POSTS.length > 0 && (
+              <>
+                <h2 className="section-heading">Todas las notas</h2>
+                <div className="notes-list">
+                  {POSTS.map((p, i) => <NoteRow post={p} key={i} />)}
+                </div>
+              </>
+            )}
+          </>
+        ) : (
+          filtered.length > 0 ? (
+            <div className="card-grid" style={{ marginTop: 40 }}>
+              {filtered.map((p, i) => <PostCard post={p} key={i} />)}
+            </div>
+          ) : (
+            <p className="empty-state">Todavía no hay publicaciones en esta categoría.</p>
+          )
+        )}
+
+        <div className="cta-wrap">
+          <div className="cta-card">
+            <div className="cta-eyebrow">PRÓXIMO GRUPO</div>
+            <h2 className="cta-title">Leer sobre inglés ayuda. Hablarlo cada semana, más.</h2>
+            <p className="cta-body">Practica lo que lees en una clase en vivo, con retroalimentación real cada semana.</p>
+            <a className="cta-btn" href="/#cta">Ver los cursos →</a>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<BlogPage />);
 </script>
 </body>
 </html>
