@@ -674,13 +674,6 @@ const STR = {
 };
 
 /* ---- Translator — Google Translate (free, no API key, browser-side) ---- */
-function detectLang(text) {
-  // Accented characters and Spanish-only punctuation are definitive
-  if (/[áéíóúüñ¿¡]/i.test(text)) return "es";
-  // Only words that are not common standalone English words
-  if (/\b(los|las|del|una|que|por|para|pero|sus|mis|este|esta|ese|esa|muy|bien|como|todo|todos|toda|cuando|porque|tambien|conmigo|contigo|consigo|tengo|tienes|tiene|tenemos|quiero|quieres|queremos|voy|vas|vamos|soy|eres|somos|estoy|estamos|nosotros|ellos|ellas|siempre|nunca|hola|gracias|buenos|buenas|donde|cuanto|mucho|muchos|mucha|muchas|poco|poca)\b/i.test(text)) return "es";
-  return "en";
-}
 
 /* ---- English cultural / colloquial notes ---- */
 const EN_CULTURE = {
@@ -1075,26 +1068,24 @@ async function fetchTranslateData(input, sourceLang, targetLang) {
 }
 
 async function translatePhrase(input, forced) {
-  let sourceLang, targetLang;
+  let sourceLang, targetLang, data;
   if (forced === "en2es") {
     sourceLang = "en"; targetLang = "es";
+    data = await fetchTranslateData(input, sourceLang, targetLang);
   } else if (forced === "es2en") {
     sourceLang = "es"; targetLang = "en";
+    data = await fetchTranslateData(input, sourceLang, targetLang);
   } else {
-    sourceLang = detectLang(input);
-    targetLang = sourceLang === "es" ? "en" : "es";
-  }
-
-  let data = await fetchTranslateData(input, sourceLang, targetLang);
-  // Google's response includes its own detected source language (index 2). If our
-  // heuristic guessed the wrong direction — e.g. Spanish text with no accents or
-  // whitelisted marker words — trust the API's detection and re-fetch correctly.
-  if (!forced) {
+    // Let Google's own language identifier decide the direction (sl=auto) instead of
+    // guessing client-side — a client-supplied sl skips real detection, which is what
+    // let mixed-language input like "me llamo hunter" translate the wrong way before.
+    data = await fetchTranslateData(input, "auto", "en");
     const detected = typeof data[2] === "string" ? data[2] : null;
-    if (detected && detected !== sourceLang && (detected === "en" || detected === "es")) {
-      sourceLang = detected;
-      targetLang = sourceLang === "es" ? "en" : "es";
-      data = await fetchTranslateData(input, sourceLang, targetLang);
+    if (detected === "es") {
+      sourceLang = "es"; targetLang = "en";
+    } else {
+      sourceLang = "en"; targetLang = "es";
+      data = await fetchTranslateData(input, "auto", "es");
     }
   }
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
