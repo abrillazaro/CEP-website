@@ -651,7 +651,13 @@ const STR = {
     instrErr: "Incorrect credentials. Please try again.",
     reassure: "No credit card needed", acctToast: "Account created (demo)",
     founderTitle: "Our Founder", founderKicker: "Meet Abril",
-    founderBio: "Abril is a Texas native and native English speaker with a Bachelor of Arts in Philosophy from the University of Texas at Austin. She has over 15 years of experience helping Spanish-speaking family members develop their English communication skills, has volunteered as a Spanish interpreter for pro bono legal services, and studied paralegal studies and American law at her local community college. She is currently based in EdoMéx, Mexico, where she is pursuing law school while building The Corporate English Project from the ground up.",
+    founderBio: [
+      "Nice to meet you, I'm Abril — founder and instructor of The Corporate English Project (CEP). I'm a native English speaker, and I hold a Bachelor of Arts in Philosophy from the University of Texas at Austin. Hook 'em horns!",
+      "I'm passionate about people, literacy, logic, quality education, and accessibility — and that combination has become the pillars of the CEP. I've always wanted to help bridge the divides that separate people, and language is so often one of them. Ultimately, I've always known I wanted to help people.",
+      "I began by teaching English to Spanish speakers, and from there my students grew to include people from all over the world — complete beginners starting from zero, advanced learners polishing fluency, and everyone in between, from all kinds of backgrounds.",
+      "I hope you'll join me and help me make the CEP that much more special.",
+      "Yours truly,\nAbril",
+    ],
     contactTitle: "Contact", scanMe: "scan me",
     formHead: "Leave your contact information", formSub: "and I’ll reach out soon",
     fFullName: "Full name", fCell: "Cell", fEmail: "Email", fOr: "or", fSubmit: "Submit",
@@ -706,7 +712,13 @@ const STR = {
     instrErr: "Credenciales incorrectas. Inténtalo de nuevo.",
     reassure: "Sin tarjeta de crédito", acctToast: "Cuenta creada (demo)",
     founderTitle: "Nuestra Fundadora", founderKicker: "Conoce a Abril",
-    founderBio: "Abril es originaria de Texas y hablante nativa de inglés, con una Licenciatura en Filosofía por la Universidad de Texas en Austin. Tiene más de 15 años de experiencia ayudando a familiares hispanohablantes a desarrollar sus habilidades de comunicación en inglés, ha sido voluntaria como intérprete de español para servicios legales pro bono y estudió asistencia legal y derecho estadounidense en su colegio comunitario. Actualmente vive en EdoMéx, México, donde cursa la carrera de derecho mientras construye The Corporate English Project desde cero.",
+    founderBio: [
+      "Mucho gusto, soy Abril — fundadora e instructora de The Corporate English Project (CEP). Soy hablante nativa de inglés y tengo una Licenciatura en Filosofía por la Universidad de Texas en Austin. ¡Hook 'em Horns!",
+      "Me apasionan las personas, la alfabetización, la lógica, la educación de calidad y la accesibilidad — y esa combinación se ha convertido en los pilares del CEP. Siempre he querido ayudar a cerrar las brechas que separan a las personas, y el idioma es, muy a menudo, una de ellas. En el fondo, siempre supe que quería ayudar a la gente.",
+      "Empecé enseñando inglés a hispanohablantes, y desde ahí mis estudiantes crecieron hasta incluir personas de todo el mundo — principiantes que comenzaban desde cero, estudiantes avanzados puliendo su fluidez, y todo lo que hay en medio, de todo tipo de trasfondos.",
+      "Espero que te unas a mí y me ayudes a hacer del CEP algo aún más especial.",
+      "Con cariño,\nAbril",
+    ],
     contactTitle: "Contacto", scanMe: "escáneame",
     formHead: "Déjame tus datos de contacto", formSub: "y te escribo pronto",
     fFullName: "Nombre completo", fCell: "Celular", fEmail: "Correo", fOr: "o", fSubmit: "Enviar",
@@ -1760,7 +1772,9 @@ function CTASection({ t, currency, lang, tz }) {
             <h2 className="how-title">{t.founderTitle}</h2>
             <div className="how-rule" />
             <div className="how-kicker">{t.founderKicker}</div>
-            <p className="how-body">{t.founderBio}</p>
+            {t.founderBio.map((para, i) => (
+              <p className="how-body" key={i} style={{ whiteSpace: "pre-line" }}>{para}</p>
+            ))}
             <div className="founder-video-ph">
               <div className="founder-video-play">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
@@ -1780,32 +1794,32 @@ function CTASection({ t, currency, lang, tz }) {
               <h3 className="founder-faq-title">{isEs ? "Preguntas frecuentes" : "Frequently Asked Questions"}</h3>
               {(isEs ? [
                 { q: "Cuéntame más sobre The Corporate English Project.",
-                  a: "La verdad es que ya está todo aquí — pero aquí tienes justo lo que probablemente buscas:",
                   links: [
                     { label: "¿Qué es CEP? Lee el artículo de bienvenida", href: "/blog/bienvenidos-a-cep.html" },
                     { label: "Precios y horario: Lunes y Miércoles", href: "/courses/mon-wed.html" },
                     { label: "Precios y horario: Viernes", href: "/courses/friday.html" },
                   ] },
                 { q: "¿Ofrecen clases para niños?",
-                  a: "Por ahora nuestros cursos son para personas de 18 años en adelante. Más adelante abriremos un grupo para estudiantes más jóvenes — avísanos si te interesa." },
+                  a: "Por ahora nuestros cursos son para personas de 18 años en adelante. Más adelante abriremos un grupo para estudiantes más jóvenes." },
                 { q: "¿Ofrecen clases individuales?",
                   a: "No — solo ofrecemos clases grupales. Ese es el espíritu de The Corporate English Project: aprender en comunidad, no lecciones uno a uno. Si tienes una necesidad distinta, escríbenos por WhatsApp y vemos qué podemos hacer." },
               ] : [
                 { q: "Tell me more about The Corporate English Project.",
-                  a: "Honestly, it's all right here already — but here's exactly what you're probably looking for:",
                   links: [
                     { label: "What is CEP? Read the welcome post", href: "/blog/bienvenidos-a-cep.html" },
                     { label: "Pricing & schedule: Monday & Wednesday", href: "/courses/mon-wed.html" },
                     { label: "Pricing & schedule: Friday", href: "/courses/friday.html" },
                   ] },
                 { q: "Do you offer classes for kids?",
-                  a: "Right now our courses are for learners 18 and older. We'll open a group for younger students in the future — let us know if you're interested." },
+                  a: "Right now our courses are for learners 18 and older. We'll open a group for younger students in the future." },
                 { q: "Do you offer individual classes?",
                   a: "No — we only offer group classes. That's the spirit of The Corporate English Project: learning as a community, not one-on-one lessons. If you have a different need, reach out on WhatsApp and we'll see what we can do." },
               ]).map((item, i) => (
                 <details className="founder-faq-item" key={i}>
                   <summary>{item.q}</summary>
-                  <p className={"founder-faq-answer" + (item.links ? " has-links" : "")}>{item.a}</p>
+                  {item.a ? (
+                    <p className={"founder-faq-answer" + (item.links ? " has-links" : "")}>{item.a}</p>
+                  ) : null}
                   {item.links ? (
                     <ul className="founder-faq-links">
                       {item.links.map((l, j) => (

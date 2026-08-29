@@ -221,7 +221,13 @@ const STR = {
     ethos2: "Deep language learning can be challenging, but our goal is never to make it complex. Instead, the goal of our project is to make the process approachable. The CEP approach is completely holistic and intertwined within its own parts—blending the practice of classes and tutoring, the daily habits of drills, and the deep-dive context of cross-reference all into one seamless experience.",
     ethos3: "Ultimately, language is inherently communal. Therefore, the ability to communicate with others in real time—across topics, levels, and contexts—is a vital tool for embodying this unique new skill. The CEP is built on the belief that the best learning happens when students are immersed in the full experience of the language, with all the necessary tools, and together.",
     founderTitle: "Our Founder", founderKicker: "Meet Abril",
-    founderBio: "Abril is a Texas native and native English speaker with a Bachelor of Arts in Philosophy from the University of Texas at Austin. She has over 15 years of experience helping Spanish-speaking family members develop their English communication skills, has volunteered as a Spanish interpreter for pro bono legal services, and studied paralegal studies and American law at her local community college. She is currently based in EdoMéx, Mexico, where she is pursuing law school while building The Corporate English Project from the ground up.",
+    founderBio: [
+      "Nice to meet you, I'm Abril — founder and instructor of The Corporate English Project (CEP). I'm a native English speaker, and I hold a Bachelor of Arts in Philosophy from the University of Texas at Austin. Hook 'em horns!",
+      "I'm passionate about people, literacy, logic, quality education, and accessibility — and that combination has become the pillars of the CEP. I've always wanted to help bridge the divides that separate people, and language is so often one of them. Ultimately, I've always known I wanted to help people.",
+      "I began by teaching English to Spanish speakers, and from there my students grew to include people from all over the world — complete beginners starting from zero, advanced learners polishing fluency, and everyone in between, from all kinds of backgrounds.",
+      "I hope you'll join me and help me make the CEP that much more special.",
+      "Yours truly,\nAbril",
+    ],
     founderVideoCap: "Founder intro · video coming soon",
     footer: "© 2025 The Corporate English Project · All rights reserved",
   },
@@ -234,7 +240,13 @@ const STR = {
     ethos1: "The Corporate English Project es una iniciativa integral de aprendizaje del inglés con raíz en el concepto latino de corpus, o cuerpo: la idea de que el idioma es un cuerpo completo de comunicación, no una colección de habilidades aisladas. La meta es formar comunicadores completos — no solo estudiantes de gramática o practicantes de conversación, sino personas capaces de leer, escribir, hablar, escuchar y pensar en inglés con confianza.",
     ethos2: "El lenguaje es comunal por naturaleza. La verdadera fluidez no requiere solo conocimiento técnico, sino la capacidad de comunicarse con otros en tiempo real, a través de temas, niveles y contextos. El CEP se basa en la creencia de que el mejor aprendizaje ocurre cuando los estudiantes se sumergen en la experiencia completa del idioma — juntos.",
     founderTitle: "Nuestra Fundadora", founderKicker: "Conoce a Abril",
-    founderBio: "Abril es originaria de Texas y hablante nativa de inglés, con una Licenciatura en Filosofía por la Universidad de Texas en Austin. Tiene más de 15 años de experiencia ayudando a familiares hispanohablantes a desarrollar sus habilidades de comunicación en inglés, ha sido voluntaria como intérprete de español para servicios legales pro bono y estudió asistencia legal y derecho estadounidense en su colegio comunitario. Actualmente vive en EdoMéx, México, donde cursa la carrera de derecho mientras construye The Corporate English Project desde cero.",
+    founderBio: [
+      "Mucho gusto, soy Abril — fundadora e instructora de The Corporate English Project (CEP). Soy hablante nativa de inglés y tengo una Licenciatura en Filosofía por la Universidad de Texas en Austin. ¡Hook 'em Horns!",
+      "Me apasionan las personas, la alfabetización, la lógica, la educación de calidad y la accesibilidad — y esa combinación se ha convertido en los pilares del CEP. Siempre he querido ayudar a cerrar las brechas que separan a las personas, y el idioma es, muy a menudo, una de ellas. En el fondo, siempre supe que quería ayudar a la gente.",
+      "Empecé enseñando inglés a hispanohablantes, y desde ahí mis estudiantes crecieron hasta incluir personas de todo el mundo — principiantes que comenzaban desde cero, estudiantes avanzados puliendo su fluidez, y todo lo que hay en medio, de todo tipo de trasfondos.",
+      "Espero que te unas a mí y me ayudes a hacer del CEP algo aún más especial.",
+      "Con cariño,\nAbril",
+    ],
     founderVideoCap: "Presentación · video próximamente",
     footer: "© 2025 The Corporate English Project · Todos los derechos reservados",
   },
@@ -349,7 +361,11 @@ function AboutPage() {
             </div>
             <div className="founder-bio">
               <p className="kicker">{t.founderKicker}</p>
-              <div className="prose"><p>{t.founderBio}</p></div>
+              <div className="prose">
+                {t.founderBio.map((para, i) => (
+                  <p key={i} style={{ whiteSpace: "pre-line" }}>{para}</p>
+                ))}
+              </div>
             </div>
           </div>
         </div>
