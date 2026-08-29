@@ -1768,20 +1768,6 @@ function CTASection({ t, currency, lang, tz }) {
       </div>
       <div style={{ padding:"12px 0 64px" }}>
         <div className="founder-row">
-          <div className="founder-left">
-            <h2 className="how-title">{t.founderTitle}</h2>
-            <div className="how-rule" />
-            <div className="how-kicker">{t.founderKicker}</div>
-            {t.founderBio.map((para, i) => (
-              <p className="how-body" key={i} style={{ whiteSpace: "pre-line" }}>{para}</p>
-            ))}
-            <div className="founder-video-ph">
-              <div className="founder-video-play">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
-              </div>
-              <span className="founder-video-cap">{isEs ? "Video próximamente" : "Video coming soon"}</span>
-            </div>
-          </div>
           <div className="founder-right">
             <a className="featured-post" href="/blog/bienvenidos-a-cep.html">
               <span className="featured-post-img" />
@@ -1829,6 +1815,20 @@ function CTASection({ t, currency, lang, tz }) {
                   ) : null}
                 </details>
               ))}
+            </div>
+          </div>
+          <div className="founder-left">
+            <h2 className="how-title">{t.founderTitle}</h2>
+            <div className="how-rule" />
+            <div className="how-kicker">{t.founderKicker}</div>
+            {t.founderBio.map((para, i) => (
+              <p className="how-body" key={i} style={{ whiteSpace: "pre-line" }}>{para}</p>
+            ))}
+            <div className="founder-video-ph">
+              <div className="founder-video-play">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>
+              </div>
+              <span className="founder-video-cap">{isEs ? "Video próximamente" : "Video coming soon"}</span>
             </div>
           </div>
         </div>
