@@ -432,8 +432,8 @@
 
   /* Founder row: text + video on the left, featured post on the right */
   .founder-row{display:flex;flex-wrap:wrap;gap:44px;max-width:1220px;margin:0 auto;
-    padding:0 56px;align-items:center;}
-  .founder-left{flex:1 1 460px;min-width:280px;text-align:left;}
+    padding:0 56px;align-items:flex-start;}
+  .founder-left{flex:1 1 460px;min-width:280px;text-align:left;margin-top:20px;}
   .founder-left .how-rule{margin:0 0 20px;}
   .founder-left .how-body{margin:0 0 28px;max-width:none;}
   .founder-video-ph{aspect-ratio:16/9;border-radius:16px;border:1px solid var(--line);
@@ -1151,11 +1151,16 @@ async function translatePhrase(input, forced) {
     // let mixed-language input like "me llamo hunter" translate the wrong way before.
     data = await fetchTranslateData(input, "auto", "en");
     const detected = typeof data[2] === "string" ? data[2] : null;
-    if (detected === "es") {
-      sourceLang = "es"; targetLang = "en";
-    } else {
+    if (detected === "en") {
       sourceLang = "en"; targetLang = "es";
       data = await fetchTranslateData(input, "auto", "es");
+    } else {
+      // This tool only ever bridges Spanish <-> English, so anything not detected as
+      // English is treated as Spanish — including Google's occasional false positives
+      // for Spanish words it also shares with Italian/Portuguese (e.g. "casa"), which
+      // used to fall through to "assume English" and get translated INTO Spanish,
+      // just echoing the same word back.
+      sourceLang = "es"; targetLang = "en";
     }
   }
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
