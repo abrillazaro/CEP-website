@@ -152,7 +152,6 @@
   .pill{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
     padding:5px 10px;border-radius:999px;background:var(--sage-tint);color:var(--sage-deep);}
   .pill.free{background:#e4ede4;color:var(--sage-deep);}
-  .pill.pro{background:var(--navy);color:#fff;}
   .card-body{padding:26px;}
   .trans-row{display:flex;align-items:flex-start;gap:16px;}
   .trans{font-family:var(--serif);font-weight:600;color:var(--navy);
@@ -178,31 +177,12 @@
   .ex .en{font-size:15px;color:var(--muted);margin-top:3px;}
 
   /* Gate */
-  .gate{margin:8px 26px 26px;border:1px dashed var(--line-strong);border-radius:18px;
-    background:linear-gradient(180deg,var(--surface-soft),#fff);padding:22px 24px;}
-  .gate-head{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
-  .gate-title{font-family:var(--serif);font-weight:600;color:var(--navy);font-size:22px;}
-  .gate-sub{color:var(--muted);font-size:14.5px;margin:0 0 18px;}
-  .locked-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .locked{position:relative;border:1px solid var(--line);border-radius:14px;background:#fff;
-    padding:16px 18px;overflow:hidden;cursor:pointer;
-    transition:border-color .18s,transform .12s,box-shadow .2s;}
-  .locked:hover{border-color:var(--sage);transform:translateY(-2px);box-shadow:var(--shadow-md);}
-  .locked h4{margin:0 0 6px;font-size:15px;color:var(--navy);display:flex;align-items:center;gap:8px;}
-  .locked .blurpv{filter:blur(4.5px);opacity:.55;user-select:none;font-size:14px;color:var(--ink);
-    line-height:1.5;}
-  .locked .lockcta{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;
-    justify-content:center;gap:7px;padding:10px;font-size:13px;font-weight:700;color:var(--navy);
-    background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.96) 55%);}
-  .gate-actions{display:flex;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap;}
+  .gate-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    padding:18px 26px 26px;border-top:1px solid var(--line);margin-top:4px;}
   .btn-save{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--navy);
     background:transparent;color:var(--navy);border-radius:12px;padding:12px 20px;font-weight:700;
     font-size:15px;transition:background .15s,color .15s;}
   .btn-save:hover{background:var(--navy);color:#fff;}
-  .btn-pro{display:inline-flex;align-items:center;gap:9px;border:none;background:var(--sage);
-    color:#fff;border-radius:12px;padding:12px 20px;font-weight:700;font-size:15px;
-    transition:background .2s,transform .12s;}
-  .btn-pro:hover{background:var(--sage-deep);transform:translateY(-1px);}
 
   /* Loading / error */
   .loading{display:flex;align-items:center;gap:12px;justify-content:center;
@@ -630,21 +610,13 @@ const STR = {
     go: "Translate", auto: "Detect language",
     quick: ["aprovechar", "to look forward to", "echar de menos", "hindsight"],
     quickLabel: "Try:",
-    free: "Free", pro: "Pro",
+    free: "Free",
     examples: "In a sentence", source: "You searched",
     listen: "Listen", listening: "Playing",
-    gateTitle: "Go further with this word",
-    gateSub: "Translation, definitions and audio are always free. Unlock natural usage and live practice with Pro.",
-    idiomsTitle: "Idioms & natural usage",
-    practiceTitle: "Practice this in conversation",
-    practiceBlur: "Start a guided role-play that uses this word the way a native speaker would — with instant feedback on tone, register and grammar.",
-    unlock: "Unlock with Pro",
-    save: "Save to my study deck", tryPro: "Start free trial", newSearch: "New search",
+    save: "Save to my study deck", newSearch: "New search",
     err: "Couldn’t reach the translator just now. Please try again.",
     mSaveTitle: "Save to your study deck",
     mSaveLead: "Create a free account to build your personal vocabulary and pick up where you left off.",
-    mProTitle: "Unlock Pro",
-    mProLead: "Create your account to start a 7-day free trial — idioms, conversation practice and adaptive decks.",
     email: "Email", password: "Password", create: "Create account",
     orcont: "or", google: "Continue with Google",
     haveAcct: "New to the CEP?", loginLink: "Go pro",
@@ -690,21 +662,13 @@ const STR = {
     go: "Traducir", auto: "Detectar idioma",
     quick: ["aprovechar", "to look forward to", "echar de menos", "hindsight"],
     quickLabel: "Prueba:",
-    free: "Gratis", pro: "Pro",
+    free: "Gratis",
     examples: "En una frase", source: "Buscaste",
     listen: "Escuchar", listening: "Reproduciendo",
-    gateTitle: "Profundiza en esta palabra",
-    gateSub: "La traducción, las definiciones y el audio siempre son gratis. Desbloquea el uso natural y la práctica en vivo con Pro.",
-    idiomsTitle: "Modismos y uso natural",
-    practiceTitle: "Practica esto en una conversación",
-    practiceBlur: "Inicia un juego de roles guiado que usa esta palabra como lo haría un nativo — con correcciones al instante de tono, registro y gramática.",
-    unlock: "Desbloquear con Pro",
-    save: "Guardar en mi mazo de estudio", tryPro: "Prueba gratis", newSearch: "Nueva búsqueda",
+    save: "Guardar en mi mazo de estudio", newSearch: "Nueva búsqueda",
     err: "No pudimos conectar con el traductor. Inténtalo de nuevo.",
     mSaveTitle: "Guarda en tu mazo de estudio",
     mSaveLead: "Crea una cuenta gratis para armar tu vocabulario personal y continuar donde lo dejaste.",
-    mProTitle: "Desbloquea Pro",
-    mProLead: "Crea tu cuenta para empezar una prueba de 7 días — modismos, práctica conversacional y mazos adaptativos.",
     email: "Correo", password: "Contraseña", create: "Crear cuenta",
     orcont: "o", google: "Continuar con Google",
     haveAcct: "¿Nuevo en el CEP?", loginLink: "Házte Pro",
@@ -1552,19 +1516,8 @@ function SearchBar({ t, value, setValue, onGo, busy, dir, cycleDir, listening, o
 }
 
 /* ---- Locked pro card ---- */
-function LockedCard({ t, icon, title, children, onUnlock }) {
-  return (
-    <div className="locked" onClick={onUnlock}>
-      <h4><Icon name={icon} size={17} /> {title}
-        <span className="pill pro" style={{ marginLeft:"auto" }}>Pro</span></h4>
-      <div className="blurpv">{children}</div>
-      <div className="lockcta"><Icon name="lock" size={15} /> {t.unlock}</div>
-    </div>
-  );
-}
-
 /* ---- Translation result ---- */
-function Result({ t, data, onSave, onPro, onNew }) {
+function Result({ t, data, onSave, onNew }) {
   const [playing, setPlaying] = useState(false);
   const tgt = data.targetLang || "en";
   const src = data.sourceLang || "es";
@@ -1616,35 +1569,13 @@ function Result({ t, data, onSave, onPro, onNew }) {
           <WordBreakdown t={t} rows={data.breakdown} sourceLang={data.sourceLang} targetLang={data.targetLang} />
           <OtherWays t={t} natural={data.translation} literal={data.literal} alternatives={data.alternatives} sourceLang={data.sourceLang} targetLang={data.targetLang} />
         </div>
-        <div className="gate">
-          <div className="gate-head">
-            <span style={{ color:"var(--sage-deep)" }}><Icon name="spark" size={20} /></span>
-            <span className="gate-title">{t.gateTitle}</span>
-          </div>
-          <p className="gate-sub">{t.gateSub}</p>
-          <div className="locked-grid">
-            <LockedCard t={t} icon="spark" title={t.idiomsTitle} onUnlock={onPro}>
-              {Array.isArray(data.idioms) && data.idioms.length
-                ? data.idioms.slice(0,2).map((id,i) =>
-                    <div key={i} style={{ marginBottom:6 }}><b>{id.phrase}</b> — {id.meaning}</div>
-                  )
-                : <div>Common idioms and natural collocations for this word, with examples.</div>}
-            </LockedCard>
-            <LockedCard t={t} icon="chat" title={t.practiceTitle} onUnlock={onPro}>
-              {t.practiceBlur}
-            </LockedCard>
-          </div>
-          <div className="gate-actions">
-            <button className="btn-save" onClick={onSave}>
-              <Icon name="bookmark" size={18} /> {t.save}
-            </button>
-            <button className="btn-pro" onClick={onPro}>
-              <Icon name="spark" size={18} /> {t.tryPro}
-            </button>
-            <button className="nav-link" onClick={onNew} style={{ marginLeft:"auto" }}>
-              {t.newSearch}
-            </button>
-          </div>
+        <div className="gate-actions">
+          <button className="btn-save" onClick={onSave}>
+            <Icon name="bookmark" size={18} /> {t.save}
+          </button>
+          <button className="nav-link" onClick={onNew} style={{ marginLeft:"auto" }}>
+            {t.newSearch}
+          </button>
         </div>
       </div>
     </div>
@@ -1855,10 +1786,9 @@ function Modal({ t, mode, onClose, onSubmit, onInstructor }) {
   const isInstr  = mode === "instructor";
 
   const title = isInstr          ? t.instructorLogin
-              : mode === "pro"   ? t.mProTitle
               : mode === "login" ? t.login
               : t.mSaveTitle;
-  const lead  = mode === "pro" ? t.mProLead : (!isInstr && mode !== "login") ? t.mSaveLead : "";
+  const lead  = (!isInstr && mode !== "login") ? t.mSaveLead : "";
 
   const handleSubmit = async () => {
     if (isInstr) {
@@ -2091,7 +2021,6 @@ function App() {
           {result ? (
             <Result t={t} data={result}
               onSave={() => setModal("save")}
-              onPro={() => setModal("pro")}
               onNew={() => { setResult(null); setError(""); setQuery(""); }} />
           ) : null}
 
