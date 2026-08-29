@@ -179,10 +179,6 @@
   /* Gate */
   .gate-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
     padding:18px 26px 26px;border-top:1px solid var(--line);margin-top:4px;}
-  .btn-save{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--navy);
-    background:transparent;color:var(--navy);border-radius:12px;padding:12px 20px;font-weight:700;
-    font-size:15px;transition:background .15s,color .15s;}
-  .btn-save:hover{background:var(--navy);color:#fff;}
 
   /* Loading / error */
   .loading{display:flex;align-items:center;gap:12px;justify-content:center;
@@ -613,7 +609,7 @@ const STR = {
     free: "Free",
     examples: "In a sentence", source: "You searched",
     listen: "Listen", listening: "Playing",
-    save: "Save to my study deck", newSearch: "New search",
+    newSearch: "New search",
     err: "Couldn’t reach the translator just now. Please try again.",
     mSaveTitle: "Save to your study deck",
     mSaveLead: "Create a free account to build your personal vocabulary and pick up where you left off.",
@@ -665,7 +661,7 @@ const STR = {
     free: "Gratis",
     examples: "En una frase", source: "Buscaste",
     listen: "Escuchar", listening: "Reproduciendo",
-    save: "Guardar en mi mazo de estudio", newSearch: "Nueva búsqueda",
+    newSearch: "Nueva búsqueda",
     err: "No pudimos conectar con el traductor. Inténtalo de nuevo.",
     mSaveTitle: "Guarda en tu mazo de estudio",
     mSaveLead: "Crea una cuenta gratis para armar tu vocabulario personal y continuar donde lo dejaste.",
@@ -1126,6 +1122,20 @@ async function translatePhrase(input, forced) {
       // just echoing the same word back.
       sourceLang = "es"; targetLang = "en";
     }
+    // Belt-and-suspenders: Google's short-text detector can still mislabel a lone
+    // Spanish-only word as English (seen again with "casa" after the fix above), which
+    // makes the "translation" a no-op — it just echoes the input back. If that happens,
+    // the guessed direction was wrong; flip it and retry once.
+    const firstPass = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
+    if (firstPass.trim().toLowerCase() === input.trim().toLowerCase()) {
+      const flipSource = sourceLang === "en" ? "es" : "en";
+      const flipTarget = sourceLang === "en" ? "en" : "es";
+      const retryData = await fetchTranslateData(input, flipSource, flipTarget);
+      const retryText = retryData[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
+      if (retryText.trim().toLowerCase() !== input.trim().toLowerCase()) {
+        sourceLang = flipSource; targetLang = flipTarget; data = retryData;
+      }
+    }
   }
   const translation = data[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
   if (!translation) throw new Error("Empty response");
@@ -1517,7 +1527,7 @@ function SearchBar({ t, value, setValue, onGo, busy, dir, cycleDir, listening, o
 
 /* ---- Locked pro card ---- */
 /* ---- Translation result ---- */
-function Result({ t, data, onSave, onNew }) {
+function Result({ t, data, onNew }) {
   const [playing, setPlaying] = useState(false);
   const tgt = data.targetLang || "en";
   const src = data.sourceLang || "es";
@@ -1570,9 +1580,6 @@ function Result({ t, data, onSave, onNew }) {
           <OtherWays t={t} natural={data.translation} literal={data.literal} alternatives={data.alternatives} sourceLang={data.sourceLang} targetLang={data.targetLang} />
         </div>
         <div className="gate-actions">
-          <button className="btn-save" onClick={onSave}>
-            <Icon name="bookmark" size={18} /> {t.save}
-          </button>
           <button className="nav-link" onClick={onNew} style={{ marginLeft:"auto" }}>
             {t.newSearch}
           </button>
@@ -2020,7 +2027,6 @@ function App() {
 
           {result ? (
             <Result t={t} data={result}
-              onSave={() => setModal("save")}
               onNew={() => { setResult(null); setError(""); setQuery(""); }} />
           ) : null}
 
