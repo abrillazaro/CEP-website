@@ -428,7 +428,7 @@
 
   .founder-right{flex:1 1 380px;min-width:280px;display:flex;flex-direction:column;}
   .featured-post{display:flex;flex-direction:column;gap:16px;text-decoration:none;}
-  .featured-post-img{height:280px;border-radius:14px;width:100%;display:block;
+  .featured-post-img{height:280px;border-radius:14px;width:100%;display:block;object-fit:cover;
     background-color:#e3e8e1;
     background-image:repeating-linear-gradient(135deg, rgba(93,124,105,.16) 0 12px, rgba(93,124,105,.06) 12px 24px);}
   .featured-post-title{font-family:var(--serif);font-weight:600;font-size:27px;
@@ -1719,7 +1719,7 @@ function CTASection({ t, currency, lang, tz }) {
           </div>
           <div className="founder-right">
             <a className="featured-post" href="/blog/bienvenidos-a-cep.html">
-              <span className="featured-post-img" />
+              <img className="featured-post-img" src="/blog/images/bienvenidos-a-cep.jpg" alt="" />
               <h3 className="featured-post-title">{isEs
                 ? "Bienvenid@s a The Corporate English Project"
                 : "Welcome to The Corporate English Project"}</h3>
