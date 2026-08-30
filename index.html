@@ -1046,20 +1046,7 @@ const ES_GRAMMAR = {
   conocer:["to know / to meet","the infinitive of 'to know' a person or place, or 'to meet' for the first time — 'conozco a Ana' = I know Ana"],
 };
 
-// Bounds how long any single translate request can hang — a slow/stalled
-// response (as opposed to an outright error) would otherwise block the UI
-// indefinitely with no fallback kicking in.
-async function fetchWithTimeout(url, ms) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), ms);
-  try {
-    return await fetch(url, { signal: ctrl.signal });
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-async function getBreakdown(inputText, sourceLang, targetLang, useFallback) {
+async function getBreakdown(inputText, sourceLang, targetLang) {
   // Include apostrophes so contractions like "y'all", "don't" stay as one token
   const rawWords = inputText.match(/[\w'áéíóúüñÁÉÍÓÚÜÑ]+/g) || [];
   // Deduplicate while preserving first-occurrence order
@@ -1069,7 +1056,7 @@ async function getBreakdown(inputText, sourceLang, targetLang, useFallback) {
   });
   if (!words.length || words.length > 12) return [];
 
-  const lookupWord = async word => {
+  const rows = await Promise.all(words.map(async word => {
     const key = word.toLowerCase();
     // Spanish input: grammar lookup gives both translation and note — skip API call
     if (sourceLang === "es") {
@@ -1079,18 +1066,13 @@ async function getBreakdown(inputText, sourceLang, targetLang, useFallback) {
     // Fetch translation for this word
     let tgt = "", apiNote = "";
     try {
-      if (useFallback) {
-        tgt = await fetchMyMemory(word, sourceLang, targetLang);
-      } else {
-        const r = await fetchWithTimeout(
-          `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=bd&q=${encodeURIComponent(word)}`,
-          3000
-        );
-        if (r.ok) {
-          const d = await r.json();
-          tgt = d[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
-          apiNote = Array.isArray(d[3]) && d[3]?.[0]?.[0] ? d[3][0][0] : "";
-        }
+      const r = await fetch(
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=bd&q=${encodeURIComponent(word)}`
+      );
+      if (r.ok) {
+        const d = await r.json();
+        tgt = d[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
+        apiNote = Array.isArray(d[3]) && d[3]?.[0]?.[0] ? d[3][0][0] : "";
       }
     } catch {}
     if (!tgt) return null;
@@ -1099,46 +1081,18 @@ async function getBreakdown(inputText, sourceLang, targetLang, useFallback) {
       ? (EN_CULTURE[key] || EN_GRAMMAR[key] || apiNote)
       : (ES_GRAMMAR[key]?.[1] || apiNote);
     return { src: word, tgt, note };
-  };
-
-  // Cap concurrency instead of firing every word at once — a burst of up to 12
-  // simultaneous requests to the same free endpoint (on top of the main
-  // translation calls) is more likely to get individually rate-limited.
-  const BATCH_SIZE = 4;
-  const rows = [];
-  for (let i = 0; i < words.length; i += BATCH_SIZE) {
-    const batch = words.slice(i, i + BATCH_SIZE);
-    rows.push(...await Promise.all(batch.map(lookupWord)));
-  }
+  }));
   return rows.filter(Boolean);
 }
 
-async function fetchTranslateData(input, sourceLang, targetLang, attempt) {
-  attempt = attempt || 0;
+async function fetchTranslateData(input, sourceLang, targetLang) {
   const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
-  let r;
-  try {
-    r = await fetchWithTimeout(url, 3000);
-  } catch (err) {
-    // fetch() itself only throws for a real network-level failure (offline,
-    // DNS, a stalled response we aborted) — that's worth one quick retry.
-    if (attempt < 1) {
-      await new Promise(res => setTimeout(res, 300));
-      return fetchTranslateData(input, sourceLang, targetLang, attempt + 1);
-    }
-    throw err;
-  }
-  if (!r.ok) {
-    // A non-OK response (429/403) means Google is actively blocking this
-    // endpoint right now, not a one-off blip — retrying the same request
-    // just stalls the user for no benefit. Fail immediately so the caller
-    // can move on to the backup provider instead.
-    throw new Error(`HTTP ${r.status}`);
-  }
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
 
-async function translateViaGoogle(input, forced) {
+async function translatePhrase(input, forced) {
   let sourceLang, targetLang, data;
   if (forced === "en2es") {
     sourceLang = "en"; targetLang = "es";
@@ -1212,88 +1166,6 @@ async function translateViaGoogle(input, forced) {
     idioms: [],
     breakdown
   };
-}
-
-// Rough Spanish-vs-English guess used only when the primary Google endpoint is
-// unreachable and we can't ask it for real language detection. Good enough for
-// a fallback path — the primary path above already has proper detection.
-function guessIsSpanish(text) {
-  const t = text.toLowerCase().trim();
-  if (/[áéíóúñ¿¡]/.test(t)) return true;
-  const esWords = new Set(["el","la","los","las","de","que","y","en","un","una","es","son","por","con","para","como","más","pero","su","le","lo","se","no","sí","yo","tú","él","ella","nosotros","ellos","gracias","hola","adiós","favor","saber","conocer","tristeza","amor","vida","casa","trabajo","hoy","mañana","ayer","bueno","malo"]);
-  const enWords = new Set(["the","is","are","am","was","were","what","how","where","when","who","why","thanks","thank","you","hello","goodbye","please","and","she","he","they","we","have","has","with","this","that","sadness","happy","sad","love","life","work","today","tomorrow","yesterday","good","bad"]);
-  const words = t.match(/[a-z']+/g) || [];
-  let esHits = 0, enHits = 0;
-  words.forEach(w => { if (esWords.has(w)) esHits++; if (enWords.has(w)) enHits++; });
-  if (esHits !== enHits) return esHits > enHits;
-  // No word-list match (likely a single unfamiliar word) — fall back to
-  // suffix shape, since e.g. "-ness"/"-tion" reads as English and
-  // "-ción"/"-mente" reads as Spanish.
-  const last = words[words.length - 1] || "";
-  const enSuffixes = ["ness","tion","sion","ing","ful","less","ment","able","ible"];
-  const esSuffixes = ["ción","sión","dad","tad","mente","ando","iendo"];
-  if (enSuffixes.some(s => last.endsWith(s))) return false;
-  if (esSuffixes.some(s => last.endsWith(s))) return true;
-  return true; // truly ambiguous — default to Spanish (this site's primary audience)
-}
-
-async function fetchMyMemory(input, sourceLang, targetLang) {
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(input)}&langpair=${sourceLang}|${targetLang}`;
-  const r = await fetchWithTimeout(url, 3000);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const d = await r.json();
-  const translation = d?.responseData?.translatedText;
-  if (!translation) throw new Error("Empty fallback response");
-  return translation;
-}
-
-// Backup translation path used only when Google's free endpoint is down or
-// rate-limited (it returns an HTML "Sorry..." page instead of JSON when that
-// happens, and can stay blocked for a while — retrying the same endpoint
-// doesn't help). MyMemory is a separate service, so it stays up independently.
-// It has no auto-detect, so direction comes from a lightweight local guess.
-async function translateViaFallback(input, forced) {
-  let sourceLang, targetLang;
-  if (forced === "en2es") { sourceLang = "en"; targetLang = "es"; }
-  else if (forced === "es2en") { sourceLang = "es"; targetLang = "en"; }
-  else if (guessIsSpanish(input)) { sourceLang = "es"; targetLang = "en"; }
-  else { sourceLang = "en"; targetLang = "es"; }
-
-  // Run the main translation and the word-by-word breakdown concurrently —
-  // they're independent requests once the direction is known, and doing
-  // them one after another just adds a second round trip of latency.
-  const [translation, breakdown] = await Promise.all([
-    fetchMyMemory(input, sourceLang, targetLang),
-    getBreakdown(input, sourceLang, targetLang, true).catch(() => [])
-  ]);
-  const literal = breakdown.length ? breakdown.map(r => r.tgt).join(" ") : "";
-
-  return {
-    input,
-    sourceLang,
-    targetLang,
-    translation,
-    literal,
-    alternatives: [],
-    partOfSpeech: "",
-    register: "",
-    pronunciation: "",
-    examples: [],
-    idioms: [],
-    breakdown
-  };
-}
-
-async function translatePhrase(input, forced) {
-  try {
-    return await translateViaGoogle(input, forced);
-  } catch (err) {
-    try {
-      return await translateViaFallback(input, forced);
-    } catch {
-      throw err;
-    }
-  }
 }
 
 function WordBreakdown({ t, rows, sourceLang, targetLang }) {
