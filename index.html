@@ -1102,20 +1102,26 @@ async function getBreakdown(inputText, sourceLang, targetLang, useFallback) {
 async function fetchTranslateData(input, sourceLang, targetLang, attempt) {
   attempt = attempt || 0;
   const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
+  let r;
   try {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return await r.json();
+    r = await fetch(url);
   } catch (err) {
-    // The free Google endpoint occasionally drops or rate-limits a single request
-    // (more common on mobile networks sharing a carrier IP). Retry with backoff
-    // before surfacing an error, instead of making the user manually retry.
-    if (attempt < 2) {
-      await new Promise(res => setTimeout(res, 500 * (attempt + 1)));
+    // fetch() itself only throws for a real network-level failure (offline,
+    // DNS, timeout) — that's worth one quick retry.
+    if (attempt < 1) {
+      await new Promise(res => setTimeout(res, 300));
       return fetchTranslateData(input, sourceLang, targetLang, attempt + 1);
     }
     throw err;
   }
+  if (!r.ok) {
+    // A non-OK response (429/403) means Google is actively blocking this
+    // endpoint right now, not a one-off blip — retrying the same request
+    // just stalls the user for no benefit. Fail immediately so the caller
+    // can move on to the backup provider instead.
+    throw new Error(`HTTP ${r.status}`);
+  }
+  return r.json();
 }
 
 async function translateViaGoogle(input, forced) {
