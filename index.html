@@ -1046,7 +1046,7 @@ const ES_GRAMMAR = {
   conocer:["to know / to meet","the infinitive of 'to know' a person or place, or 'to meet' for the first time — 'conozco a Ana' = I know Ana"],
 };
 
-async function getBreakdown(inputText, sourceLang, targetLang) {
+async function getBreakdown(inputText, sourceLang, targetLang, useFallback) {
   // Include apostrophes so contractions like "y'all", "don't" stay as one token
   const rawWords = inputText.match(/[\w'áéíóúüñÁÉÍÓÚÜÑ]+/g) || [];
   // Deduplicate while preserving first-occurrence order
@@ -1066,13 +1066,17 @@ async function getBreakdown(inputText, sourceLang, targetLang) {
     // Fetch translation for this word
     let tgt = "", apiNote = "";
     try {
-      const r = await fetch(
-        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=bd&q=${encodeURIComponent(word)}`
-      );
-      if (r.ok) {
-        const d = await r.json();
-        tgt = d[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
-        apiNote = Array.isArray(d[3]) && d[3]?.[0]?.[0] ? d[3][0][0] : "";
+      if (useFallback) {
+        tgt = await fetchMyMemory(word, sourceLang, targetLang);
+      } else {
+        const r = await fetch(
+          `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=bd&q=${encodeURIComponent(word)}`
+        );
+        if (r.ok) {
+          const d = await r.json();
+          tgt = d[0]?.map(s => s?.[0]).filter(Boolean).join("") || "";
+          apiNote = Array.isArray(d[3]) && d[3]?.[0]?.[0] ? d[3][0][0] : "";
+        }
       }
     } catch {}
     if (!tgt) return null;
@@ -1194,11 +1198,23 @@ async function translateViaGoogle(input, forced) {
 // unreachable and we can't ask it for real language detection. Good enough for
 // a fallback path — the primary path above already has proper detection.
 function guessIsSpanish(text) {
-  const t = text.toLowerCase();
+  const t = text.toLowerCase().trim();
   if (/[áéíóúñ¿¡]/.test(t)) return true;
-  const enWords = new Set(["the","is","are","am","was","were","what","how","where","when","who","why","thanks","thank","you","hello","goodbye","please","and","she","he","they","we","have","has","with","this","that"]);
+  const esWords = new Set(["el","la","los","las","de","que","y","en","un","una","es","son","por","con","para","como","más","pero","su","le","lo","se","no","sí","yo","tú","él","ella","nosotros","ellos","gracias","hola","adiós","favor","saber","conocer","tristeza","amor","vida","casa","trabajo","hoy","mañana","ayer","bueno","malo"]);
+  const enWords = new Set(["the","is","are","am","was","were","what","how","where","when","who","why","thanks","thank","you","hello","goodbye","please","and","she","he","they","we","have","has","with","this","that","sadness","happy","sad","love","life","work","today","tomorrow","yesterday","good","bad"]);
   const words = t.match(/[a-z']+/g) || [];
-  return !words.some(w => enWords.has(w));
+  let esHits = 0, enHits = 0;
+  words.forEach(w => { if (esWords.has(w)) esHits++; if (enWords.has(w)) enHits++; });
+  if (esHits !== enHits) return esHits > enHits;
+  // No word-list match (likely a single unfamiliar word) — fall back to
+  // suffix shape, since e.g. "-ness"/"-tion" reads as English and
+  // "-ción"/"-mente" reads as Spanish.
+  const last = words[words.length - 1] || "";
+  const enSuffixes = ["ness","tion","sion","ing","ful","less","ment","able","ible"];
+  const esSuffixes = ["ción","sión","dad","tad","mente","ando","iendo"];
+  if (enSuffixes.some(s => last.endsWith(s))) return false;
+  if (esSuffixes.some(s => last.endsWith(s))) return true;
+  return true; // truly ambiguous — default to Spanish (this site's primary audience)
 }
 
 async function fetchMyMemory(input, sourceLang, targetLang) {
@@ -1215,8 +1231,7 @@ async function fetchMyMemory(input, sourceLang, targetLang) {
 // rate-limited (it returns an HTML "Sorry..." page instead of JSON when that
 // happens, and can stay blocked for a while — retrying the same endpoint
 // doesn't help). MyMemory is a separate service, so it stays up independently.
-// It has no auto-detect, so direction comes from a lightweight local guess,
-// and there's no word-by-word breakdown in this mode.
+// It has no auto-detect, so direction comes from a lightweight local guess.
 async function translateViaFallback(input, forced) {
   let sourceLang, targetLang;
   if (forced === "en2es") { sourceLang = "en"; targetLang = "es"; }
@@ -1225,19 +1240,24 @@ async function translateViaFallback(input, forced) {
   else { sourceLang = "en"; targetLang = "es"; }
 
   const translation = await fetchMyMemory(input, sourceLang, targetLang);
+
+  let breakdown = [];
+  try { breakdown = await getBreakdown(input, sourceLang, targetLang, true); } catch {}
+  const literal = breakdown.length ? breakdown.map(r => r.tgt).join(" ") : "";
+
   return {
     input,
     sourceLang,
     targetLang,
     translation,
-    literal: "",
+    literal,
     alternatives: [],
     partOfSpeech: "",
     register: "",
     pronunciation: "",
     examples: [],
     idioms: [],
-    breakdown: []
+    breakdown
   };
 }
 
