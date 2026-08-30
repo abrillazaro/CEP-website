@@ -455,20 +455,6 @@
   .founder-faq-links a{font-size:14px;font-weight:600;color:var(--navy);text-decoration:underline;
     text-decoration-color:rgba(32,57,92,.35);text-underline-offset:2px;}
   .founder-faq-links a:hover{color:var(--sage-deep);}
-
-  /* Hamburger menu */
-  .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;
-    border:none;background:transparent;padding:8px;cursor:pointer;z-index:20;}
-  .hamburger span{display:block;width:22px;height:2px;background:var(--navy);border-radius:2px;
-    transition:transform .2s,opacity .2s;}
-  .mobile-menu{display:none;position:absolute;top:100%;right:0;background:var(--surface);
-    border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:var(--shadow-lg);
-    min-width:180px;flex-direction:column;gap:4px;z-index:100;}
-  .mobile-menu.open{display:flex;}
-  .mobile-menu a,.mobile-menu button{display:block;padding:10px 14px;border-radius:10px;
-    font-size:15px;font-weight:600;color:var(--navy);text-decoration:none;background:transparent;
-    border:none;text-align:left;width:100%;transition:background .15s;}
-  .mobile-menu a:hover,.mobile-menu button:hover{background:var(--surface-soft);}
   .menu-login{margin-top:4px;background:var(--navy) !important;color:#fff !important;
     border-radius:10px;}
   .menu-login:hover{opacity:.9;}
@@ -523,7 +509,6 @@
     .searchbar input{font-size:18px;}
     .btn-go span.lbl{display:none;}
     .btn-go{padding:0 16px;}
-    .hamburger{display:flex;}
     .btn-login{display:none;}
   }
   @media (max-width:540px){
@@ -1477,8 +1462,6 @@ function segStyle(active) {
 }
 
 function Nav({ t, lang, setLang, onHome, region, onRegionClick }) {
-  const [menuOpen, setMenuOpen] = React.useState(false);
-  const toggleMenu = () => setMenuOpen(o => !o);
   return (
     <nav className="nav" style={{ position:"relative" }}>
       <a className="nav-logo" href="#" onClick={onHome} aria-label="Back to start">
@@ -1491,13 +1474,6 @@ function Nav({ t, lang, setLang, onHome, region, onRegionClick }) {
           <Icon name="globe" size={17} stroke={2} />
           <button className="seg" onClick={() => setLang("en")} style={segStyle(lang === "en")}>EN</button>
           <button className="seg" onClick={() => setLang("es")} style={segStyle(lang === "es")}>ES</button>
-        </div>
-        <a className="nav-link hide-sm" href="/blog">{t.blog}</a>
-        <button className="hamburger" onClick={toggleMenu} aria-label="Menu">
-          <span /><span /><span />
-        </button>
-        <div className={"mobile-menu" + (menuOpen ? " open" : "")}>
-          <a href="/blog">{t.blog}</a>
         </div>
       </div>
     </nav>

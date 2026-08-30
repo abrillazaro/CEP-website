@@ -85,18 +85,16 @@ const { useState, useEffect } = React;
 
 const STR = {
   es: {
-    blogNav: "Bitácora", home: "Inicio",
+    home: "Inicio",
     title: "Artículos y preposiciones",
     soon: "Este artículo todavía se está escribiendo. Vuelve pronto para leerlo completo.",
-    back: "← Volver a la bitácora",
-    bcBlog: "Bitácora",
+    back: "← Volver al inicio",
   },
   en: {
-    blogNav: "Blog", home: "Home",
+    home: "Home",
     title: "Articles and prepositions",
     soon: "This article is still being written. Check back soon to read the full post.",
-    back: "← Back to the blog",
-    bcBlog: "Blog",
+    back: "← Back to home",
   },
 };
 
@@ -185,19 +183,17 @@ function PostPage() {
             <button className={"seg" + (lang === "en" ? " active" : "")} onClick={() => setLang("en")}>EN</button>
             <button className={"seg" + (lang === "es" ? " active" : "")} onClick={() => setLang("es")}>ES</button>
           </div>
-          <a className="nav-link active" href="/blog">{s.blogNav}</a>
         </div>
       </nav>
 
       <main className="post-main">
         <div className="post-breadcrumb">
           <a href="/">{s.home}</a> {" / "}
-          <a href="/blog">{s.bcBlog}</a> {" / "}
           <span>{s.title}</span>
         </div>
         <h1 className="post-title">{s.title}</h1>
         <p className="post-soon">{s.soon}</p>
-        <a className="post-back" href="/blog">{s.back}</a>
+        <a className="post-back" href="/">{s.back}</a>
       </main>
     </div>
   );
