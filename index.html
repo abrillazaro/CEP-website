@@ -159,6 +159,7 @@
   .pos{font-style:italic;color:var(--muted);font-size:16px;font-family:var(--serif);margin-top:4px;}
   .phon{font-size:16px;color:var(--navy-soft);margin-top:8px;font-variant:all-small-caps;
     letter-spacing:.02em;}
+  .trans-actions{display:flex;flex-wrap:wrap;gap:8px;}
   .speak{margin-top:6px;border:1px solid var(--line-strong);background:var(--surface);
     color:var(--navy);border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;
     display:inline-flex;align-items:center;gap:8px;transition:background .15s,border-color .15s;}
@@ -585,6 +586,8 @@ function Icon({ name, size = 22, stroke = 2 }) {
     case "swap":     return <svg {...p}><path d="M7 4 3 8l4 4"/><path d="M3 8h14"/><path d="m17 20 4-4-4-4"/><path d="M21 16H7"/></svg>;
     case "globe":    return <svg {...p}><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18Z"/></svg>;
     case "speaker":  return <svg {...p}><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg>;
+    case "copy":     return <svg {...p}><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>;
+    case "check":    return <svg {...p}><path d="M20 6 9 17l-5-5"/></svg>;
     case "lock":     return <svg {...p}><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>;
     case "bookmark": return <svg {...p}><path d="M6 4h12v16l-6-4-6 4V4Z"/></svg>;
     case "spark":    return <svg {...p}><path d="M12 2.5 14 9.6 21 12 14 14.4 12 21.5 10 14.4 3 12 10 9.6Z"/></svg>;
@@ -612,6 +615,7 @@ const STR = {
     free: "Free",
     examples: "In a sentence", source: "You searched",
     listen: "Listen", listening: "Playing",
+    copy: "Copy", copied: "Copied",
     newSearch: "New search",
     err: "Couldn’t reach the translator just now. Please try again.",
     mSaveTitle: "Save to your study deck",
@@ -664,6 +668,7 @@ const STR = {
     free: "Gratis",
     examples: "En una frase", source: "Buscaste",
     listen: "Escuchar", listening: "Reproduciendo",
+    copy: "Copiar", copied: "Copiado",
     newSearch: "Nueva búsqueda",
     err: "No pudimos conectar con el traductor. Inténtalo de nuevo.",
     mSaveTitle: "Guarda en tu mazo de estudio",
@@ -1532,6 +1537,7 @@ function SearchBar({ t, value, setValue, onGo, busy, dir, cycleDir, listening, o
 /* ---- Translation result ---- */
 function Result({ t, data, onNew }) {
   const [playing, setPlaying] = useState(false);
+  const [copied, setCopied] = useState(false);
   const tgt = data.targetLang || "en";
   const src = data.sourceLang || "es";
   const langWord = l => l === "es"
@@ -1543,6 +1549,27 @@ function Result({ t, data, onNew }) {
     setPlaying(true);
     u.onend = () => setPlaying(false);
     setTimeout(() => setPlaying(false), 4000);
+  };
+  const onCopy = async () => {
+    const text = data.translation || "";
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard unavailable — silently ignore */
+    }
   };
   return (
     <div className="result">
@@ -1562,12 +1589,18 @@ function Result({ t, data, onNew }) {
               <div className="trans">{data.translation}</div>
               {data.partOfSpeech ? <div className="pos">{data.partOfSpeech}</div> : null}
               {data.pronunciation ? <div className="phon">/{data.pronunciation}/</div> : null}
-              <button className={"speak" + (playing ? " playing" : "")} onClick={onListen}>
-                {playing ? <span className="eqbars"><span/><span/><span/></span>
-                         : <Icon name="speaker" size={16} />}
-                {playing ? t.listening : t.listen}
-                <span className="pill free" style={{ marginLeft:4 }}>{t.free}</span>
-              </button>
+              <div className="trans-actions">
+                <button className={"speak" + (playing ? " playing" : "")} onClick={onListen}>
+                  {playing ? <span className="eqbars"><span/><span/><span/></span>
+                           : <Icon name="speaker" size={16} />}
+                  {playing ? t.listening : t.listen}
+                  <span className="pill free" style={{ marginLeft:4 }}>{t.free}</span>
+                </button>
+                <button className={"speak" + (copied ? " playing" : "")} onClick={onCopy}>
+                  <Icon name={copied ? "check" : "copy"} size={16} />
+                  {copied ? t.copied : t.copy}
+                </button>
+              </div>
             </div>
           </div>
           {Array.isArray(data.examples) && data.examples.length ? <>
