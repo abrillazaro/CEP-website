@@ -1114,7 +1114,7 @@ async function fetchTranslateData(input, sourceLang, targetLang, attempt) {
   }
 }
 
-async function translatePhrase(input, forced) {
+async function translateViaGoogle(input, forced) {
   let sourceLang, targetLang, data;
   if (forced === "en2es") {
     sourceLang = "en"; targetLang = "es";
@@ -1188,6 +1188,69 @@ async function translatePhrase(input, forced) {
     idioms: [],
     breakdown
   };
+}
+
+// Rough Spanish-vs-English guess used only when the primary Google endpoint is
+// unreachable and we can't ask it for real language detection. Good enough for
+// a fallback path — the primary path above already has proper detection.
+function guessIsSpanish(text) {
+  const t = text.toLowerCase();
+  if (/[áéíóúñ¿¡]/.test(t)) return true;
+  const enWords = new Set(["the","is","are","am","was","were","what","how","where","when","who","why","thanks","thank","you","hello","goodbye","please","and","she","he","they","we","have","has","with","this","that"]);
+  const words = t.match(/[a-z']+/g) || [];
+  return !words.some(w => enWords.has(w));
+}
+
+async function fetchMyMemory(input, sourceLang, targetLang) {
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(input)}&langpair=${sourceLang}|${targetLang}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const d = await r.json();
+  const translation = d?.responseData?.translatedText;
+  if (!translation) throw new Error("Empty fallback response");
+  return translation;
+}
+
+// Backup translation path used only when Google's free endpoint is down or
+// rate-limited (it returns an HTML "Sorry..." page instead of JSON when that
+// happens, and can stay blocked for a while — retrying the same endpoint
+// doesn't help). MyMemory is a separate service, so it stays up independently.
+// It has no auto-detect, so direction comes from a lightweight local guess,
+// and there's no word-by-word breakdown in this mode.
+async function translateViaFallback(input, forced) {
+  let sourceLang, targetLang;
+  if (forced === "en2es") { sourceLang = "en"; targetLang = "es"; }
+  else if (forced === "es2en") { sourceLang = "es"; targetLang = "en"; }
+  else if (guessIsSpanish(input)) { sourceLang = "es"; targetLang = "en"; }
+  else { sourceLang = "en"; targetLang = "es"; }
+
+  const translation = await fetchMyMemory(input, sourceLang, targetLang);
+  return {
+    input,
+    sourceLang,
+    targetLang,
+    translation,
+    literal: "",
+    alternatives: [],
+    partOfSpeech: "",
+    register: "",
+    pronunciation: "",
+    examples: [],
+    idioms: [],
+    breakdown: []
+  };
+}
+
+async function translatePhrase(input, forced) {
+  try {
+    return await translateViaGoogle(input, forced);
+  } catch (err) {
+    try {
+      return await translateViaFallback(input, forced);
+    } catch {
+      throw err;
+    }
+  }
 }
 
 function WordBreakdown({ t, rows, sourceLang, targetLang }) {
