@@ -1703,6 +1703,10 @@ function CTASection({ t, currency, lang, tz }) {
     isEs ? "Hola, me interesa inscribir a mi hijo/a en un curso de inglés para niños en The Corporate English Project. ¿Podrían avisarme cuándo abra el próximo grupo?"
          : "Hi, I'm interested in enrolling my child in an English course at The Corporate English Project. Could you let me know when the next group opens?"
   );
+  const specialNeedLink = "https://wa.me/525572132329?text=" + encodeURIComponent(
+    isEs ? "Hola, tengo una necesidad particular para tomar clases de inglés. Me gustaría contarte más."
+         : "Hi, I have a specific need for taking English classes. I'd like to tell you more about it."
+  );
   return (
     <section className="cursos-section" id="cta">
       <div className="cursos-inner">
@@ -1784,7 +1788,7 @@ function CTASection({ t, currency, lang, tz }) {
                 { q: "¿Ofrecen clases para niños?",
                   aNode: <>Sí — actualmente los cursos abiertos para inscripción son para personas adultas, pero abrimos cursos nuevos de manera continua. Si quieres saber cuándo abre el próximo curso para niños, <a href={kidsNotifyLink} target="_blank" rel="noopener noreferrer"><strong>envíame un mensaje por WhatsApp</strong></a>.</> },
                 { q: "¿Ofrecen clases individuales?",
-                  a: "No — solo ofrecemos clases grupales. Ese es el espíritu de The Corporate English Project: aprender en comunidad, no lecciones uno a uno. Si tienes una necesidad distinta, escríbenos por WhatsApp y vemos qué podemos hacer." },
+                  aNode: <>No — solo ofrecemos clases grupales. Ese es el espíritu de The Corporate English Project: aprender en comunidad, no lecciones uno a uno. Si tienes una necesidad distinta, <a href={specialNeedLink} target="_blank" rel="noopener noreferrer"><strong>escríbenos por WhatsApp</strong></a> y vemos qué podemos hacer.</> },
               ] : [
                 { q: "Tell me more about The Corporate English Project.",
                   links: [
@@ -1795,7 +1799,7 @@ function CTASection({ t, currency, lang, tz }) {
                 { q: "Do you offer classes for kids?",
                   aNode: <>Yes — the courses currently open for enrollment are for adults, but new courses open on a rolling basis. If you'd like to know when the next course for children opens, <a href={kidsNotifyLink} target="_blank" rel="noopener noreferrer"><strong>send me a message on WhatsApp</strong></a>.</> },
                 { q: "Do you offer individual classes?",
-                  a: "No — we only offer group classes. That's the spirit of The Corporate English Project: learning as a community, not one-on-one lessons. If you have a different need, reach out on WhatsApp and we'll see what we can do." },
+                  aNode: <>No — we only offer group classes. That's the spirit of The Corporate English Project: learning as a community, not one-on-one lessons. If you have a different need, <a href={specialNeedLink} target="_blank" rel="noopener noreferrer"><strong>reach out on WhatsApp</strong></a> and we'll see what we can do.</> },
               ]).map((item, i) => (
                 <details className="founder-faq-item" key={i}>
                   <summary>{item.q}</summary>
