@@ -177,10 +177,6 @@
   .ex .es{font-size:17px;color:var(--ink);}
   .ex .en{font-size:15px;color:var(--muted);margin-top:3px;}
 
-  /* Gate */
-  .gate-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-    padding:18px 26px 26px;border-top:1px solid var(--line);margin-top:4px;}
-
   /* Loading / error */
   .loading{display:flex;align-items:center;gap:12px;justify-content:center;
     color:var(--navy-soft);font-size:16px;margin:34px 0;}
@@ -603,7 +599,6 @@ const STR = {
     examples: "In a sentence", source: "You searched",
     listen: "Listen", listening: "Playing",
     copy: "Copy", copied: "Copied",
-    newSearch: "New search",
     err: "Couldn’t reach the translator just now. Please try again.",
     mSaveTitle: "Save to your study deck",
     mSaveLead: "Create a free account to build your personal vocabulary and pick up where you left off.",
@@ -656,7 +651,6 @@ const STR = {
     examples: "En una frase", source: "Buscaste",
     listen: "Escuchar", listening: "Reproduciendo",
     copy: "Copiar", copied: "Copiado",
-    newSearch: "Nueva búsqueda",
     err: "No pudimos conectar con el traductor. Inténtalo de nuevo.",
     mSaveTitle: "Guarda en tu mazo de estudio",
     mSaveLead: "Crea una cuenta gratis para armar tu vocabulario personal y continuar donde lo dejaste.",
@@ -1513,7 +1507,7 @@ function SearchBar({ t, value, setValue, onGo, busy, dir, cycleDir, listening, o
 
 /* ---- Locked pro card ---- */
 /* ---- Translation result ---- */
-function Result({ t, data, onNew }) {
+function Result({ t, data }) {
   const [playing, setPlaying] = useState(false);
   const [copied, setCopied] = useState(false);
   const tgt = data.targetLang || "en";
@@ -1592,11 +1586,6 @@ function Result({ t, data, onNew }) {
           </> : null}
           <WordBreakdown t={t} rows={data.breakdown} sourceLang={data.sourceLang} targetLang={data.targetLang} />
           <OtherWays t={t} natural={data.translation} literal={data.literal} alternatives={data.alternatives} sourceLang={data.sourceLang} targetLang={data.targetLang} />
-        </div>
-        <div className="gate-actions">
-          <button className="nav-link" onClick={onNew} style={{ marginLeft:"auto" }}>
-            {t.newSearch}
-          </button>
         </div>
       </div>
     </div>
@@ -2047,10 +2036,7 @@ function App() {
 
           {error ? <div className="errbox">{error}</div> : null}
 
-          {result ? (
-            <Result t={t} data={result}
-              onNew={() => { setResult(null); setError(""); setQuery(""); }} />
-          ) : null}
+          {result ? <Result t={t} data={result} /> : null}
 
           <div className={"hero-fold" + (hasResult ? " hidden" : "")} style={{marginTop:66}}>
             <h1 className="headline">{t.h1pre}<em>{t.h1b}</em>{t.h1c}</h1>
