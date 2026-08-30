@@ -1056,7 +1056,7 @@ async function getBreakdown(inputText, sourceLang, targetLang) {
   });
   if (!words.length || words.length > 12) return [];
 
-  const rows = await Promise.all(words.map(async word => {
+  const lookupWord = async word => {
     const key = word.toLowerCase();
     // Spanish input: grammar lookup gives both translation and note — skip API call
     if (sourceLang === "es") {
@@ -1081,15 +1081,37 @@ async function getBreakdown(inputText, sourceLang, targetLang) {
       ? (EN_CULTURE[key] || EN_GRAMMAR[key] || apiNote)
       : (ES_GRAMMAR[key]?.[1] || apiNote);
     return { src: word, tgt, note };
-  }));
+  };
+
+  // Cap concurrency instead of firing every word at once — a burst of up to 12
+  // simultaneous requests to the same free endpoint (on top of the main
+  // translation calls) is more likely to get individually rate-limited.
+  const BATCH_SIZE = 4;
+  const rows = [];
+  for (let i = 0; i < words.length; i += BATCH_SIZE) {
+    const batch = words.slice(i, i + BATCH_SIZE);
+    rows.push(...await Promise.all(batch.map(lookupWord)));
+  }
   return rows.filter(Boolean);
 }
 
-async function fetchTranslateData(input, sourceLang, targetLang) {
+async function fetchTranslateData(input, sourceLang, targetLang, attempt) {
+  attempt = attempt || 0;
   const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=at&q=${encodeURIComponent(input)}`;
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r.json();
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } catch (err) {
+    // The free Google endpoint occasionally drops or rate-limits a single request
+    // (more common on mobile networks sharing a carrier IP). Retry with backoff
+    // before surfacing an error, instead of making the user manually retry.
+    if (attempt < 2) {
+      await new Promise(res => setTimeout(res, 500 * (attempt + 1)));
+      return fetchTranslateData(input, sourceLang, targetLang, attempt + 1);
+    }
+    throw err;
+  }
 }
 
 async function translatePhrase(input, forced) {
