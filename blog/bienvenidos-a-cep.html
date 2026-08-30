@@ -63,7 +63,11 @@
   .post-breadcrumb a:hover{color:var(--cur-navy);}
   .post-title{font-family:var(--cur-serif);font-weight:600;font-size:clamp(32px,5vw,52px);
     line-height:1.1;color:var(--cur-navy);margin:0 0 20px;}
-  .post-soon{font-size:18px;color:var(--cur-muted);line-height:1.6;margin:0 0 32px;}
+  .post-lede{font-family:var(--cur-serif);font-style:italic;font-size:20px;
+    line-height:1.6;color:var(--cur-navy);margin:0 0 28px;}
+  .post-body p{font-size:17px;line-height:1.75;color:var(--cur-muted);margin:0 0 22px;}
+  .post-body p:last-child{margin-bottom:32px;}
+  .post-draft-note{font-size:13px;font-style:italic;color:var(--cur-muted2);margin:0 0 28px;}
   .post-back{display:inline-block;font-size:14px;font-weight:700;color:var(--cur-navy);}
   .post-back:hover{color:var(--cur-green);}
 
@@ -87,13 +91,25 @@ const STR = {
   es: {
     home: "Inicio",
     title: "Bienvenid@s a The Corporate English Project",
-    soon: "Este artículo todavía se está escribiendo. Vuelve pronto para leerlo completo.",
+    draftNote: "Este artículo sigue en borrador — pronto tendrá su versión final.",
+    lede: "Quizás te estés preguntando: “¿Qué es The Corporate English Project? ¿Qué hace? ¿A quién sirve?”",
+    body: [
+      "En esencia, The Corporate English Project es una iniciativa global en línea que ayuda a cualquier persona que quiera hablar inglés a lograrlo. Ahora, antes de continuar, quiero agradecerte por tu interés en nuestro humilde proyecto, que te llevó a profundizar lo suficiente como para leer esta publicación. Así que, desde el fondo de mi ser: ¡GRACIAS!",
+      "Primero, aunque todos son bienvenidos — incluyendo profesionales que buscan mejorar su inglés de forma real y tangible — The Corporate English Project NO es un programa exclusivo para “profesionales corporativos” ni para “enseñar inglés de negocios.” Todo lo contrario: The Corporate English Project busca servir a toda la comunidad dispersa de hispanohablantes que aprenden inglés, de todos los niveles y de todos los orígenes. Lo único que los estudiantes de CEP deben tener en común es la disposición a mejorar su inglés y ser parte de una comunidad.",
+      "CEP sirve a todos los estudiantes, de todas las edades, de todos los orígenes, que tienen diferentes motivaciones para aprender inglés, pero que ponen su mejor esfuerzo de todas formas.",
+    ],
     back: "← Volver al inicio",
   },
   en: {
     home: "Home",
     title: "Welcome to The Corporate English Project",
-    soon: "This article is still being written. Check back soon to read the full post.",
+    draftNote: "This article is still a draft — the final version is coming soon.",
+    lede: "Perhaps you are wondering, “What is The Corporate English Project? What does it do? Who does it serve?”",
+    body: [
+      "At its core, The Corporate English Project is a global online initiative that helps anyone who wants to speak English, speak English. Now, before proceeding, I would like to thank you for your interest in our humble project that has prompted you to dive deep enough to read this post. So, from the bottom of my being: THANK YOU!",
+      "First, although everyone is welcome — including business professionals aiming to improve their English in a real, tangible way — The Corporate English Project is NOT a program exclusive to “corporate professionals” or to “teaching enterprise/business English.” Far from it — The Corporate English Project aims to serve the entire dispersed community of Spanish-speaking English learners, from every level and every background. The only thing CEP students must have in common is that they are willing to improve their English and be part of a community.",
+      "CEP serves all learners, all ages, all backgrounds, who all have different motivations to learn English but put their best foot forward nonetheless.",
+    ],
     back: "← Back to home",
   },
 };
@@ -192,7 +208,11 @@ function PostPage() {
           <span>{s.title}</span>
         </div>
         <h1 className="post-title">{s.title}</h1>
-        <p className="post-soon">{s.soon}</p>
+        <p className="post-draft-note">{s.draftNote}</p>
+        <p className="post-lede">{s.lede}</p>
+        <div className="post-body">
+          {s.body.map((para, i) => <p key={i}>{para}</p>)}
+        </div>
         <a className="post-back" href="/">{s.back}</a>
       </main>
     </div>
