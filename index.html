@@ -2002,7 +2002,6 @@ function App() {
   const [dir, setDir]           = useState("auto");
   const [busy, setBusy]         = useState(false);
   const [result, setResult]     = useState(null);
-  const [hasSearchedBefore, setHasSearchedBefore] = useState(false);
   const [error, setError]       = useState("");
   const [modal, setModal]       = useState(null);
   const [toast, setToast]       = useState("");
@@ -2039,7 +2038,6 @@ function App() {
   const runTranslate = useCallback(async text => {
     const q = (text != null ? text : query).trim();
     if (!q) return;
-    setHasSearchedBefore(true);
     setBusy(true); setError("");
     try {
       const data = await translatePhrase(q, dir);
@@ -2071,7 +2069,6 @@ function App() {
   const onHome = e => {
     if (e) e.preventDefault();
     setQuery(""); setResult(null); setError(""); setModal(null); setBusy(false);
-    setHasSearchedBefore(false);
     if (window.location.hash)
       history.replaceState(null, "", window.location.pathname + window.location.search);
     window.scrollTo({ top:0, behavior:"smooth" });
@@ -2088,10 +2085,6 @@ function App() {
   };
   const onModalSubmit = () => { setModal(null); showToast(t.acctToast); };
   const hasResult = !!result || busy || !!error;
-  // Full marketing hero (headline, ticker, quick chips) only shows on first
-  // load — once the user has searched at all, "New search" keeps them in
-  // the compact translate-tool view instead of snapping back to the splash.
-  const showHero = !hasResult && !hasSearchedBefore;
 
   // Sage glow at 58% intensity, animated (hardcoded — no tweaks panel in production)
   const a = (0.58 * 0.85).toFixed(3);
@@ -2106,13 +2099,13 @@ function App() {
         </a>
       </div>
       <div className="glow animate"
-        style={{ background: glowBg, top: showHero ? "42%" : "30%" }} />
+        style={{ background: glowBg, top: hasResult ? "30%" : "42%" }} />
 
       <Nav t={t} lang={lang} setLang={setLang}
         onLogin={() => setModal("login")} onHome={onHome}
         region={region} onRegionClick={() => setRegionModal(true)} />
 
-      <main className={"hero" + (!showHero ? " compact" : "")}>
+      <main className={"hero" + (hasResult ? " compact" : "")}>
         <div className="shell">
           <SearchBar t={t} value={query} setValue={v => setQuery(v)}
             onGo={() => runTranslate()} busy={busy} dir={dir} cycleDir={cycleDir}
@@ -2120,7 +2113,7 @@ function App() {
 
           <p className="subhead">{t.sub}</p>
 
-          {showHero ? (
+          {!hasResult ? (
             <div className="quickrow">
               <span className="hint" style={{ marginRight:4 }}>{t.quickLabel}</span>
               {t.quick.map(w =>
@@ -2144,10 +2137,10 @@ function App() {
               onNew={() => { setResult(null); setError(""); setQuery(""); }} />
           ) : null}
 
-          <div className={"hero-fold" + (!showHero ? " hidden" : "")} style={{marginTop:66}}>
+          <div className={"hero-fold" + (hasResult ? " hidden" : "")} style={{marginTop:66}}>
             <h1 className="headline">{t.h1pre}<em>{t.h1b}</em>{t.h1c}</h1>
           </div>
-          {showHero ? (
+          {!hasResult ? (
             <div className="enroll-cue">
               <span className="enroll-cue-text">{lang === "es" ? "Desliza para inscribirte" : "Scroll to Enroll"}</span>
               <span className="enroll-cue-arrow">
@@ -2158,7 +2151,7 @@ function App() {
             </div>
           ) : null}
         </div>
-        {showHero ? <EnrollTicker lang={lang} currency={currency} /> : null}
+        {!hasResult ? <EnrollTicker lang={lang} currency={currency} /> : null}
       </main>
 
       <CTASection t={t} currency={currency} lang={lang} tz={region.tz} />
