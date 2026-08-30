@@ -68,6 +68,14 @@
   .post-body p{font-size:17px;line-height:1.75;color:var(--cur-muted);margin:0 0 22px;}
   .post-body p:last-child{margin-bottom:32px;}
   .post-draft-note{font-size:13px;font-style:italic;color:var(--cur-muted2);margin:0 0 28px;}
+  .post-toc-label{font-weight:700;font-size:17px;color:var(--cur-navy);margin:36px 0 14px;}
+  .post-toc{list-style:none;margin:0 0 36px;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .post-toc a{font-size:16px;color:var(--cur-navy);text-decoration:underline;
+    text-decoration-color:rgba(28,53,87,.35);text-underline-offset:2px;}
+  .post-toc a:hover{color:var(--cur-green);}
+  .post-h2{font-family:var(--cur-serif);font-weight:600;font-size:26px;color:var(--cur-navy);
+    margin:8px 0 16px;scroll-margin-top:24px;}
+  .post-stub{font-size:15px;font-style:italic;color:var(--cur-muted2);margin:0 0 32px;}
   .post-back{display:inline-block;font-size:14px;font-weight:700;color:var(--cur-navy);}
   .post-back:hover{color:var(--cur-green);}
 
@@ -92,26 +100,98 @@ const STR = {
     home: "Inicio",
     title: "Bienvenid@s a The Corporate English Project",
     draftNote: "— o CEP, para abreviar.",
-    lede: "Quizás te estés preguntando: “¿Qué es The Corporate English Project? ¿Qué hace? ¿A quién sirve?”",
-    body: [
-      "En esencia, The Corporate English Project es una iniciativa global en línea que ayuda a cualquier persona que quiera hablar inglés a lograrlo. Ahora, antes de continuar, quiero agradecerte por tu interés en nuestro humilde proyecto, que te llevó a profundizar lo suficiente como para leer esta publicación. Así que, desde el fondo de mi ser: ¡GRACIAS!",
-      "Primero, aunque todos son bienvenidos — incluyendo profesionales que buscan mejorar su inglés de forma real y tangible — The Corporate English Project NO es un programa exclusivo para “profesionales corporativos” ni para “enseñar inglés de negocios.” Todo lo contrario: The Corporate English Project busca servir a toda la comunidad dispersa de hispanohablantes que aprenden inglés, de todos los niveles y de todos los orígenes. Lo único que los estudiantes de CEP deben tener en común es la disposición a mejorar su inglés y ser parte de una comunidad.",
-      "CEP sirve a todos los estudiantes, de todas las edades, de todos los orígenes, que tienen diferentes motivaciones para aprender inglés, pero que ponen su mejor esfuerzo de todas formas.",
-    ],
     back: "← Volver al inicio",
   },
   en: {
     home: "Home",
     title: "Welcome to The Corporate English Project",
     draftNote: "— or CEP, for short.",
-    lede: "Perhaps you are wondering, “What is The Corporate English Project? What does it do? Who does it serve?”",
-    body: [
-      "At its core, The Corporate English Project is a global online initiative that helps anyone who wants to speak English, speak English. Now, before proceeding, I would like to thank you for your interest in our humble project that has prompted you to dive deep enough to read this post. So, from the bottom of my being: THANK YOU!",
-      "First, although everyone is welcome — including business professionals aiming to improve their English in a real, tangible way — The Corporate English Project is NOT a program exclusive to “corporate professionals” or to “teaching enterprise/business English.” Far from it — The Corporate English Project aims to serve the entire dispersed community of Spanish-speaking English learners, from every level and every background. The only thing CEP students must have in common is that they are willing to improve their English and be part of a community.",
-      "CEP serves all learners, all ages, all backgrounds, who all have different motivations to learn English but put their best foot forward nonetheless.",
-    ],
     back: "← Back to home",
   },
+};
+
+/* Article body — bilingual, rich JSX (needs inline italics/quotes the plain
+   STR strings above can't hold). Sections not written yet render as a
+   heading + "coming soon" stub so the table of contents links resolve. */
+const ARTICLE = {
+  es: (
+    <>
+      <p className="post-lede">Quizás te estés preguntando: “¿Qué es The Corporate English Project? ¿Qué hace? ¿A quién sirve?”</p>
+      <div className="post-body">
+        <p>En esencia, The Corporate English Project es una iniciativa global en línea que ayuda a cualquier persona que quiera hablar inglés a lograrlo. Ahora, antes de continuar, quiero agradecerte por tu interés en nuestro humilde proyecto, que te llevó a profundizar lo suficiente como para leer esta publicación. Así que, desde el fondo de mi ser: ¡GRACIAS!</p>
+      </div>
+
+      <div className="post-toc-label">En esta publicación, hablaré sobre:</div>
+      <ul className="post-toc">
+        <li><a href="#que-significa">¿Qué significa “The Corporate English Project”?</a></li>
+        <li><a href="#a-quien-sirve">¿A quién busca servir CEP?</a></li>
+        <li><a href="#objetivo">El objetivo del proyecto</a></li>
+        <li><a href="#como-funciona">Cómo funciona el proyecto</a></li>
+        <li><a href="#por-que">Por qué funciona de esa manera</a></li>
+      </ul>
+
+      <h2 className="post-h2" id="que-significa">¿Qué significa “The Corporate English Project”?</h2>
+      <div className="post-body">
+        <p>Nuestro proyecto obtiene parte de su nombre — <em>corporate</em> — de la raíz latina <em>corpus</em>, o cuerpo. <em>Cuerpo</em>, tal como se usa aquí, significa un grupo organizado de personas que trabajan juntas. Más específicamente, CEP es un <em>cuerpo global</em> — una organización o institución internacional que opera en varios países para promover la cooperación a nivel mundial.</p>
+        <p>Mientras que un <em>proyecto</em> es una pieza de trabajo planeado y temporal, o un esfuerzo creado para lograr un objetivo específico, producir un resultado único o resolver un problema.</p>
+        <p>Así que el nombre <em>The Corporate English Project</em> puede interpretarse como “el esfuerzo internacional grupal de inglés.”</p>
+      </div>
+
+      <h2 className="post-h2" id="a-quien-sirve">¿A quién busca servir CEP?</h2>
+      <div className="post-body">
+        <p>Primero, aunque todos son bienvenidos — incluyendo profesionales que buscan mejorar su inglés de forma real y tangible — The Corporate English Project NO es un programa exclusivo para “profesionales corporativos” ni para “enseñar inglés de negocios.” Todo lo contrario: The Corporate English Project busca servir a toda la comunidad dispersa de hispanohablantes que aprenden inglés, de todos los niveles y de todos los orígenes. Lo único que los estudiantes de CEP deben tener en común es la disposición a mejorar su inglés y ser parte de una comunidad.</p>
+        <p>CEP sirve a todos los estudiantes, de todas las edades, de todos los orígenes, que tienen diferentes motivaciones para aprender inglés, pero que ponen su mejor esfuerzo de todas formas.</p>
+      </div>
+
+      <h2 className="post-h2" id="objetivo">El objetivo del proyecto</h2>
+      <p className="post-stub">Esta sección todavía no está escrita — muy pronto.</p>
+
+      <h2 className="post-h2" id="como-funciona">Cómo funciona el proyecto</h2>
+      <p className="post-stub">Esta sección todavía no está escrita — muy pronto.</p>
+
+      <h2 className="post-h2" id="por-que">Por qué funciona de esa manera</h2>
+      <p className="post-stub">Esta sección todavía no está escrita — muy pronto.</p>
+    </>
+  ),
+  en: (
+    <>
+      <p className="post-lede">Perhaps you are wondering, “What is The Corporate English Project? What does it do? Who does it serve?”</p>
+      <div className="post-body">
+        <p>At its core, The Corporate English Project is a global online initiative that helps anyone who wants to speak English, speak English. Now, before proceeding, I would like to thank you for your interest in our humble project that has prompted you to dive deep enough to read this post. So, from the bottom of my being: THANK YOU!</p>
+      </div>
+
+      <div className="post-toc-label">In this post, I will address:</div>
+      <ul className="post-toc">
+        <li><a href="#what-it-means">What does “The Corporate English Project” mean?</a></li>
+        <li><a href="#who-it-serves">Who does CEP aim to serve?</a></li>
+        <li><a href="#goal">The goal of the project</a></li>
+        <li><a href="#how-it-functions">How the project functions</a></li>
+        <li><a href="#why">Why it functions the way it does</a></li>
+      </ul>
+
+      <h2 className="post-h2" id="what-it-means">What does “The Corporate English Project” mean?</h2>
+      <div className="post-body">
+        <p>Our project gets part of its name — <em>corporate</em> — from the Latin root, <em>corpus</em>, or body. <em>Body</em>, as used here, means an organized group of individuals working together. More specifically, CEP is a <em>global body</em> — an international organization or institution that operates across multiple countries to promote cooperation worldwide.</p>
+        <p>While a <em>project</em> is a temporary piece of planned work, or an endeavor created to achieve a specific goal, produce a unique outcome, or solve a problem.</p>
+        <p>So the name <em>The Corporate English Project</em> can be interpreted as “the international English group endeavor.”</p>
+      </div>
+
+      <h2 className="post-h2" id="who-it-serves">Who does CEP aim to serve?</h2>
+      <div className="post-body">
+        <p>First, although everyone is welcome (including business professionals aiming to improve their English in a real, tangible way) The Corporate English Project is NOT a program exclusive to “corporate professionals” or to “teaching enterprise/business English.” Instead — The Corporate English Project aims to serve the entire dispersed community of Spanish-speaking English learners, from every level and every background. The only thing CEP students must have in common is that they are willing to improve their English and be part of a community.</p>
+        <p>CEP serves all learners, all ages, all backgrounds, who all have different motivations to learn English but put their best foot forward nonetheless.</p>
+      </div>
+
+      <h2 className="post-h2" id="goal">The goal of the project</h2>
+      <p className="post-stub">This section isn't written yet — coming soon.</p>
+
+      <h2 className="post-h2" id="how-it-functions">How the project functions</h2>
+      <p className="post-stub">This section isn't written yet — coming soon.</p>
+
+      <h2 className="post-h2" id="why">Why it functions the way it does</h2>
+      <p className="post-stub">This section isn't written yet — coming soon.</p>
+    </>
+  ),
 };
 
 function gmtOffset(tz) {
@@ -209,10 +289,7 @@ function PostPage() {
         </div>
         <h1 className="post-title">{s.title}</h1>
         <p className="post-draft-note">{s.draftNote}</p>
-        <p className="post-lede">{s.lede}</p>
-        <div className="post-body">
-          {s.body.map((para, i) => <p key={i}>{para}</p>)}
-        </div>
+        {ARTICLE[lang]}
         <a className="post-back" href="/">{s.back}</a>
       </main>
     </div>
