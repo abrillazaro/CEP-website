@@ -109,6 +109,11 @@ const STR = {
       "Cualquier cosa que diga que no sea parte del material “oficial”, pero que resalte por cómo se dice",
     ],
     notesP2: "Notar cómo se dice algo y qué se está diciendo son rutinas que practico todos los días cuando hablo con angloparlantes. Nunca se deja de aprender un idioma, y aunque soy fluida y una maestra de inglés calificada, sigo prestando mucha atención a cómo habla la gente, porque me mantiene alerta y me da nuevas formas de enseñarte. He descubierto que es una de las mejores herramientas para aprender: te ayuda a entender cómo habla realmente la gente, y te da ideas reales de cómo tú también puedes hablar.",
+    toolsTitle: "Usa tus herramientas:",
+    toolsP1: "Estamos en la era de la información — no hay nada de malo en usar todas las herramientas que tengas disponibles, ya que están para facilitar tu aprendizaje, no para reemplazarlo. Si no sabes cómo decir algo en inglés, no tengas miedo de abrir una aplicación de traducción y averiguarlo. Usar herramientas para facilitar tu aprendizaje es algo que se fomenta.",
+    toolsP2: "Este no es un programa escolar. No hay promedio, no hay calificación, no hay riesgo de “meterte en problemas”. Te recomiendo usar herramientas de traducción, sumergirte en el inglés todo lo que puedas, buscar distintas formas de decir lo mismo, y hacer un poco de tu propia investigación por tu cuenta. Usa todas las herramientas que tengas disponibles — el objetivo es que realmente aprendas inglés.",
+    toolsP3: "Una advertencia: no dejes que las herramientas aprendan por ti — no pueden. Si pasas tu tarea por una inteligencia artificial generativa y entregas lo que sea que te dé sin revisarlo, sin analizarlo, y sin identificar qué entiendes y qué no, así es como las herramientas dejan de ayudarte. Todo esto se trata de tu propio crecimiento, y saltarte el paso real de “aprender” significa que tú eres quien sale perdiendo.",
+    toolsP4: "Así que: usa las herramientas... ¡Usa las herramientas! ¡¡¡Usa las herramientas!!! Solo asegúrate de estar aprendiendo mientras lo haces.",
   },
   en: {
     home: "Home",
@@ -130,6 +135,11 @@ const STR = {
       "Anything I say that isn't part of the \"official\" material, but stands out in how it's said",
     ],
     notesP2: "Noticing how something is said and what is being said are routines I practice every day when I speak with English speakers. You never stop learning a language, and even though I'm fluent and a qualified English teacher, I still pay close attention to the way people speak, because it keeps me sharp and gives me new ways to teach you. I've found it's one of the best tools for learning: it helps you understand how people actually speak, and gives you real ideas for how you can speak too.",
+    toolsTitle: "Use your tools:",
+    toolsP1: "We're in the information age — there's nothing wrong with using every tool available to you, as they're facilitating your learning, not replacing it. If you don't know how to say something in English, don't be afraid to open a translation app and find out. Using tools to facilitate your learning is encouraged.",
+    toolsP2: "This isn't a school program. There's no GPA, no grade, no risk of \"getting in trouble.\" I recommend using translation tools, immersing yourself in English as much as you can, searching different ways to say the same thing, and doing a bit of your own research on the side. Use every tool available to you — the goal is for you to actually learn English.",
+    toolsP3: "One warning: do not let tools do your learning for you — they can't. If you run your homework through a generative AI and submit whatever it gives you without looking at it, reviewing it, and figuring out what you do and don't understand, that's how tools stop helping you. The whole point of this is your own growth, and skipping the actual \"learning\" step means you're the one who misses out.",
+    toolsP4: "So: use the tools... Use the tools! Use the tools!!! Just make sure you're learning while you do.",
   },
 };
 
@@ -254,6 +264,16 @@ function WelcomePage() {
           </ul>
           <div className="post-body">
             <p>{s.notesP2}</p>
+          </div>
+        </div>
+
+        <div className="post-section">
+          <h2 className="post-h2">{s.toolsTitle}</h2>
+          <div className="post-body">
+            <p>{s.toolsP1}</p>
+            <p>{s.toolsP2}</p>
+            <p>{s.toolsP3}</p>
+            <p>{s.toolsP4}</p>
           </div>
         </div>
 
