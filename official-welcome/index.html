@@ -88,9 +88,49 @@
 <script type="text/babel">
 const { useState, useEffect } = React;
 
-const NAV_STR = {
-  es: { home: "Inicio" },
-  en: { home: "Home" },
+const STR = {
+  es: {
+    home: "Inicio",
+    docTitle: "Bienvenid@ a The Corporate English Project",
+    heading: "¡Felicidades! Ya eres oficialmente parte de The Corporate English Project.",
+    getInTouchTitle: "Ponte en contacto:",
+    getInTouchPre: "Siéntete libre de escribirme a",
+    whatsappLabel: "mi WhatsApp",
+    getInTouchPost: "— me encantaría saber de ti antes de que empiecen las clases. Hazme preguntas, o simplemente preséntate y cuéntame un poco sobre ti.",
+    notesTitle: "Una nota sobre tomar apuntes:",
+    notesP1Pre: "Por favor, ven a clase preparado(a) para tomar apuntes.",
+    notesLinkLabel: "Los apuntes a mano son mejores que escribir a máquina para el aprendizaje profundo",
+    notesP1Post: ", aunque escribir a máquina también funciona — mi prioridad es simplemente que tengas apuntes a los que puedas volver. Tomar apuntes te ayuda a procesar lo que sucede en clase en el momento, y si surge una duda, puedes anotarla para no perderla antes de tener la oportunidad de preguntar.",
+    notesQuestion: "¿Sobre qué deberías tomar apuntes?",
+    bullets: [
+      "Cualquier pregunta, duda o punto de confusión",
+      "El material cubierto en clase",
+      "Las correcciones que hago",
+      "Cualquier cosa que diga que no sea parte del material “oficial”, pero que resalte por cómo se dice",
+    ],
+    notesP2: "Notar cómo se dice algo y qué se está diciendo son rutinas que practico todos los días cuando hablo con angloparlantes. Nunca se deja de aprender un idioma, y aunque soy fluida y una maestra de inglés calificada, sigo prestando mucha atención a cómo habla la gente, porque me mantiene alerta y me da nuevas formas de enseñarte. He descubierto que es una de las mejores herramientas para aprender: te ayuda a entender cómo habla realmente la gente, y te da ideas reales de cómo tú también puedes hablar.",
+  },
+  en: {
+    home: "Home",
+    docTitle: "Welcome to The Corporate English Project",
+    heading: "Congratulations! You're officially a member of The Corporate English Project!",
+    getInTouchTitle: "Get in touch:",
+    getInTouchPre: "Feel free to reach out to me on",
+    whatsappLabel: "my WhatsApp",
+    getInTouchPost: "— I'd love to hear from you before class starts. Ask me questions, or just introduce yourself and tell me a bit about you.",
+    notesTitle: "A note on note-taking:",
+    notesP1Pre: "Please come to class prepared to take notes.",
+    notesLinkLabel: "Handwritten notes are better than typing for deep learning",
+    notesP1Post: ", though typing works too — my priority is simply that you have notes you can look back on. Taking notes helps you process what's happening in class as it happens, and if a question comes up, you can jot it down so you don't lose it before you get the chance to ask.",
+    notesQuestion: "What should you take notes on?",
+    bullets: [
+      "Any questions, doubts, or points of confusion",
+      "The material covered in class",
+      "Corrections I make",
+      "Anything I say that isn't part of the \"official\" material, but stands out in how it's said",
+    ],
+    notesP2: "Noticing how something is said and what is being said are routines I practice every day when I speak with English speakers. You never stop learning a language, and even though I'm fluent and a qualified English teacher, I still pay close attention to the way people speak, because it keeps me sharp and gives me new ways to teach you. I've found it's one of the best tools for learning: it helps you understand how people actually speak, and gives you real ideas for how you can speak too.",
+  },
 };
 
 const WHATSAPP_LINK = "https://wa.me/525572132329?text=" +
@@ -140,11 +180,12 @@ function WelcomePage() {
   const [lang, setLang] = useState(() => {
     try { return localStorage.getItem("cepLang") || "es"; } catch (e) { return "es"; }
   });
-  const s = NAV_STR[lang];
+  const s = STR[lang];
 
   useEffect(() => {
     try { localStorage.setItem("cepLang", lang); } catch (e) {}
     document.documentElement.lang = lang;
+    document.title = s.docTitle;
   }, [lang]);
 
   useEffect(() => {
@@ -185,37 +226,34 @@ function WelcomePage() {
       </nav>
 
       <main className="post-main">
-        <h1 className="post-title">Congratulations! You're officially a member of The Corporate English Project!</h1>
+        <h1 className="post-title">{s.heading}</h1>
 
         <div className="post-section">
-          <h2 className="post-h2">Get in touch:</h2>
+          <h2 className="post-h2">{s.getInTouchTitle}</h2>
           <div className="post-body">
             <p>
-              Feel free to reach out to me on{" "}
-              <a className="post-link" href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer">my WhatsApp</a>
-              {" "}— I'd love to hear from you before class starts. Ask me questions, or just introduce yourself and tell me a bit about you.
+              {s.getInTouchPre}{" "}
+              <a className="post-link" href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer">{s.whatsappLabel}</a>
+              {" "}{s.getInTouchPost}
             </p>
           </div>
         </div>
 
         <div className="post-section">
-          <h2 className="post-h2">A note on note-taking:</h2>
+          <h2 className="post-h2">{s.notesTitle}</h2>
           <div className="post-body">
             <p>
-              Please come to class prepared to take notes.{" "}
-              <a className="post-link" href={NOTES_ARTICLE_LINK} target="_blank" rel="noopener noreferrer">Handwritten notes are better than typing for deep learning</a>
-              , though typing works too — my priority is simply that you have notes you can look back on. Taking notes helps you process what's happening in class as it happens, and if a question comes up, you can jot it down so you don't lose it before you get the chance to ask.
+              {s.notesP1Pre}{" "}
+              <a className="post-link" href={NOTES_ARTICLE_LINK} target="_blank" rel="noopener noreferrer">{s.notesLinkLabel}</a>
+              {s.notesP1Post}
             </p>
-            <p>What should you take notes on?</p>
+            <p>{s.notesQuestion}</p>
           </div>
           <ul className="post-list">
-            <li>Any questions, doubts, or points of confusion</li>
-            <li>The material covered in class</li>
-            <li>Corrections I make</li>
-            <li>Anything I say that isn't part of the "official" material, but stands out in how it's said</li>
+            {s.bullets.map((b, i) => <li key={i}>{b}</li>)}
           </ul>
           <div className="post-body">
-            <p>Noticing how something is said and what is being said are routines I practice every day when I speak with English speakers. You never stop learning a language, and even though I'm fluent and a qualified English teacher, I still pay close attention to the way people speak, because it keeps me sharp and gives me new ways to teach you. I've found it's one of the best tools for learning: it helps you understand how people actually speak, and gives you real ideas for how you can speak too.</p>
+            <p>{s.notesP2}</p>
           </div>
         </div>
 
