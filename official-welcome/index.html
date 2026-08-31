@@ -58,7 +58,9 @@
   /* Welcome content */
   .post-main{flex:1;padding:0 56px 100px;max-width:820px;margin:0 auto;width:100%;}
   .post-title{font-family:var(--cur-serif);font-weight:600;font-size:clamp(30px,4.6vw,46px);
-    line-height:1.2;color:var(--cur-navy);margin:8px 0 40px;}
+    line-height:1.2;color:var(--cur-navy);margin:8px 0 14px;}
+  .post-subtitle{font-family:var(--cur-serif);font-weight:500;font-style:italic;
+    font-size:clamp(20px,2.8vw,28px);line-height:1.4;color:var(--cur-muted);margin:0 0 40px;}
   .post-h2{font-family:var(--cur-serif);font-weight:600;font-size:26px;color:var(--cur-navy);
     margin:8px 0 16px;}
   .post-body p{font-size:17px;line-height:1.75;color:var(--cur-muted);margin:0 0 22px;}
@@ -92,7 +94,8 @@ const STR = {
   es: {
     home: "Inicio",
     docTitle: "Bienvenid@ a The Corporate English Project",
-    heading: "¡Felicidades! Ya eres oficialmente parte de The Corporate English Project.",
+    headingTitle: "¡Felicidades!",
+    headingSubtitle: "Ya eres oficialmente parte de The Corporate English Project.",
     getInTouchTitle: "Ponte en contacto:",
     getInTouchPre: "Siéntete libre de escribirme a",
     whatsappLabel: "mi WhatsApp",
@@ -118,7 +121,8 @@ const STR = {
   en: {
     home: "Home",
     docTitle: "Welcome to The Corporate English Project",
-    heading: "Congratulations! You're officially a member of The Corporate English Project!",
+    headingTitle: "Congratulations!",
+    headingSubtitle: "You're officially a member of The Corporate English Project!",
     getInTouchTitle: "Get in touch:",
     getInTouchPre: "Feel free to reach out to me on",
     whatsappLabel: "my WhatsApp",
@@ -236,7 +240,8 @@ function WelcomePage() {
       </nav>
 
       <main className="post-main">
-        <h1 className="post-title">{s.heading}</h1>
+        <h1 className="post-title">{s.headingTitle}</h1>
+        <p className="post-subtitle">{s.headingSubtitle}</p>
 
         <div className="post-section">
           <h2 className="post-h2">{s.getInTouchTitle}</h2>
