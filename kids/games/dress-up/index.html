@@ -469,7 +469,16 @@ const CATEGORIES = [
 ];
 
 const ITEMS = {
-  hair:[],
+  hair:[
+    {id:'bob',         label:'Bob',          hairStyle:'bob',            noun:'bob',           img:'hair/whitebob.png'},
+    {id:'pixiecut',    label:'Pixie Cut',    hairStyle:'pixiecut',       noun:'pixie cut',     img:'hair/whitepixiecut.png'},
+    {id:'straight',    label:'Straight Hair',hairStyle:'longstraighthair', noun:'straight hair', img:'hair/longstraighthairred.png'},
+    {id:'curly',       label:'Curly Hair',   hairStyle:'curlyhair',      noun:'curly hair',    img:'hair/curlyhairred.png'},
+    {id:'ponytail',    label:'Ponytail',     noun:'ponytail'},
+    {id:'braids',      label:'Braids',       noun:'braids'},
+    {id:'bun',         label:'Bun',          noun:'bun'},
+    {id:'pigtails',    label:'Pigtails',     noun:'pigtails'},
+  ],
   face:[],
   tops:[],
   bottoms:[],
@@ -566,6 +575,21 @@ const HAIR_COLOR_FILES = {
     hotpink:      'longstraighhairhotpink',      // typo in filename: missing 't'
     yellow:       'longstraighhairyellow',       // typo in filename: missing 't'
   },
+  // curlyhair files are named curlyhair{color}.png (same reversed pattern as longstraighthair).
+  // No coral/black/white/brown/purple/mintgreen/emeraldgreen/gray variants exist yet —
+  // those fall back to curlyhairred (see getHairImgSrc).
+  curlyhair: {
+    babyblue:     'curlyhairbabyblue',
+    gold:         'curlyhairgold',
+    hotpink:      'curlyhairhotpink',
+    lavender:     'curlyhairlavendar',   // file uses 'lavendar' spelling
+    navyblue:     'curlyhairnavyblue',
+    orange:       'curlyhairorange',
+    pink:         'curlyhairpink',
+    red:          'curlyhairred',
+    turquoise:    'curlyhairturqoise',   // file spelled turqoise
+    yellow:       'curlyhairyellow',
+  },
 };
 
 function hairColorSlug(colorName){
@@ -578,6 +602,11 @@ function getHairImgSrc(hairStyle, colorName){
   if(hairStyle === 'longstraighthair'){
     // Files use reversed naming: longstraighthair{color}.png; fall back to red
     const file = variants[slug] !== undefined ? variants[slug] : 'longstraighthairred';
+    return `hair/${file}.png`;
+  }
+  if(hairStyle === 'curlyhair'){
+    // Files use reversed naming: curlyhair{color}.png; fall back to red
+    const file = variants[slug] !== undefined ? variants[slug] : 'curlyhairred';
     return `hair/${file}.png`;
   }
   const fileSlug = variants[slug] !== undefined ? variants[slug] : 'white';
@@ -944,8 +973,8 @@ function updateDoll(){
       // PNG-based hair: resolve color variant, show overlay <img>, hide SVG hair shapes
       const src = getHairImgSrc(slots.hair.item.hairStyle, slots.hair.color?.name);
       if(hairImgEl){ hairImgEl.src = src; hairImgEl.style.display='block';
-        hairImgEl.style.top = slots.hair.item.hairStyle === 'bob' ? '7.9%' : '5%';
-        hairImgEl.style.width = slots.hair.item.hairStyle === 'bob' ? '32%' : slots.hair.item.hairStyle === 'longstraighthair' ? '58.9%' : '31%'; }
+        hairImgEl.style.top = slots.hair.item.hairStyle === 'bob' ? '7.9%' : slots.hair.item.hairStyle === 'curlyhair' ? '3%' : '5%';
+        hairImgEl.style.width = slots.hair.item.hairStyle === 'bob' ? '32%' : slots.hair.item.hairStyle === 'longstraighthair' ? '58.9%' : slots.hair.item.hairStyle === 'curlyhair' ? '34%' : '31%'; }
       document.getElementById('svg-hair-back').style.display = 'none';
       const hf = document.getElementById('svg-hair-front');
       if(hf) hf.style.display = 'none';
