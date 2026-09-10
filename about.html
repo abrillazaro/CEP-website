@@ -58,8 +58,12 @@
     font-weight:700;font-size:15px;white-space:nowrap;box-shadow:var(--shadow-sm);
     transition:transform .12s,background .2s;}
   .btn-login:hover{background:var(--navy-deep);transform:translateY(-1px);}
-  .seg{border:none;background:transparent;border-radius:999px;padding:4px 11px;
-    font-weight:700;font-size:13px;transition:all .15s;cursor:pointer;}
+  .lang-select{border:none;background:transparent;font:inherit;font-weight:700;font-size:13px;
+    color:var(--navy);cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;
+    padding-right:16px;margin:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2320395c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right center;}
+  .lang-select:focus{outline:none;}
   .region-btn{display:flex;align-items:center;gap:5px;background:transparent;border:none;
     cursor:default;color:var(--navy);font-family:var(--sans);font-weight:600;padding:0 4px;}
   .region-gmt{font-size:12px;opacity:.85;}
@@ -260,12 +264,6 @@ function Icon({ name, size = 22, stroke = 2 }) {
   }
 }
 
-function segStyle(active) {
-  return { border: "none", background: active ? "var(--navy)" : "transparent",
-    color: active ? "#fff" : "var(--navy-soft)", borderRadius: 999,
-    padding: "4px 11px", fontWeight: 700, fontSize: 13, transition: "all .15s" };
-}
-
 function gmtOffset(tz) {
   try {
     const s = Intl.DateTimeFormat('en',{timeZone:tz,timeZoneName:'shortOffset'})
@@ -303,10 +301,12 @@ function Nav({ t, lang, setLang }) {
       <div className="nav-right">
         <RegionBadge />
         <div className="region-divider" />
-        <div className="lang-toggle" role="group" aria-label="Language">
+        <div className="lang-toggle">
           <Icon name="globe" size={17} stroke={2} />
-          <button className="seg" onClick={() => setLang("en")} style={segStyle(lang === "en")}>EN</button>
-          <button className="seg" onClick={() => setLang("es")} style={segStyle(lang === "es")}>ES</button>
+          <select className="lang-select" aria-label="Language" value={lang} onChange={e => setLang(e.target.value)}>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
         </div>
         <a className="nav-link hide-sm" href="/blog">{t.blog}</a>
         <a className="nav-link active hide-sm" href="/about.html">{t.about}</a>

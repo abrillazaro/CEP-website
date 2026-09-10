@@ -51,9 +51,12 @@
   .lang-toggle{display:flex;align-items:center;gap:7px;border:1px solid rgba(79,115,89,.45);
     background:#fff;border-radius:999px;padding:5px 7px 5px 13px;box-shadow:var(--shadow-sm);}
   .lang-toggle-icon{display:flex;color:var(--cur-muted);}
-  .seg{border:none;background:transparent;border-radius:999px;padding:4px 11px;
-    font-weight:700;font-size:13px;color:var(--cur-muted);transition:all .15s;}
-  .seg.active{background:var(--cur-navy);color:#fff;}
+  .lang-select{border:none;background:transparent;font:inherit;font-weight:700;font-size:13px;
+    color:var(--cur-navy);cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;
+    padding-right:16px;margin:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%231c3557' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right center;}
+  .lang-select:focus{outline:none;}
   .nav-link{padding:9px 14px;border-radius:10px;color:var(--cur-navy);
     font-weight:600;font-size:15px;background:transparent;transition:background .15s;}
   .nav-link.active{font-weight:700;background:rgba(28,53,87,.08);}
@@ -355,10 +358,12 @@ function BlogPage() {
         <div className="nav-right">
           <RegionBadge />
           <div className="region-divider" />
-          <div className="lang-toggle" role="group" aria-label="Language">
+          <div className="lang-toggle">
             <span className="lang-toggle-icon"><GlobeIcon /></span>
-            <button className={"seg" + (lang === "en" ? " active" : "")} onClick={() => setLang("en")}>EN</button>
-            <button className={"seg" + (lang === "es" ? " active" : "")} onClick={() => setLang("es")}>ES</button>
+            <select className="lang-select" aria-label="Language" value={lang} onChange={e => setLang(e.target.value)}>
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
           </div>
           <a className="nav-link active" href="/blog">{s.blogNav}</a>
         </div>
