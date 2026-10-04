@@ -1696,8 +1696,8 @@ function EnrollTicker({ lang, currency }) {
   }, [lang, currency]);
   const cur = currency || "MXN";
   const priceLabel = cur === "MXN" ? "$50 MXN" : cur === "CRC" ? "1,350 CRC" : "$3 USD";
-  const pillsEn = ["BEGINNER","INTERMEDIATE","CONVERSATIONAL","SOUND NATURAL","SPEAK AND THINK IN ENGLISH","LEARN TO LISTEN FOR COMPREHENSION",priceLabel + " PER CLASS"];
-  const pillsEs = ["PRINCIPIANTE","INTERMEDIO","CONVERSACIONAL","SUENA NATURAL","HABLA Y PIENSA EN INGLÉS","APRENDE A ESCUCHAR CON COMPRENSIÓN",priceLabel + " POR CLASE"];
+  const pillsEn = ["BEGINNER","INTERMEDIATE","COMPREHENSIVE","SOUND NATURAL","SPEAK AND THINK IN ENGLISH","LEARN TO LISTEN FOR COMPREHENSION",priceLabel + " PER CLASS"];
+  const pillsEs = ["PRINCIPIANTE","INTERMEDIO","INTEGRAL","SUENA NATURAL","HABLA Y PIENSA EN INGLÉS","APRENDE A ESCUCHAR CON COMPRENSIÓN",priceLabel + " POR CLASE"];
   const pills = lang === "es" ? pillsEs : pillsEn;
   const seg = pills.map((p, i) => <span key={i} className="etpill">{p}</span>);
   return (
