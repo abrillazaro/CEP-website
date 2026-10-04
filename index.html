@@ -626,8 +626,10 @@ const STR = {
     ctaBtn: "Take your English Placement Test and inquire about joining the CEP now!",
     cardEyebrow: "Live online group class",
     cardInter: "Intermediate",
+    cardBeginner: "Beginner",
     courseMonWedTitle: "Monday & Wednesday",
     courseFridayTitle: "Friday",
+    courseBeginnerTitle: "Monday, Wednesday & Friday",
     cursosEyebrow: "Live classes",
     cursosTitle: "Courses",
     cursosBody: "Build real speaking confidence: connect more with your community, handle everyday tasks and errands, and get an edge in your career.",
@@ -640,6 +642,8 @@ const STR = {
     monWedCapacity: "12-student cap",
     fridayDuration: "6 weeks · starts Nov 6 (skips Thanksgiving)",
     fridayCapacity: "15-student cap",
+    beginnerDuration: "6 weeks · starts Nov 2 (skips Thanksgiving)",
+    beginnerCapacity: "12-student cap",
   },
   es: {
     blog: "Bitácora", login: "Entrar",
@@ -678,8 +682,10 @@ const STR = {
     ctaBtn: "¡Toma tu Examen de Nivel de Inglés e infórmate sobre el CEP ahora!",
     cardEyebrow: "Clase grupal en vivo",
     cardInter: "Intermedio",
+    cardBeginner: "Principiante",
     courseMonWedTitle: "Lunes y Miércoles",
     courseFridayTitle: "Viernes",
+    courseBeginnerTitle: "Lunes, Miércoles y Viernes",
     cursosEyebrow: "Clases en vivo",
     cursosTitle: "Cursos",
     cursosBody: "Gana confianza al hablar: conecta más con tu comunidad, resuelve los trámites y pendientes del día a día, y date una ventaja en tu carrera.",
@@ -692,6 +698,8 @@ const STR = {
     monWedCapacity: "Cupo de 12 estudiantes",
     fridayDuration: "6 semanas · inicia 6 de nov (sin clase en Acción de Gracias)",
     fridayCapacity: "Cupo de 15 estudiantes",
+    beginnerDuration: "6 semanas · inicia 2 de nov (sin clase en Acción de Gracias)",
+    beginnerCapacity: "Cupo de 12 estudiantes",
   }
 };
 
@@ -1442,12 +1450,15 @@ function convertClassOccurrence(dayIdx, hour, srcTz, targetTz, lang) {
   return { weekday: wd.charAt(0).toUpperCase()+wd.slice(1), t1, t2 };
 }
 
-function courseSchedule(dayIdxs, tz, lang) {
+function courseSchedule(dayIdxs, tz, lang, hour) {
   try {
-    const results = dayIdxs.map(d => convertClassOccurrence(d, 20, "America/Chicago", tz, lang));
+    const results = dayIdxs.map(d => convertClassOccurrence(d, hour || 20, "America/Chicago", tz, lang));
     const sameTime = results.every(r => r.t1 === results[0].t1 && r.t2 === results[0].t2);
     if (sameTime) {
-      const days = results.map(r => r.weekday).join(lang === 'es' ? ' y ' : ' & ');
+      const names = results.map(r => r.weekday);
+      const days = names.length > 1
+        ? names.slice(0, -1).join(', ') + (lang === 'es' ? ' y ' : ' & ') + names[names.length - 1]
+        : names[0];
       return days + ' · ' + results[0].t1 + '–' + results[0].t2;
     }
     return results.map(r => r.weekday + ' ' + r.t1 + '–' + r.t2).join(', ');
@@ -1719,8 +1730,9 @@ const CLASS_LINKS = {
 const COURSE_PAGES = {
   monwed: "/courses/mon-wed.html",
   friday: "/courses/friday.html",
+  beginner: "/courses/beginner-mwf.html",
 };
-const COURSE_SESSIONS = { monwed: 12, friday: 6 };
+const COURSE_SESSIONS = { monwed: 12, friday: 6, beginner: 18 };
 
 function classRate(cur) {
   return cur === "MXN" ? 50 : cur === "CRC" ? 1350 : 3;
@@ -1737,13 +1749,17 @@ function CTASection({ t, currency, lang, tz }) {
   const isEs = lang === "es";
   const monWedSchedule = courseSchedule([1,3], safeTz, lang);
   const fridaySchedule = courseSchedule([5], safeTz, lang);
+  const beginnerSchedule = courseSchedule([1,3,5], safeTz, lang, 15);
   const cards = [
-    { key:"monwed", label: t.courseMonWedTitle,
+    { key:"monwed", label: t.courseMonWedTitle, level: t.cardInter,
       meta2: t.monWedDuration, meta3: t.monWedCapacity,
       schedule: monWedSchedule, price: formatCoursePrice(cur, COURSE_SESSIONS.monwed) },
-    { key:"friday", label: t.courseFridayTitle,
+    { key:"friday", label: t.courseFridayTitle, level: t.cardInter,
       meta2: t.fridayDuration, meta3: t.fridayCapacity,
       schedule: fridaySchedule, price: formatCoursePrice(cur, COURSE_SESSIONS.friday) },
+    { key:"beginner", label: t.courseBeginnerTitle, level: t.cardBeginner,
+      meta2: t.beginnerDuration, meta3: t.beginnerCapacity,
+      schedule: beginnerSchedule, price: formatCoursePrice(cur, COURSE_SESSIONS.beginner) },
   ];
   const notifyLink = "https://wa.me/525572132329?text=" + encodeURIComponent(
     isEs ? "Hola, me gustaría que me avisen cuando abran un grupo de nivel principiante."
@@ -1781,7 +1797,7 @@ function CTASection({ t, currency, lang, tz }) {
                 <div key={c.key} className="cursos-card">
                   <div className="cursos-card-eyebrow">{t.cardEyebrow}</div>
                   <div className="cursos-card-title">{c.label}</div>
-                  <div className="cursos-card-meta">{t.cardInter} · {c.schedule}</div>
+                  <div className="cursos-card-meta">{c.level} · {c.schedule}</div>
                   <div className="cursos-card-meta">{c.meta2}</div>
                   <div className="cursos-card-meta">{c.meta3}</div>
                   <div className="cursos-card-hr" />
