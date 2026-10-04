@@ -370,9 +370,6 @@
     color:var(--cur-navy);margin:0;}
   .cursos-body{font-size:16px;line-height:1.5;color:var(--cur-muted);margin:0;}
   .cursos-divider{height:1px;background:rgba(28,53,87,.14);border:none;margin:0;}
-  .cursos-notify{font-size:16px;font-weight:700;color:var(--cur-navy);text-decoration:underline;
-    display:inline-flex;align-items:center;gap:6px;}
-  .cursos-notify:hover{color:var(--cur-green);}
   .cursos-right{flex:1 1 400px;min-width:0;}
   .cursos-right-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
     padding-bottom:14px;margin-bottom:26px;border-bottom:1px solid rgba(28,53,87,.14);flex-wrap:wrap;}
@@ -629,21 +626,23 @@ const STR = {
     cardBeginner: "Beginner",
     courseMonWedTitle: "Monday & Wednesday",
     courseFridayTitle: "Friday",
-    courseBeginnerTitle: "Monday, Wednesday & Friday",
+    courseBeginnerMonWedTitle: "Monday & Wednesday",
+    courseBeginnerFridayTitle: "Friday",
     cursosEyebrow: "Live classes",
     cursosTitle: "Courses",
     cursosBody: "Build real speaking confidence: connect more with your community, handle everyday tasks and errands, and get an edge in your career.",
-    cursosNotify: "Notify me when a beginner group opens",
     cursosGroupsOpen: "Groups with open enrollment",
     cursosMetaTop: "6 weeks · starts November",
     cursosPayOnce: "one-time payment at enrollment",
     cursosLearnMore: "Learn more",
-    monWedDuration: "6 weeks · starts Nov 2 (skips Thanksgiving)",
+    monWedDuration: "6 weeks · starts Nov 2",
     monWedCapacity: "12-student cap",
-    fridayDuration: "6 weeks · starts Nov 6 (skips Thanksgiving)",
+    fridayDuration: "6 weeks · starts Nov 6",
     fridayCapacity: "15-student cap",
-    beginnerDuration: "6 weeks · starts Nov 2 (skips Thanksgiving)",
-    beginnerCapacity: "12-student cap",
+    beginnerMonWedDuration: "6 weeks · starts Nov 2",
+    beginnerMonWedCapacity: "12-student cap",
+    beginnerFridayDuration: "6 weeks · starts Nov 6",
+    beginnerFridayCapacity: "15-student cap",
   },
   es: {
     blog: "Bitácora", login: "Entrar",
@@ -685,21 +684,23 @@ const STR = {
     cardBeginner: "Principiante",
     courseMonWedTitle: "Lunes y Miércoles",
     courseFridayTitle: "Viernes",
-    courseBeginnerTitle: "Lunes, Miércoles y Viernes",
+    courseBeginnerMonWedTitle: "Lunes y Miércoles",
+    courseBeginnerFridayTitle: "Viernes",
     cursosEyebrow: "Clases en vivo",
     cursosTitle: "Cursos",
     cursosBody: "Gana confianza al hablar: conecta más con tu comunidad, resuelve los trámites y pendientes del día a día, y date una ventaja en tu carrera.",
-    cursosNotify: "Avísame cuando abra un grupo de principiantes",
     cursosGroupsOpen: "Grupos con inscripción abierta",
     cursosMetaTop: "6 semanas · inicia noviembre",
     cursosPayOnce: "pago único al inscribirte",
     cursosLearnMore: "Conoce más",
-    monWedDuration: "6 semanas · inicia 2 de nov (sin clase en Acción de Gracias)",
+    monWedDuration: "6 semanas · inicia 2 de nov",
     monWedCapacity: "Cupo de 12 estudiantes",
-    fridayDuration: "6 semanas · inicia 6 de nov (sin clase en Acción de Gracias)",
+    fridayDuration: "6 semanas · inicia 6 de nov",
     fridayCapacity: "Cupo de 15 estudiantes",
-    beginnerDuration: "6 semanas · inicia 2 de nov (sin clase en Acción de Gracias)",
-    beginnerCapacity: "Cupo de 12 estudiantes",
+    beginnerMonWedDuration: "6 semanas · inicia 2 de nov",
+    beginnerMonWedCapacity: "Cupo de 12 estudiantes",
+    beginnerFridayDuration: "6 semanas · inicia 6 de nov",
+    beginnerFridayCapacity: "Cupo de 15 estudiantes",
   }
 };
 
@@ -1730,9 +1731,10 @@ const CLASS_LINKS = {
 const COURSE_PAGES = {
   monwed: "/courses/mon-wed.html",
   friday: "/courses/friday.html",
-  beginner: "/courses/beginner-mwf.html",
+  beginnerMonWed: "/courses/beginner-mon-wed.html",
+  beginnerFriday: "/courses/beginner-friday.html",
 };
-const COURSE_SESSIONS = { monwed: 12, friday: 6, beginner: 18 };
+const COURSE_SESSIONS = { monwed: 12, friday: 6, beginnerMonWed: 12, beginnerFriday: 6 };
 
 function classRate(cur) {
   return cur === "MXN" ? 50 : cur === "CRC" ? 1350 : 3;
@@ -1749,7 +1751,8 @@ function CTASection({ t, currency, lang, tz }) {
   const isEs = lang === "es";
   const monWedSchedule = courseSchedule([1,3], safeTz, lang);
   const fridaySchedule = courseSchedule([5], safeTz, lang);
-  const beginnerSchedule = courseSchedule([1,3,5], safeTz, lang, 15);
+  const beginnerMonWedSchedule = courseSchedule([1,3], safeTz, lang, 15);
+  const beginnerFridaySchedule = courseSchedule([5], safeTz, lang, 15);
   const cards = [
     { key:"monwed", label: t.courseMonWedTitle, level: t.cardInter,
       meta2: t.monWedDuration, meta3: t.monWedCapacity,
@@ -1757,14 +1760,13 @@ function CTASection({ t, currency, lang, tz }) {
     { key:"friday", label: t.courseFridayTitle, level: t.cardInter,
       meta2: t.fridayDuration, meta3: t.fridayCapacity,
       schedule: fridaySchedule, price: formatCoursePrice(cur, COURSE_SESSIONS.friday) },
-    { key:"beginner", label: t.courseBeginnerTitle, level: t.cardBeginner,
-      meta2: t.beginnerDuration, meta3: t.beginnerCapacity,
-      schedule: beginnerSchedule, price: formatCoursePrice(cur, COURSE_SESSIONS.beginner) },
+    { key:"beginnerMonWed", label: t.courseBeginnerMonWedTitle, level: t.cardBeginner,
+      meta2: t.beginnerMonWedDuration, meta3: t.beginnerMonWedCapacity,
+      schedule: beginnerMonWedSchedule, price: formatCoursePrice(cur, COURSE_SESSIONS.beginnerMonWed) },
+    { key:"beginnerFriday", label: t.courseBeginnerFridayTitle, level: t.cardBeginner,
+      meta2: t.beginnerFridayDuration, meta3: t.beginnerFridayCapacity,
+      schedule: beginnerFridaySchedule, price: formatCoursePrice(cur, COURSE_SESSIONS.beginnerFriday) },
   ];
-  const notifyLink = "https://wa.me/525572132329?text=" + encodeURIComponent(
-    isEs ? "Hola, me gustaría que me avisen cuando abran un grupo de nivel principiante."
-         : "Hi, I'd like to be notified when a beginner-level group opens."
-  );
   const kidsNotifyLink = "https://wa.me/525572132329?text=" + encodeURIComponent(
     isEs ? "Hola, me interesa inscribir a mi hijo/a en un curso de inglés para niños en The Corporate English Project. ¿Podrían avisarme cuándo abra el próximo grupo?"
          : "Hi, I'm interested in enrolling my child in an English course at The Corporate English Project. Could you let me know when the next group opens?"
@@ -1781,9 +1783,6 @@ function CTASection({ t, currency, lang, tz }) {
           <h2 className="cursos-h1">{t.cursosTitle}</h2>
           <p className="cursos-body">{t.cursosBody}</p>
           <hr className="cursos-divider" />
-          <a className="cursos-notify" href={notifyLink} target="_blank" rel="noopener noreferrer">
-            {t.cursosNotify} →
-          </a>
         </div>
         <div className="cursos-right">
           <div className="cursos-right-head">
