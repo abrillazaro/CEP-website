@@ -76,7 +76,12 @@
   .crs-content{flex:1 1 520px;min-width:0;}
   .crs-title{font-family:var(--serif);font-weight:600;color:var(--cur-navy);
     font-size:clamp(30px,4vw,42px);line-height:1.12;margin:0 0 16px;letter-spacing:-.01em;}
-  .crs-lede{font-size:17px;line-height:1.6;color:var(--cur-muted);margin:0 0 30px;max-width:60ch;}
+  .crs-lede{font-size:17px;line-height:1.6;color:var(--cur-muted);margin:0 0 24px;max-width:60ch;}
+  .crs-quiz-btn{display:inline-flex;align-items:center;gap:8px;background:#fff;
+    border:1.5px solid rgba(79,115,89,.45);border-radius:12px;padding:12px 16px;
+    color:var(--cur-navy);font-weight:700;font-size:14.5px;text-decoration:none;
+    box-shadow:0 2px 10px rgba(28,53,87,.05);transition:all .18s;margin:0 0 30px;}
+  .crs-quiz-btn:hover{border-color:var(--cur-green);color:var(--cur-green);transform:translateY(-1px);}
 
   .crs-meta-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;
     border-top:1px solid rgba(28,53,87,.14);border-bottom:1px solid rgba(28,53,87,.14);
@@ -160,6 +165,9 @@
         <div class="crs-content">
           <h1 class="crs-title" id="title">Inglés Intermedio — Viernes</h1>
           <p class="crs-lede" id="lede"></p>
+          <a class="crs-quiz-btn" id="quiz-cta" href="#">
+            <span id="quiz-cta-text"></span><span>→</span>
+          </a>
 
           <div class="crs-meta-strip">
             <div class="crs-meta-cell">
@@ -275,6 +283,7 @@
       labelPrice: "Investment",
       ageNote: "This course is for learners 18 and older. A group for younger students will open in the future.",
       scheduleNote: "Thanksgiving break: no class Friday, November 27. Classes resume Friday, December 4.",
+      quizCta: "Which course should I enroll in?", quizUrl: "/quiz/en.html",
       hAbout: "What it's about",
       pAbout: "This intermediate-level course is for Spanish speakers who already have a foundational understanding of English — you can follow along, understand what's being said, and recognize key vocabulary and grammar, even if speaking doesn't come easily yet. That's exactly what the class is for: speaking develops through live practice, not before it. It's a comprehensive class — we build confidence, fluency, vocabulary, listening comprehension, and grammar together, at a lighter weekly pace. We meet live via Microsoft Teams every Friday, in groups of up to 15 students.",
       hGoals: "What you'll achieve",
@@ -302,6 +311,7 @@
       labelPrice: "Inversión",
       ageNote: "Este curso es para personas de 18 años en adelante. Más adelante abriremos un grupo para estudiantes más jóvenes.",
       scheduleNote: "Descanso de Acción de Gracias: no habrá clase el viernes 27 de noviembre. Las clases se reanudan el viernes 4 de diciembre.",
+      quizCta: "¿En cuál curso me inscribo?", quizUrl: "/quiz/es.html",
       hAbout: "De qué se trata",
       pAbout: "Este curso de nivel intermedio es para hispanohablantes que ya tienen una comprensión base del inglés — puedes seguir el hilo, entender lo que se dice y reconocer vocabulario y gramática clave, aunque hablar todavía no te salga con facilidad. Para eso es justamente la clase: la habilidad de hablar se desarrolla con la práctica en vivo, no antes de ella. Es una clase integral — trabajamos juntos la confianza, la fluidez, el vocabulario, la comprensión auditiva y la gramática, a un ritmo semanal más ligero. Nos reunimos en vivo por Microsoft Teams cada viernes, en grupos de hasta 15 estudiantes.",
       hGoals: "Lo que vas a lograr",
@@ -409,6 +419,8 @@
     document.getElementById("bc-current").textContent = s.bcCurrent;
     document.getElementById("title").textContent = s.title;
     document.getElementById("lede").textContent = s.lede;
+    document.getElementById("quiz-cta-text").textContent = s.quizCta;
+    document.getElementById("quiz-cta").href = s.quizUrl;
 
     document.getElementById("label-start").textContent = s.labelStart;
     document.getElementById("meta-start").textContent = s.start;
