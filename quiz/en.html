@@ -118,6 +118,7 @@
   .cursos-card{background:#fff;border:1px solid rgba(79,115,89,.45);border-radius:18px;
     padding:28px 24px 24px;box-shadow:0 2px 10px rgba(28,53,87,.05);
     display:flex;flex-direction:column;text-align:center;
+    text-decoration:none;color:inherit;
     transition:box-shadow .2s,transform .18s;}
   .cursos-card:hover{box-shadow:0 12px 28px rgba(28,53,87,.11);transform:translateY(-2px);}
   .cursos-card-eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;
@@ -339,8 +340,9 @@
   }
 
   function renderCourseCard(course) {
-    var el = document.createElement('div');
+    var el = document.createElement('a');
     el.className = 'cursos-card';
+    el.href = course.page + '?lang=' + LANG;
     var schedEl = document.createElement('div');
     schedEl.className = 'cursos-card-meta';
     schedEl.textContent = '…';
@@ -367,9 +369,8 @@
     pay.className = 'cursos-card-pay';
     pay.textContent = PAY_ONCE;
     el.appendChild(pay);
-    var btn = document.createElement('a');
+    var btn = document.createElement('span');
     btn.className = 'cursos-card-btn';
-    btn.href = course.page + '?lang=' + LANG;
     btn.textContent = LEARN_MORE + ' →';
     el.appendChild(btn);
 
