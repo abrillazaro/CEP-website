@@ -73,11 +73,13 @@
   .quiz-item input:checked::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;
     border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}
   .quiz-item span{font-size:16px;line-height:1.5;color:var(--ink);}
+  .quiz-item.locked{opacity:.4;pointer-events:none;cursor:default;}
 
   .quiz-submit{display:block;width:100%;background:var(--cur-navy);color:#fff;border:none;
     border-radius:12px;padding:17px 24px;font-size:16.5px;font-weight:700;
     transition:background .18s;}
   .quiz-submit:hover{background:var(--cur-green);}
+  .quiz-submit:disabled{background:var(--cur-muted2);cursor:default;}
 
   .quiz-results{display:none;margin-top:48px;}
   .quiz-results.visible{display:block;}
@@ -144,11 +146,11 @@
         <p class="quiz-instruction">Marca todo lo que puedes hacer hoy en inglés.</p>
 
         <div class="quiz-list" id="quiz-list">
-          <label class="quiz-item"><input type="checkbox" value="1" /><span>Puedo saludar y presentarme (nombre, de dónde soy, a qué me dedico).</span></label>
-          <label class="quiz-item"><input type="checkbox" value="2" /><span>Entiendo preguntas simples si me hablan despacio.</span></label>
-          <label class="quiz-item"><input type="checkbox" value="3" /><span>Puedo hablar de mi rutina diaria con frases cortas.</span></label>
-          <label class="quiz-item"><input type="checkbox" value="4" /><span>Puedo pedir algo en una tienda o restaurante.</span></label>
-          <label class="quiz-item"><input type="checkbox" value="5" /><span>Puedo contar qué hice ayer o el fin de semana.</span></label>
+          <label class="quiz-item"><input type="checkbox" value="1" /><span>Todavía no hablo nada de inglés.</span></label>
+          <label class="quiz-item"><input type="checkbox" value="2" /><span>Sé algunas palabras y frases básicas (hola, gracias, números, colores).</span></label>
+          <label class="quiz-item"><input type="checkbox" value="3" /><span>Puedo presentarme y entender preguntas simples si me hablan despacio.</span></label>
+          <label class="quiz-item"><input type="checkbox" value="4" /><span>Puedo hablar de mi rutina diaria con frases cortas.</span></label>
+          <label class="quiz-item"><input type="checkbox" value="5" /><span>Puedo contar qué hice ayer o el fin de semana con frases simples.</span></label>
           <label class="quiz-item"><input type="checkbox" value="6" /><span>Puedo mantener una conversación de 5 minutos, aunque cometa errores.</span></label>
           <label class="quiz-item"><input type="checkbox" value="7" /><span>Cuando no sé una palabra, puedo explicar la idea de otra forma.</span></label>
           <label class="quiz-item"><input type="checkbox" value="8" /><span>Puedo dar mi opinión y explicar por qué.</span></label>
@@ -352,11 +354,13 @@
     }
   };
 
+  // Result is based on the highest-numbered statement checked, not the count.
   function computeLevel(checked) {
-    var count = checked.length;
-    if (count >= 8) return 'advanced';
-    if (count >= 4 || checked.indexOf(6) !== -1) return 'intermediate';
-    return 'beginner';
+    if (!checked.length) return 'beginner';
+    var highest = Math.max.apply(null, checked);
+    if (highest <= 5) return 'beginner';
+    if (highest <= 8) return 'intermediate';
+    return 'advanced';
   }
 
   var form = document.getElementById('quiz-form');
@@ -364,20 +368,14 @@
   var cardsEl = document.getElementById('result-cards');
   var whatsappWrap = document.getElementById('result-whatsapp');
   var whatsappLink = document.getElementById('whatsapp-link');
+  var submitBtn = form.querySelector('.quiz-submit');
+  var quizList = document.getElementById('quiz-list');
+  var allCheckboxes = Array.from(quizList.querySelectorAll('input[type="checkbox"]'));
+  var item1 = allCheckboxes[0];
+  var otherCheckboxes = allCheckboxes.slice(1);
 
-  // Toggle visual "checked" state on the row as the checkbox changes
-  document.getElementById('quiz-list').addEventListener('change', function(e){
-    var item = e.target.closest('.quiz-item');
-    if (item) item.classList.toggle('checked', e.target.checked);
-  });
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var checked = Array.from(form.querySelectorAll('input[type="checkbox"]:checked'))
-      .map(function(el){ return parseInt(el.value, 10); });
-    var levelKey = computeLevel(checked);
+  function renderResults(levelKey) {
     var result = RESULTS[levelKey];
-
     document.getElementById('result-level').textContent = result.level;
     document.getElementById('result-desc').textContent = result.desc;
 
@@ -399,6 +397,47 @@
     } else {
       whatsappWrap.style.display = 'none';
     }
+  }
+
+  // Toggle visual "checked" state on a row, and handle statement #1's special
+  // lock behavior: checking it means "todavía no hablo nada de inglés", so the
+  // other statements stop applying — they're cleared and grayed out, and the
+  // Beginner result shows immediately. Unchecking #1 turns them back on.
+  quizList.addEventListener('change', function(e){
+    var cb = e.target;
+    var item = cb.closest('.quiz-item');
+    if (cb === item1) {
+      if (cb.checked) {
+        otherCheckboxes.forEach(function(ocb){
+          ocb.checked = false;
+          ocb.disabled = true;
+          ocb.closest('.quiz-item').classList.remove('checked');
+          ocb.closest('.quiz-item').classList.add('locked');
+        });
+        if (item) item.classList.add('checked');
+        submitBtn.disabled = true;
+        renderResults('beginner');
+        resultsEl.classList.add('visible');
+      } else {
+        otherCheckboxes.forEach(function(ocb){
+          ocb.disabled = false;
+          ocb.closest('.quiz-item').classList.remove('locked');
+        });
+        if (item) item.classList.remove('checked');
+        submitBtn.disabled = false;
+        resultsEl.classList.remove('visible');
+      }
+      return;
+    }
+    if (item) item.classList.toggle('checked', cb.checked);
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var checked = Array.from(form.querySelectorAll('input[type="checkbox"]:checked'))
+      .map(function(el){ return parseInt(el.value, 10); });
+    var levelKey = computeLevel(checked);
+    renderResults(levelKey);
 
     form.style.display = 'none';
     resultsEl.classList.add('visible');
@@ -408,6 +447,11 @@
   document.getElementById('retake-btn').addEventListener('click', function(){
     form.reset();
     form.querySelectorAll('.quiz-item.checked').forEach(function(el){ el.classList.remove('checked'); });
+    otherCheckboxes.forEach(function(ocb){
+      ocb.disabled = false;
+      ocb.closest('.quiz-item').classList.remove('locked');
+    });
+    submitBtn.disabled = false;
     resultsEl.classList.remove('visible');
     form.style.display = '';
     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
