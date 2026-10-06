@@ -145,8 +145,6 @@
           <option value="es" selected>Español</option>
         </select>
       </div>
-      <a class="nav-link" id="nav-about" href="/about.html">Nosotros</a>
-      <a class="nav-link" id="nav-blog" href="/blog">Bitácora</a>
     </div>
   </nav>
 
@@ -268,7 +266,6 @@
 
   var STR = {
     en: {
-      about: "About", blog: "Blog",
       bcCursos: "Courses", bcCurrent: "Monday & Wednesday",
       title: "Intermediate English — Friday",
       lede: "A comprehensive intermediate English class, once a week in live groups — building confidence, fluency, vocabulary, listening, and grammar together, without a heavy weekly commitment.",
@@ -296,7 +293,6 @@
       enrollBtn: "Enroll now",
     },
     es: {
-      about: "Nosotros", blog: "Bitácora",
       bcCursos: "Cursos", bcCurrent: "Viernes",
       title: "Inglés Intermedio — Viernes",
       lede: "Una clase de inglés intermedio integral, una vez por semana, en grupos en vivo — trabajando confianza, fluidez, vocabulario, comprensión auditiva y gramática, sin saturar tu agenda semanal.",
@@ -409,8 +405,6 @@
   function render() {
     var s = STR[lang];
     document.getElementById("lang-select").value = lang;
-    document.getElementById("nav-about").textContent = s.about;
-    document.getElementById("nav-blog").textContent = s.blog;
     document.getElementById("bc-cursos").textContent = s.bcCursos;
     document.getElementById("bc-current").textContent = s.bcCurrent;
     document.getElementById("title").textContent = s.title;
