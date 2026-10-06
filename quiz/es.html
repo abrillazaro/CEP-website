@@ -49,6 +49,19 @@
     padding:0 40px 11px;max-width:1320px;margin:0 auto;width:100%;}
   .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--navy);}
   .nav-logo img{height:150px;width:auto;display:block;}
+  .nav-right{display:flex;align-items:center;gap:10px;}
+  .region-btn{display:flex;align-items:center;gap:5px;background:transparent;border:none;
+    color:var(--navy);font-family:var(--sans);font-weight:600;padding:0 4px;}
+  .region-gmt{font-size:12px;opacity:.85;}
+  .region-divider{width:1px;height:20px;background:rgba(30,45,77,.14);margin:0 2px;flex-shrink:0;}
+  .lang-toggle{display:flex;align-items:center;gap:2px;border:1px solid var(--line-strong);
+    background:var(--surface);border-radius:999px;padding:5px 7px;box-shadow:var(--shadow-sm);}
+  .lang-select{border:none;background:transparent;font:inherit;font-weight:700;font-size:13px;
+    color:var(--navy);cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;
+    padding-right:16px;margin:0;font-family:var(--sans);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2320395c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right center;}
+  .lang-select:focus{outline:none;}
 
   /* Quiz page */
   .quiz-main{flex:1;background:var(--cur-bg);font-family:var(--cur-sans);padding:24px 0 80px;}
@@ -133,6 +146,16 @@
     <a class="nav-logo" href="/">
       <img src="/logo-navy.png" alt="The Corporate English Project" />
     </a>
+    <div class="nav-right">
+      <span class="region-btn" id="region-badge"></span>
+      <div class="region-divider"></div>
+      <div class="lang-toggle">
+        <select class="lang-select" id="lang-select" aria-label="Language" onchange="switchLang(this.value)">
+          <option value="en">English</option>
+          <option value="es" selected>Español</option>
+        </select>
+      </div>
+    </div>
   </nav>
 
   <main class="quiz-main">
@@ -212,6 +235,29 @@
 })();
 </script>
 <script>
+  // Switches to the other language's quiz page. Checked boxes don't carry
+  // over — that matches how the rest of the site's language toggle works
+  // (it's a different page per language, not a live-translated state).
+  function switchLang(l) {
+    try { localStorage.setItem("cepLang", l); } catch(e) {}
+    window.location.href = l === "es" ? "/quiz/es.html" : "/quiz/en.html";
+  }
+
+  function gmtOffset(tz) {
+    try {
+      var s = Intl.DateTimeFormat('en',{timeZone:tz,timeZoneName:'shortOffset'})
+        .formatToParts(new Date()).find(function(p){return p.type==='timeZoneName';});
+      var val = s ? s.value : 'GMT';
+      return val === 'GMT' ? 'GMT+0' : val;
+    } catch(e) { return 'GMT'; }
+  }
+
+  window._cepRegionPromise.then(function(region){
+    var tz = region.tz || "America/Mexico_City";
+    var flag = region.countryCode === 'MX' ? '🇲🇽' : region.countryCode === 'CR' ? '🇨🇷' : region.countryCode === 'CA' ? '🇨🇦' : '🇺🇸';
+    document.getElementById('region-badge').innerHTML = '<span>' + flag + '</span> <span class="region-gmt">' + gmtOffset(tz) + '</span>';
+  });
+
   // Same course data/logic as the course pages and homepage Cursos section,
   // so times, dates, caps, and prices always match. No data is saved
   // anywhere — this quiz runs entirely in the browser.
