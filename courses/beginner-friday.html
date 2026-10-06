@@ -117,9 +117,6 @@
     color:#fff;border-radius:10px;padding:16px 24px;font-size:16px;font-weight:700;
     text-decoration:none;transition:background .18s;}
   .crs-enroll-btn:hover{background:var(--cur-green);}
-  .crs-enroll-btn.disabled{background:var(--cur-muted2);cursor:default;pointer-events:none;}
-  .crs-enroll-note{font-size:13px;color:var(--cur-muted2);text-align:center;
-    margin-top:12px;font-style:italic;}
 
   @media(max-width:900px){
     .crs-aside{position:static;flex-basis:100%;}
@@ -221,8 +218,7 @@
               <span id="er-price-label">Inversión</span>
               <span id="er-price">…</span>
             </div>
-            <a class="crs-enroll-btn disabled" id="enroll-btn" href="#" aria-disabled="true">Inscripción</a>
-            <p class="crs-enroll-note" id="enroll-note"></p>
+            <a class="crs-enroll-btn" id="enroll-btn" href="#" target="_blank" rel="noopener noreferrer">Inscribirme</a>
           </div>
         </aside>
       </div>
@@ -266,9 +262,7 @@
 <script>
   var COURSE_DAYS = [5]; // Fri
   var COURSE_SESSIONS = 6;
-  // No Stripe Payment Link yet — enroll-btn stays disabled (see below) until
-  // one is added here and the disabled state is removed.
-  var CLASS_LINK = "";
+  var CLASS_LINK = "https://buy.stripe.com/6oUaEW82Xby93AbbEH57W04";
 
   var STR = {
     en: {
@@ -296,8 +290,7 @@
       enrollTitle: "Enrollment",
       erScheduleLabel: "Schedule", erStartLabel: "Starts", erCapLabel: "Cap", erPriceLabel: "Investment",
       cap: "15 students",
-      enrollBtn: "Enrollment Opening Soon",
-      enrollNote: "The enrollment form will be added here shortly.",
+      enrollBtn: "Enroll now",
     },
     es: {
       bcCursos: "Cursos", bcCurrent: "Viernes",
@@ -324,8 +317,7 @@
       enrollTitle: "Inscripción",
       erScheduleLabel: "Horario", erStartLabel: "Inicia", erCapLabel: "Cupo", erPriceLabel: "Inversión",
       cap: "15 estudiantes",
-      enrollBtn: "Inscripción Próximamente",
-      enrollNote: "El formulario de inscripción se agregará aquí pronto.",
+      enrollBtn: "Inscribirme",
     }
   };
 
@@ -448,7 +440,7 @@
     document.getElementById("er-cap").textContent = s.cap;
     document.getElementById("er-price-label").textContent = s.erPriceLabel;
     document.getElementById("enroll-btn").textContent = s.enrollBtn;
-    document.getElementById("enroll-note").textContent = s.enrollNote;
+    document.getElementById("enroll-btn").href = CLASS_LINK;
 
     document.title = s.title + " | The Corporate English Project";
     document.documentElement.lang = lang;
