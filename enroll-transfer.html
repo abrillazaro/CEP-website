@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Completa tu inscripción | The Corporate English Project</title>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#20395c;
+    --navy-deep:#152840;
+    --navy-soft:#54688a;
+    --sage:#5d7c69;
+    --sage-deep:#465c4f;
+    --sage-tint:#dce7dd;
+    --bg:#f1f3ef;
+    --surface:#ffffff;
+    --line:#e0e4dd;
+    --line-strong:#cdd4c9;
+    --ink:#1e2a3a;
+    --muted:#6c7787;
+    --serif:"Playfair Display", Georgia, serif;
+    --sans:"Hanken Grotesk", system-ui, sans-serif;
+    --shadow-sm:0 1px 2px rgba(21,40,64,.05), 0 1px 3px rgba(21,40,64,.06);
+    --shadow-md:0 6px 16px rgba(21,40,64,.08), 0 2px 6px rgba(21,40,64,.05);
+    /* Cursos palette */
+    --cur-navy:#1c3557;
+    --cur-green:#4f7359;
+    --cur-muted:#5b7288;
+    --cur-muted2:#7d8b93;
+    --cur-bg:#eef1ec;
+    --cur-sans:'Lato', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh;}
+  ::selection{background:var(--sage-tint);color:var(--navy-deep);}
+  button{font-family:inherit;cursor:pointer;}
+  a{color:inherit;}
+
+  .page{min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+
+  /* Nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;
+    padding:0 40px 11px;max-width:1320px;margin:0 auto;width:100%;}
+  .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--navy);}
+  .nav-logo img{height:150px;width:auto;display:block;}
+  .region-btn{display:flex;align-items:center;gap:5px;background:transparent;border:none;
+    color:var(--navy);font-family:var(--sans);font-weight:600;padding:0 4px;}
+  .region-gmt{font-size:12px;opacity:.85;}
+
+  /* Enrollment page */
+  .enr-main{flex:1;background:var(--cur-bg);font-family:var(--cur-sans);padding:24px 0 80px;}
+  .enr-container{max-width:620px;margin:0 auto;padding:0 24px;}
+  .enr-breadcrumb{font-size:13px;color:var(--cur-muted2);margin:0 0 20px;}
+  .enr-breadcrumb a{text-decoration:none;color:var(--cur-muted2);}
+  .enr-breadcrumb a:hover{color:var(--cur-navy);}
+  .enr-title{font-family:var(--serif);font-weight:600;color:var(--cur-navy);
+    font-size:clamp(26px,4.2vw,36px);line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;}
+  .enr-lede{font-size:16px;line-height:1.6;color:var(--cur-muted);margin:0 0 30px;}
+
+  .enr-section-label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--cur-muted2);font-weight:700;margin:0 0 14px;}
+
+  .enr-field{margin-bottom:18px;}
+  .enr-field label{display:block;font-size:13.5px;font-weight:700;color:var(--cur-navy);margin-bottom:6px;}
+  .enr-field input, .enr-field textarea{width:100%;border:1.5px solid var(--line-strong);
+    border-radius:11px;padding:13px 14px;font-size:15.5px;font-family:inherit;color:var(--ink);
+    background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;}
+  .enr-field input:focus, .enr-field textarea:focus{border-color:var(--cur-green);
+    box-shadow:0 0 0 3px rgba(79,115,89,.15);}
+  .enr-field input[readonly]{background:#f3f4f1;color:var(--cur-muted);cursor:default;}
+  .enr-field textarea{resize:vertical;min-height:90px;}
+
+  .enr-pay-box{background:#fff;border:1.5px solid rgba(79,115,89,.45);border-radius:16px;
+    padding:24px 24px 20px;margin:12px 0 28px;}
+  .enr-pay-intro{font-size:15.5px;font-weight:700;color:var(--cur-navy);margin:0 0 16px;}
+  .enr-pay-row{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:12px 0;border-bottom:1px solid rgba(28,53,87,.1);}
+  .enr-pay-row:last-of-type{border-bottom:none;}
+  .enr-pay-row-label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--cur-muted2);font-weight:700;flex-shrink:0;}
+  .enr-pay-row-value{font-size:15.5px;font-weight:700;color:var(--cur-navy);text-align:right;
+    word-break:break-word;}
+  .enr-copy-btn{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;
+    background:var(--cur-bg);border:1px solid rgba(79,115,89,.4);border-radius:8px;
+    padding:6px 10px;font-size:12.5px;font-weight:700;color:var(--cur-navy);
+    transition:background .15s;}
+  .enr-copy-btn:hover{background:#e3e9e3;}
+  .enr-pay-note{font-size:13.5px;font-style:italic;color:var(--cur-muted2);margin:14px 0 0;}
+
+  .enr-wa-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+    background:#25D366;color:#fff;border:none;border-radius:12px;padding:16px 20px;
+    font-size:15.5px;font-weight:700;text-decoration:none;margin:0 0 28px;
+    transition:background .18s;}
+  .enr-wa-btn:hover{background:#1ebd5a;}
+
+  .enr-checkbox-row{display:flex;align-items:flex-start;gap:12px;background:#fff;
+    border:1.5px solid rgba(79,115,89,.3);border-radius:12px;padding:16px 18px;
+    margin:0 0 24px;cursor:pointer;}
+  .enr-checkbox-row input{appearance:none;-webkit-appearance:none;flex-shrink:0;width:22px;height:22px;
+    margin:0;border-radius:6px;border:2px solid var(--line-strong);background:#fff;
+    position:relative;top:1px;cursor:pointer;}
+  .enr-checkbox-row input:checked{background:var(--cur-green);border-color:var(--cur-green);}
+  .enr-checkbox-row input:checked::after{content:"";position:absolute;left:6px;top:2px;width:6px;height:11px;
+    border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}
+  .enr-checkbox-row span{font-size:15px;line-height:1.5;color:var(--ink);}
+
+  .enr-submit{display:block;width:100%;background:var(--cur-navy);color:#fff;border:none;
+    border-radius:12px;padding:17px 24px;font-size:16.5px;font-weight:700;
+    transition:background .18s;}
+  .enr-submit:hover:not(:disabled){background:var(--cur-green);}
+  .enr-submit:disabled{background:var(--cur-muted2);cursor:default;opacity:.6;}
+
+  .enr-error{font-size:14px;color:#b3433a;margin:0 0 16px;display:none;}
+  .enr-error.visible{display:block;}
+
+  .enr-thanks{display:none;text-align:center;padding:40px 0;}
+  .enr-thanks.visible{display:block;}
+  .enr-thanks-icon{width:56px;height:56px;border-radius:50%;background:var(--cur-green);
+    color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+  .enr-thanks h2{font-family:var(--serif);font-weight:600;color:var(--cur-navy);
+    font-size:28px;margin:0 0 12px;}
+  .enr-thanks p{font-size:16px;line-height:1.6;color:var(--cur-muted);max-width:44ch;margin:0 auto;}
+
+  @media(max-width:640px){
+    .nav{padding:0 20px 11px;}
+    .enr-container{padding:0 20px;}
+    .enr-pay-row{flex-direction:column;align-items:flex-start;gap:6px;}
+    .enr-pay-row-value{text-align:left;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="nav">
+    <a class="nav-logo" href="/">
+      <img src="/logo-navy.png" alt="The Corporate English Project" />
+    </a>
+    <span class="region-btn" id="region-badge"></span>
+  </nav>
+
+  <main class="enr-main">
+    <div class="enr-container">
+      <div class="enr-breadcrumb">
+        <a href="/">Inicio</a> / <span>Inscripción</span>
+      </div>
+
+      <div id="enr-form-wrap">
+        <h1 class="enr-title">Completa tu inscripción</h1>
+        <p class="enr-lede">Aparta tu lugar con una transferencia SPEI. En cuanto confirme tu pago, te envío el enlace de la clase por WhatsApp.</p>
+
+        <form id="enr-form" novalidate>
+          <div class="enr-field">
+            <label for="f-name">Nombre completo</label>
+            <input type="text" id="f-name" name="name" required />
+          </div>
+          <div class="enr-field">
+            <label for="f-whatsapp">WhatsApp</label>
+            <input type="tel" id="f-whatsapp" name="whatsapp" placeholder="55 1234 5678" required />
+          </div>
+          <div class="enr-field">
+            <label for="f-email">Correo electrónico</label>
+            <input type="email" id="f-email" name="email" required />
+          </div>
+          <div class="enr-field">
+            <label for="f-class">Clase</label>
+            <input type="text" id="f-class" name="class" readonly required />
+          </div>
+          <div class="enr-field">
+            <label for="f-about">Cuéntame un poco de ti</label>
+            <textarea id="f-about" name="about" required></textarea>
+          </div>
+
+          <div class="enr-section-label">Instrucciones de pago</div>
+          <div class="enr-pay-box">
+            <p class="enr-pay-intro">Para apartar tu lugar, haz una transferencia SPEI:</p>
+            <div class="enr-pay-row">
+              <span class="enr-pay-row-label">CLABE</span>
+              <span class="enr-pay-row-value">722969069919429213</span>
+              <button type="button" class="enr-copy-btn" data-copy="722969069919429213">Copiar</button>
+            </div>
+            <div class="enr-pay-row">
+              <span class="enr-pay-row-label">Beneficiario</span>
+              <span class="enr-pay-row-value">Abril Aimee Lazaro Lazaro</span>
+            </div>
+            <div class="enr-pay-row">
+              <span class="enr-pay-row-label">Institución</span>
+              <span class="enr-pay-row-value">Mercado Pago W</span>
+            </div>
+            <div class="enr-pay-row">
+              <span class="enr-pay-row-label">Monto</span>
+              <span class="enr-pay-row-value" id="pay-amount">…</span>
+              <button type="button" class="enr-copy-btn" id="copy-amount">Copiar</button>
+            </div>
+            <p class="enr-pay-note">En el concepto escribe tu nombre completo.</p>
+          </div>
+
+          <a class="enr-wa-btn" id="wa-btn" target="_blank" rel="noopener noreferrer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.15h-.01c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.26-8.24a8.2 8.2 0 0 1 5.84 2.42 8.17 8.17 0 0 1 2.42 5.83c0 4.55-3.7 8.23-8.26 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.39-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.14-.01-.31-.01-.48-.01a.92.92 0 0 0-.67.31c-.23.25-.87.85-.87 2.08s.89 2.42 1.01 2.59c.12.17 1.76 2.68 4.26 3.76.6.26 1.06.41 1.43.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
+            Enviar comprobante por WhatsApp
+          </a>
+
+          <label class="enr-checkbox-row" for="f-confirm">
+            <input type="checkbox" id="f-confirm" required />
+            <span>Ya hice mi transferencia y envié mi comprobante por WhatsApp.</span>
+          </label>
+
+          <p class="enr-error" id="enr-error">Hubo un problema al enviar tu inscripción. Inténtalo de nuevo.</p>
+
+          <button type="submit" class="enr-submit" id="enr-submit" disabled>Confirmar inscripción</button>
+        </form>
+      </div>
+
+      <div class="enr-thanks" id="enr-thanks">
+        <div class="enr-thanks-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></svg>
+        </div>
+        <h2 id="enr-thanks-name">¡Gracias!</h2>
+        <p>Voy a confirmar tu pago y te voy a enviar el enlace de la clase por WhatsApp.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  function _cepCur(cc){return cc==='MX'?'MXN':cc==='CR'?'CRC':'USD';}
+  function _cepFromTz(tz){
+    if(!tz) return {countryCode:'US',currency:'USD'};
+    var mxTz=/^America\/(Mexico_City|Monterrey|Merida|Mazatlan|Hermosillo|Chihuahua|Ojinaga|Bahia_Banderas|Cancun|Ensenada|Santa_Isabel|Tijuana)$/;
+    if(mxTz.test(tz)) return {countryCode:'MX',currency:'MXN'};
+    if(tz==='America/Costa_Rica') return {countryCode:'CR',currency:'CRC'};
+    return {countryCode:'US',currency:'USD'};
+  }
+  var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+  var tzGuess=_cepFromTz(tz);
+  var stored=null;try{stored=JSON.parse(localStorage.getItem('cepRegionV2'));}catch(e){}
+  if(stored&&stored.tz&&stored.currency){
+    window._cepRegionPromise=Promise.resolve(stored);
+  }else{
+    var tzResult={countryCode:tzGuess.countryCode,currency:tzGuess.currency,tz:tz||'America/Mexico_City'};
+    window._cepRegionPromise=fetch('https://ipapi.co/json/')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var cc=d.country_code||tzGuess.countryCode;
+        var apiTz=d.timezone||tz||'America/Mexico_City';
+        var result={countryCode:cc,currency:_cepCur(cc),tz:apiTz};
+        try{localStorage.setItem('cepRegionV2',JSON.stringify(result));}catch(e){}
+        return result;
+      })
+      .catch(function(){
+        try{localStorage.setItem('cepRegionV2',JSON.stringify(tzResult));}catch(e){}
+        return tzResult;
+      });
+  }
+})();
+</script>
+<script>
+  var _sb = window.supabase.createClient(
+    'https://qkxhzpicqjxodeadhcvw.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFreGh6cGljcWp4b2RlYWRoY3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNTg2NTUsImV4cCI6MjA5MjgzNDY1NX0.wLL0h9vQ8W5xp7mKFbq-CphiqE4cRVGTQ-KayuteHt8'
+  );
+
+  function gmtOffset(tz) {
+    try {
+      var s = Intl.DateTimeFormat('en',{timeZone:tz,timeZoneName:'shortOffset'})
+        .formatToParts(new Date()).find(function(p){return p.type==='timeZoneName';});
+      var val = s ? s.value : 'GMT';
+      return val === 'GMT' ? 'GMT+0' : val;
+    } catch(e) { return 'GMT'; }
+  }
+  window._cepRegionPromise.then(function(region){
+    var tz = region.tz || "America/Mexico_City";
+    var flag = region.countryCode === 'MX' ? '🇲🇽' : region.countryCode === 'CR' ? '🇨🇷' : region.countryCode === 'CA' ? '🇨🇦' : '🇺🇸';
+    document.getElementById('region-badge').innerHTML = '<span>' + flag + '</span> <span class="region-gmt">' + gmtOffset(tz) + '</span>';
+  });
+
+  // --- Read class/price/course from the URL (set by the course page's enroll button) ---
+  var params = new URLSearchParams(window.location.search);
+  var classLabel = params.get('class') || '';
+  var priceMXN = parseInt(params.get('price'), 10) || 0;
+  var courseKey = params.get('course') || '';
+  var VALID_COURSE_KEYS = ['monwed', 'friday', 'beginnerMonWed', 'beginnerFriday'];
+
+  document.getElementById('f-class').value = classLabel;
+  document.getElementById('pay-amount').textContent = '$' + priceMXN.toLocaleString('en-US') + ' MXN';
+
+  // --- Copy buttons ---
+  function wireCopyButton(btn, text) {
+    btn.addEventListener('click', function(){
+      var original = btn.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = '¡Copiado!';
+        setTimeout(function(){ btn.textContent = original; }, 1500);
+      }).catch(function(){});
+    });
+  }
+  document.querySelectorAll('.enr-copy-btn[data-copy]').forEach(function(btn){
+    wireCopyButton(btn, btn.getAttribute('data-copy'));
+  });
+  wireCopyButton(document.getElementById('copy-amount'), '$' + priceMXN.toLocaleString('en-US') + ' MXN');
+
+  // --- WhatsApp proof-of-payment button (message built live from the form) ---
+  var waBtn = document.getElementById('wa-btn');
+  function updateWaLink() {
+    var name = document.getElementById('f-name').value.trim() || '(sin nombre)';
+    var msg = 'Hola, aquí está mi comprobante de pago para ' + classLabel + '. Mi nombre es ' + name + '.';
+    waBtn.href = 'https://wa.me/525572132329?text=' + encodeURIComponent(msg);
+  }
+  updateWaLink();
+  document.getElementById('f-name').addEventListener('input', updateWaLink);
+
+  // --- Enable submit only once everything required is filled ---
+  var form = document.getElementById('enr-form');
+  var submitBtn = document.getElementById('enr-submit');
+  var confirmBox = document.getElementById('f-confirm');
+  function checkFormValid() {
+    var requiredFields = form.querySelectorAll('[required]');
+    var allFilled = Array.from(requiredFields).every(function(el){
+      if (el.type === 'checkbox') return el.checked;
+      return el.value.trim().length > 0;
+    });
+    submitBtn.disabled = !allFilled;
+  }
+  form.addEventListener('input', checkFormValid);
+  confirmBox.addEventListener('change', checkFormValid);
+  checkFormValid();
+
+  // --- Submit: insert into Supabase, then show the thank-you screen ---
+  var errorBox = document.getElementById('enr-error');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (submitBtn.disabled) return;
+    if (VALID_COURSE_KEYS.indexOf(courseKey) === -1) {
+      errorBox.textContent = 'Falta información del curso. Vuelve a la página del curso y haz clic en Inscribirme de nuevo.';
+      errorBox.classList.add('visible');
+      return;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando…';
+    errorBox.classList.remove('visible');
+
+    var name = document.getElementById('f-name').value.trim();
+
+    _sb.from('enrollments').insert({
+      name: name,
+      whatsapp: document.getElementById('f-whatsapp').value.trim(),
+      email: document.getElementById('f-email').value.trim(),
+      course_key: courseKey,
+      class_label: classLabel,
+      about_me: document.getElementById('f-about').value.trim()
+    }).then(function(res){
+      if (res.error) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirmar inscripción';
+        errorBox.textContent = 'Hubo un problema al enviar tu inscripción. Inténtalo de nuevo.';
+        errorBox.classList.add('visible');
+        return;
+      }
+      document.getElementById('enr-form-wrap').style.display = 'none';
+      document.getElementById('enr-thanks-name').textContent = '¡Gracias, ' + name + '!';
+      document.getElementById('enr-thanks').classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>

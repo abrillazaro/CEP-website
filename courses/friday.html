@@ -473,6 +473,19 @@
       document.getElementById("er-price").textContent = price;
       var flag = region.countryCode === 'MX' ? '🇲🇽' : region.countryCode === 'CR' ? '🇨🇷' : region.countryCode === 'CA' ? '🇨🇦' : '🇺🇸';
       document.getElementById("region-badge").innerHTML = '<span>' + flag + '</span> <span class="region-gmt">' + gmtOffset(tz) + '</span>';
+
+      // Mexico visitors get the on-site SPEI-transfer enrollment flow instead
+      // of Stripe — everyone else keeps the existing Stripe link untouched.
+      if (region.countryCode === 'MX') {
+        var scheduleEs = courseSchedule(COURSE_DAYS, tz, 'es');
+        var classLabelMx = "Intermedio · " + scheduleEs + " · Inicia 6 de nov";
+        var mxUrl = "/enroll-transfer.html?class=" + encodeURIComponent(classLabelMx) +
+          "&price=300&course=friday";
+        var enrollBtnEl = document.getElementById("enroll-btn");
+        enrollBtnEl.href = mxUrl;
+        enrollBtnEl.removeAttribute("target");
+        enrollBtnEl.removeAttribute("rel");
+      }
     });
   }
 

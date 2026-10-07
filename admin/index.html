@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Panel de inscripciones | The Corporate English Project</title>
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500,600,700&family=Hanken+Grotesk:wght@400;500;600;700&family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#20395c;
+    --navy-deep:#152840;
+    --navy-soft:#54688a;
+    --sage:#5d7c69;
+    --sage-deep:#465c4f;
+    --sage-tint:#dce7dd;
+    --bg:#f1f3ef;
+    --surface:#ffffff;
+    --line:#e0e4dd;
+    --line-strong:#cdd4c9;
+    --ink:#1e2a3a;
+    --muted:#6c7787;
+    --serif:"Playfair Display", Georgia, serif;
+    --sans:"Hanken Grotesk", system-ui, sans-serif;
+    --shadow-sm:0 1px 2px rgba(21,40,64,.05), 0 1px 3px rgba(21,40,64,.06);
+    --cur-navy:#1c3557;
+    --cur-green:#4f7359;
+    --cur-muted:#5b7288;
+    --cur-muted2:#7d8b93;
+    --cur-bg:#eef1ec;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);
+    -webkit-font-smoothing:antialiased;min-height:100vh;}
+  button{font-family:inherit;cursor:pointer;}
+  a{color:inherit;}
+
+  .nav{display:flex;align-items:center;justify-content:space-between;
+    padding:18px 40px;max-width:1320px;margin:0 auto;width:100%;}
+  .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--navy);}
+  .nav-logo img{height:60px;width:auto;display:block;}
+  .signout-btn{border:1px solid var(--line-strong);background:#fff;border-radius:10px;
+    padding:9px 16px;font-size:13.5px;font-weight:700;color:var(--navy);display:none;}
+  .signout-btn:hover{background:var(--sage-tint);}
+
+  /* Login screen */
+  .login-wrap{max-width:380px;margin:60px auto;padding:0 24px;}
+  .login-card{background:#fff;border:1px solid var(--line);border-radius:18px;
+    padding:34px 30px;box-shadow:var(--shadow-sm);}
+  .login-card h1{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--navy);
+    margin:0 0 6px;}
+  .login-card p{font-size:14px;color:var(--muted);margin:0 0 22px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+  .field input{width:100%;border:1.5px solid var(--line-strong);border-radius:10px;
+    padding:11px 13px;font-size:15px;font-family:inherit;outline:none;}
+  .field input:focus{border-color:var(--sage);}
+  .login-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;
+    padding:13px;font-weight:700;font-size:15px;margin-top:4px;transition:background .18s;}
+  .login-btn:hover{background:var(--navy-deep);}
+  .login-btn:disabled{opacity:.6;cursor:default;}
+  .login-err{font-size:13.5px;color:#b3433a;margin:10px 0 0;display:none;}
+  .login-err.visible{display:block;}
+
+  /* Dashboard */
+  .dash{display:none;max-width:1100px;margin:0 auto;padding:0 32px 80px;}
+  .dash.visible{display:block;}
+  .dash h1{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--navy);margin:0 0 24px;}
+
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:14px;margin:0 0 30px;}
+  .stat-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;}
+  .stat-label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--cur-muted2);
+    font-weight:700;margin:0 0 6px;}
+  .stat-value{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--navy);}
+
+  .toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;
+    flex-wrap:wrap;margin:0 0 18px;}
+  .toolbar select{border:1.5px solid var(--line-strong);border-radius:10px;padding:9px 12px;
+    font-size:14px;font-family:inherit;background:#fff;color:var(--navy);font-weight:600;}
+  .refresh-btn{border:1px solid var(--line-strong);background:#fff;border-radius:10px;
+    padding:9px 14px;font-size:13.5px;font-weight:700;color:var(--navy);}
+  .refresh-btn:hover{background:var(--sage-tint);}
+
+  .enr-table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;
+    overflow:hidden;box-shadow:var(--shadow-sm);}
+  .enr-table th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--cur-muted2);font-weight:700;padding:12px 14px;background:var(--cur-bg);
+    border-bottom:1px solid var(--line);}
+  .enr-table td{padding:14px;font-size:14px;color:var(--ink);border-bottom:1px solid var(--line);
+    vertical-align:top;}
+  .enr-table tr:last-child td{border-bottom:none;}
+  .enr-name{font-weight:700;color:var(--navy);}
+  .enr-sub{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .enr-about{max-width:220px;font-size:13px;color:var(--muted);}
+  .status-badge{display:inline-block;padding:4px 11px;border-radius:999px;font-size:12px;
+    font-weight:700;}
+  .status-badge.pendiente{background:#fdf1dc;color:#9a6a0e;}
+  .status-badge.pagado{background:var(--sage-tint);color:var(--sage-deep);}
+  .status-toggle{display:block;margin-top:8px;border:1px solid var(--line-strong);background:#fff;
+    border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--navy);
+    white-space:nowrap;}
+  .status-toggle:hover{background:var(--sage-tint);}
+  .status-toggle:disabled{opacity:.5;cursor:default;}
+  .empty-state{text-align:center;padding:50px 20px;color:var(--muted);font-size:15px;}
+
+  @media(max-width:700px){
+    .nav{padding:14px 20px;}
+    .dash{padding:0 16px 60px;}
+    .enr-table{display:block;overflow-x:auto;white-space:nowrap;}
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="nav-logo" href="/">
+    <img src="/logo-navy.png" alt="The Corporate English Project" />
+  </a>
+  <button class="signout-btn" id="signout-btn">Cerrar sesión</button>
+</nav>
+
+<div class="login-wrap" id="login-wrap">
+  <div class="login-card">
+    <h1>Panel de inscripciones</h1>
+    <p>Acceso solo para administración.</p>
+    <form id="login-form">
+      <div class="field">
+        <label for="login-email">Correo electrónico</label>
+        <input type="email" id="login-email" required />
+      </div>
+      <div class="field">
+        <label for="login-password">Contraseña</label>
+        <input type="password" id="login-password" required />
+      </div>
+      <button type="submit" class="login-btn" id="login-btn">Entrar</button>
+      <p class="login-err" id="login-err">Correo o contraseña incorrectos.</p>
+    </form>
+  </div>
+</div>
+
+<div class="dash" id="dash">
+  <h1>Inscripciones</h1>
+
+  <div class="stats-row" id="stats-row"></div>
+
+  <div class="toolbar">
+    <select id="class-filter">
+      <option value="">Todas las clases</option>
+      <option value="monwed">Intermedio · Lunes y Miércoles</option>
+      <option value="friday">Intermedio · Viernes</option>
+      <option value="beginnerMonWed">Principiante · Lunes y Miércoles</option>
+      <option value="beginnerFriday">Principiante · Viernes</option>
+    </select>
+    <button class="refresh-btn" id="refresh-btn">↻ Actualizar</button>
+  </div>
+
+  <div id="table-wrap"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  var _sb = window.supabase.createClient(
+    'https://qkxhzpicqjxodeadhcvw.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFreGh6cGljcWp4b2RlYWRoY3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyNTg2NTUsImV4cCI6MjA5MjgzNDY1NX0.wLL0h9vQ8W5xp7mKFbq-CphiqE4cRVGTQ-KayuteHt8'
+  );
+
+  var COURSES_META = {
+    monwed:          { label: 'Intermedio · Lunes y Miércoles', cap: 12 },
+    friday:           { label: 'Intermedio · Viernes', cap: 15 },
+    beginnerMonWed:   { label: 'Principiante · Lunes y Miércoles', cap: 12 },
+    beginnerFriday:   { label: 'Principiante · Viernes', cap: 15 }
+  };
+
+  var loginWrap = document.getElementById('login-wrap');
+  var dash = document.getElementById('dash');
+  var signoutBtn = document.getElementById('signout-btn');
+  var allRows = [];
+
+  function showDash() {
+    loginWrap.style.display = 'none';
+    signoutBtn.style.display = '';
+    dash.classList.add('visible');
+    loadEnrollments();
+  }
+  function showLogin() {
+    loginWrap.style.display = '';
+    signoutBtn.style.display = 'none';
+    dash.classList.remove('visible');
+  }
+
+  _sb.auth.getSession().then(function(res){
+    if (res.data.session) showDash(); else showLogin();
+  });
+
+  var loginForm = document.getElementById('login-form');
+  var loginBtn = document.getElementById('login-btn');
+  var loginErr = document.getElementById('login-err');
+  loginForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Entrando…';
+    loginErr.classList.remove('visible');
+    _sb.auth.signInWithPassword({
+      email: document.getElementById('login-email').value.trim(),
+      password: document.getElementById('login-password').value
+    }).then(function(res){
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Entrar';
+      if (res.error) {
+        loginErr.classList.add('visible');
+        return;
+      }
+      showDash();
+    });
+  });
+
+  signoutBtn.addEventListener('click', function(){
+    _sb.auth.signOut().then(function(){ showLogin(); });
+  });
+
+  function loadEnrollments() {
+    document.getElementById('table-wrap').innerHTML = '<div class="empty-state">Cargando…</div>';
+    _sb.from('enrollments').select('*').order('created_at', { ascending: false })
+      .then(function(res){
+        if (res.error) {
+          document.getElementById('table-wrap').innerHTML =
+            '<div class="empty-state">No se pudieron cargar las inscripciones.</div>';
+          return;
+        }
+        allRows = res.data || [];
+        renderStats();
+        renderTable();
+      });
+  }
+
+  function renderStats() {
+    var html = '';
+    Object.keys(COURSES_META).forEach(function(key){
+      var meta = COURSES_META[key];
+      var paid = allRows.filter(function(r){ return r.course_key === key && r.status === 'Pagado'; }).length;
+      html += '<div class="stat-card"><div class="stat-label">' + meta.label + '</div>' +
+        '<div class="stat-value">' + paid + ' / ' + meta.cap + ' pagados</div></div>';
+    });
+    document.getElementById('stats-row').innerHTML = html;
+  }
+
+  function fmtDate(iso) {
+    try {
+      return new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso));
+    } catch(e) { return iso; }
+  }
+
+  function renderTable() {
+    var filterKey = document.getElementById('class-filter').value;
+    var rows = filterKey ? allRows.filter(function(r){ return r.course_key === filterKey; }) : allRows;
+
+    if (!rows.length) {
+      document.getElementById('table-wrap').innerHTML = '<div class="empty-state">No hay inscripciones todavía.</div>';
+      return;
+    }
+
+    var html = '<table class="enr-table"><thead><tr>' +
+      '<th>Estudiante</th><th>Clase</th><th>Cuéntame un poco de ti</th><th>Fecha</th><th>Estado</th>' +
+      '</tr></thead><tbody>';
+
+    rows.forEach(function(r){
+      var isPaid = r.status === 'Pagado';
+      html += '<tr>' +
+        '<td><div class="enr-name">' + escapeHtml(r.name) + '</div>' +
+          '<div class="enr-sub">' + escapeHtml(r.whatsapp) + '</div>' +
+          '<div class="enr-sub">' + escapeHtml(r.email) + '</div></td>' +
+        '<td>' + escapeHtml(r.class_label) + '</td>' +
+        '<td class="enr-about">' + escapeHtml(r.about_me || '') + '</td>' +
+        '<td>' + fmtDate(r.created_at) + '</td>' +
+        '<td><span class="status-badge ' + (isPaid ? 'pagado' : 'pendiente') + '">' + r.status + '</span>' +
+          '<button class="status-toggle" data-id="' + r.id + '" data-next="' + (isPaid ? 'Pendiente' : 'Pagado') + '">' +
+          'Marcar como ' + (isPaid ? 'Pendiente' : 'Pagado') + '</button></td>' +
+        '</tr>';
+    });
+    html += '</tbody></table>';
+    document.getElementById('table-wrap').innerHTML = html;
+
+    document.querySelectorAll('.status-toggle').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var id = btn.getAttribute('data-id');
+        var next = btn.getAttribute('data-next');
+        btn.disabled = true;
+        btn.textContent = 'Guardando…';
+        _sb.from('enrollments').update({ status: next }).eq('id', id).then(function(res){
+          if (res.error) {
+            btn.disabled = false;
+            btn.textContent = 'Error — reintenta';
+            return;
+          }
+          loadEnrollments();
+        });
+      });
+    });
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str == null ? '' : str;
+    return div.innerHTML;
+  }
+
+  document.getElementById('class-filter').addEventListener('change', renderTable);
+  document.getElementById('refresh-btn').addEventListener('click', loadEnrollments);
+</script>
+</body>
+</html>
