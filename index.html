@@ -2104,7 +2104,7 @@ function App() {
   }, []);
   const handleRegionSelect = r => {
     setRegion(r); setCurrency(r.currency);
-    try { localStorage.setItem('cepRegion', JSON.stringify(r)); } catch(e) {}
+    try { localStorage.setItem('cepRegionV2', JSON.stringify(r)); } catch(e) {}
   };
   const onModalSubmit = () => { setModal(null); showToast(t.acctToast); };
   const hasResult = !!result || busy || !!error;
