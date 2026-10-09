@@ -357,6 +357,29 @@
 
   /* Ticker */
 
+  /* Benefits section */
+  .benefits-section{background:#fff;width:100%;padding:72px 0;
+    font-family:Arial, Helvetica, sans-serif;}
+  .benefits-inner{max-width:1220px;margin:0 auto;padding:0 56px;
+    display:flex;align-items:center;gap:64px;flex-wrap:wrap;}
+  .benefits-left{flex:1 1 320px;min-width:260px;padding:28px 0;}
+  .benefits-tagline{font-size:clamp(28px,3.4vw,42px);font-weight:700;color:var(--cur-navy);
+    line-height:1.18;margin:0 0 16px;}
+  .benefits-price{font-size:clamp(30px,3.8vw,46px);font-weight:700;color:#D46A9F;line-height:1.1;}
+  .benefits-list{flex:1 1 380px;min-width:280px;list-style:none;margin:0;padding:0;
+    display:flex;flex-direction:column;gap:18px;}
+  .benefits-list li{display:flex;align-items:flex-start;gap:12px;font-size:16px;
+    line-height:1.5;color:var(--cur-muted);}
+  .benefits-list li svg{flex-shrink:0;margin-top:1px;}
+  @media(max-width:780px){
+    .benefits-inner{flex-direction:column;align-items:flex-start;gap:36px;padding:0 24px;}
+    .benefits-left{padding:0;}
+  }
+  @media(max-width:480px){
+    .benefits-section{padding:48px 0;}
+    .benefits-inner{padding:0 20px;}
+  }
+
   /* Cursos section */
   .cursos-section{--cur-navy:#1c3557;--cur-green:#4f7359;--cur-muted:#5b7288;
     --cur-muted2:#7d8b93;--cur-bg:#eef1ec;--cur-sans:'Lato',sans-serif;
@@ -653,6 +676,19 @@ const STR = {
     beginnerMonWedCapacity: "12-student cap",
     beginnerFridayDuration: "6 weeks · starts Nov 6",
     beginnerFridayCapacity: "15-student cap",
+    benefitsTagline: "Improve your English in 6 weeks.",
+    benefitsPrice: "$3 USD/hour.",
+    benefitsItems: [
+      "Join from anywhere",
+      "Live classes with a real teacher, not recordings",
+      "Native English speaker and bilingual teacher",
+      "Your teacher holds a B.A. in Philosophy and has taught students from around the world",
+      "Learn with others to support interpersonal interaction and deep learning",
+      "Max 12 students per class, so everyone speaks and gets feedback",
+      "Homework included to keep your English going between classes",
+      "60-minute classes for 6 weeks",
+      "Stress-free: no grades, just progress",
+    ],
   },
   es: {
     blog: "Bitácora", login: "Entrar",
@@ -713,6 +749,19 @@ const STR = {
     beginnerMonWedCapacity: "Cupo de 12 estudiantes",
     beginnerFridayDuration: "6 semanas · inicia 6 de nov",
     beginnerFridayCapacity: "Cupo de 15 estudiantes",
+    benefitsTagline: "Mejora tu inglés en 6 semanas.",
+    benefitsPrice: "$3 USD por hora.",
+    benefitsItems: [
+      "Conéctate desde cualquier lugar",
+      "Clases en vivo con una maestra real, no grabaciones",
+      "Maestra bilingüe y hablante nativa de inglés",
+      "Tu maestra tiene Licenciatura en Filosofía y ha enseñado a alumnos de todo el mundo",
+      "Aprende con otros para fomentar la interacción y un aprendizaje profundo",
+      "Máximo 12 alumnos por clase, para que todos hablen y reciban retroalimentación",
+      "Tarea incluida para seguir practicando entre clases",
+      "Clases de 60 minutos durante 6 semanas",
+      "Sin estrés: sin calificaciones, solo progreso",
+    ],
   }
 };
 
@@ -1765,6 +1814,36 @@ function formatCoursePrice(cur, sessions) {
   return cur === "MXN" ? `$${formatted} MXN` : cur === "CRC" ? `${formatted} CRC` : `$${formatted} USD`;
 }
 
+function BenefitCheckIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+      <circle cx="11" cy="11" r="11" fill="#2E7D5B" />
+      <path d="M6.5 11.3l3 3 6-6.3" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function BenefitsSection({ t }) {
+  return (
+    <section className="benefits-section">
+      <div className="benefits-inner">
+        <div className="benefits-left">
+          <div className="benefits-tagline">{t.benefitsTagline}</div>
+          <div className="benefits-price">{t.benefitsPrice}</div>
+        </div>
+        <ul className="benefits-list">
+          {t.benefitsItems.map((item, i) => (
+            <li key={i}>
+              <BenefitCheckIcon />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 function CTASection({ t, currency, lang, tz }) {
   const safeTz = tz || "America/Mexico_City";
   const cur = currency || "MXN";
@@ -2188,6 +2267,8 @@ function App() {
         </div>
         {!hasResult ? <EnrollTicker lang={lang} currency={currency} /> : null}
       </main>
+
+      <BenefitsSection t={t} />
 
       <CTASection t={t} currency={currency} lang={lang} tz={region.tz} />
 
