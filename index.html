@@ -639,7 +639,8 @@ const STR = {
     cursosTitle: "Courses",
     cursosBody: "Build real speaking confidence: connect more with your community, handle everyday tasks and errands, and get an edge in your career.",
     cursosQuiz: "Which course should I enroll in?",
-    cursosWaBtn: "Questions? Message me on WhatsApp",
+    cursosFaqBtn: "Questions? Check out the FAQ",
+    cursosWaBtn: "Still have questions? Message me on WhatsApp",
     cursosGroupsOpen: "Live online group class · Open enrollment",
     cursosMetaTop: "6 weeks · starts November",
     cursosPayOnce: "one-time payment at enrollment",
@@ -698,7 +699,8 @@ const STR = {
     cursosTitle: "Cursos",
     cursosBody: "Gana confianza al hablar: conecta más con tu comunidad, resuelve los trámites y pendientes del día a día, y date una ventaja en tu carrera.",
     cursosQuiz: "¿En cuál curso me inscribo?",
-    cursosWaBtn: "¿Tienes dudas? Escríbeme por WhatsApp",
+    cursosFaqBtn: "¿Tienes dudas? Revisa las preguntas frecuentes",
+    cursosWaBtn: "¿Todavía tienes dudas? Escríbeme por WhatsApp",
     cursosGroupsOpen: "Clase grupal en vivo · Inscripción abierta",
     cursosMetaTop: "6 semanas · inicia noviembre",
     cursosPayOnce: "pago único al inscribirte",
@@ -1802,6 +1804,10 @@ function CTASection({ t, currency, lang, tz }) {
           <p className="cursos-body">{t.cursosBody}</p>
           <a className="cursos-quiz-btn" href={isEs ? "/quiz/es.html" : "/quiz/en.html"}>
             <span>{t.cursosQuiz}</span>
+            <span>→</span>
+          </a>
+          <a className="cursos-quiz-btn" href={isEs ? "/faq.html?lang=es" : "/faq.html?lang=en"}>
+            <span>{t.cursosFaqBtn}</span>
             <span>→</span>
           </a>
           <a className="cursos-quiz-btn" href={"https://wa.me/525572132329?text=" + encodeURIComponent(isEs
